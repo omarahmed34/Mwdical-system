@@ -1,0 +1,1897 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>النظام الطبي الذكي المتكامل</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        body { 
+            font-family: 'Cairo', sans-serif; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .navbar { background: rgba(255,255,255,0.95) !important; backdrop-filter: blur(10px); }
+        .hero-section { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; 
+            padding: 6rem 0 4rem;
+            margin-top: -4rem;
+            padding-top: 8rem;
+        }
+        .specialty-card {
+            transition: all 0.3s ease;
+            border: none;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            background: white;
+            height: 100%;
+        }
+        .specialty-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        .specialty-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+            margin: 0 auto 1rem;
+        }
+        .chat-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            height: 600px;
+            display: flex;
+            flex-direction: column;
+        }
+        .chat-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem;
+            border-radius: 20px 20px 0 0;
+            text-align: center;
+        }
+        .chat-messages {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            max-height: 400px;
+        }
+        .message {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: flex-start;
+        }
+        .message.user {
+            justify-content: flex-end;
+        }
+        .message.bot {
+            justify-content: flex-start;
+        }
+        .message-content {
+            max-width: 70%;
+            padding: 0.75rem 1rem;
+            border-radius: 15px;
+            word-wrap: break-word;
+        }
+        .message.user .message-content {
+            background: #667eea;
+            color: white;
+            border-bottom-right-radius: 5px;
+        }
+        .message.bot .message-content {
+            background: #f8f9fa;
+            color: #333;
+            border-bottom-left-radius: 5px;
+        }
+        .chat-input {
+            padding: 1rem;
+            border-top: 1px solid #eee;
+            border-radius: 0 0 20px 20px;
+        }
+        .quick-diagnosis-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        .quick-diagnosis-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+        }
+        .typing-indicator {
+            display: none;
+            padding: 0.5rem 1rem;
+            background: #f8f9fa;
+            border-radius: 15px;
+            margin-bottom: 1rem;
+        }
+        .typing-dots {
+            display: inline-block;
+            position: relative;
+            width: 40px;
+            height: 10px;
+        }
+        .typing-dots span {
+            position: absolute;
+            top: 0;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #999;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+        .typing-dots span:nth-child(1) { left: 0; animation-delay: -0.32s; }
+        .typing-dots span:nth-child(2) { left: 12px; animation-delay: -0.16s; }
+        .typing-dots span:nth-child(3) { left: 24px; }
+        @keyframes typing {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+        .diagnosis-result {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin: 1rem 0;
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        }
+        .severity-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .severity-low { background: #d4edda; color: #155724; }
+        .severity-medium { background: #fff3cd; color: #856404; }
+        .severity-high { background: #f8d7da; color: #721c24; }
+
+        .welcome-message {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin: 1rem 0;
+        }
+
+        .welcome-message .btn {
+            margin: 0.25rem;
+            border-color: rgba(255,255,255,0.3);
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .welcome-message .btn:hover {
+            background: rgba(255,255,255,0.2);
+            border-color: white;
+            transform: translateY(-2px);
+        }
+
+        .message-content ul, .message-content ol {
+            margin: 0.5rem 0;
+            padding-left: 1.5rem;
+        }
+
+        .message-content li {
+            margin: 0.25rem 0;
+        }
+
+        .alert {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            padding: 0.5rem 0.75rem;
+        }
+
+        .quick-options .btn {
+            font-size: 0.8rem;
+            padding: 0.5rem 1rem;
+        }
+
+        .meal-plan {
+            background: rgba(255,255,255,0.1);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+        }
+
+        .meal-plan p {
+            margin-bottom: 0.5rem;
+            padding: 0.5rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: 5px;
+        }
+
+        .nutrition-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .nutrition-card {
+            background: rgba(255,255,255,0.1);
+            padding: 1rem;
+            border-radius: 10px;
+            border-left: 4px solid #28a745;
+        }
+
+        .vitamin-info {
+            background: linear-gradient(135deg, #ffc107 0%, #ff8c00 100%);
+            color: white;
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 0.5rem 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="index.html">
+                <i class="fas fa-heartbeat text-primary me-2"></i>
+                <span class="fw-bold">مساعد طبي ذكي</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">الرئيسية</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="diagnosis.html">التشخيص</a></li>
+                    <li class="nav-item"><a class="nav-link" href="appointments.html">حجز موعد</a></li>
+                    <li class="nav-item"><a class="nav-link" href="team.html">القائمون بالعمل</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row justify-content-center text-center">
+                <div class="col-lg-8">
+                    <div class="d-inline-flex align-items-center justify-content-center bg-white bg-opacity-20 rounded-circle p-3 mb-4">
+                        <i class="fas fa-stethoscope" style="font-size: 3rem;"></i>
+                    </div>
+                    <h1 class="display-4 fw-bold mb-4">النظام الطبي الذكي المتكامل</h1>
+                    <p class="lead fs-4 mb-4">
+                        تشخيص دقيق وسريع بالذكاء الاصطناعي مع تغطية شاملة لجميع التخصصات الطبية
+                    </p>
+                    <div class="row g-3 justify-content-center">
+                        <div class="col-auto">
+                            <div class="bg-white bg-opacity-20 rounded-pill px-4 py-2">
+                                <i class="fas fa-robot me-2"></i>
+                                <span>ذكاء اصطناعي متقدم</span>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="bg-white bg-opacity-20 rounded-pill px-4 py-2">
+                                <i class="fas fa-clock me-2"></i>
+                                <span>متاح 24/7</span>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="bg-white bg-opacity-20 rounded-pill px-4 py-2">
+                                <i class="fas fa-shield-alt me-2"></i>
+                                <span>آمن ومحمي</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Medical Specialties -->
+    <section class="py-5 py-md-6" style="background: white;">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="h2 fw-bold text-primary mb-3">التخصصات الطبية المتاحة</h2>
+                <p class="text-muted fs-5">نغطي جميع التخصصات الطبية بأحدث التقنيات</p>
+            </div>
+            
+            <div class="row g-4">
+                <!-- Internal Medicine -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="specialty-card p-4 text-center h-100">
+                        <div class="specialty-icon bg-primary">
+                            <i class="fas fa-heartbeat"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2">الطب الباطني</h5>
+                        <p class="text-muted mb-3">تشخيص أمراض القلب، السكري، الضغط</p>
+                        <button class="btn btn-outline-primary btn-sm" onclick="startSpecialtyChat('internal')">ابدأ التشخيص</button>
+                    </div>
+                </div>
+
+                <!-- Cardiology -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="specialty-card p-4 text-center h-100">
+                        <div class="specialty-icon bg-danger">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2">أمراض القلب</h5>
+                        <p class="text-muted mb-3">تشخيص أمراض القلب والأوعية الدموية</p>
+                        <button class="btn btn-outline-danger btn-sm" onclick="startSpecialtyChat('cardiology')">ابدأ التشخيص</button>
+                    </div>
+                </div>
+
+                <!-- Neurology -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="specialty-card p-4 text-center h-100">
+                        <div class="specialty-icon bg-info">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2">الأعصاب</h5>
+                        <p class="text-muted mb-3">تشخيص أمراض الجهاز العصبي والدماغ</p>
+                        <button class="btn btn-outline-info btn-sm" onclick="startSpecialtyChat('neurology')">ابدأ التشخيص</button>
+                    </div>
+                </div>
+
+                <!-- Orthopedics -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="specialty-card p-4 text-center h-100">
+                        <div class="specialty-icon bg-warning">
+                            <i class="fas fa-bone"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2">العظام</h5>
+                        <p class="text-muted mb-3">تشخيص إصابات وأمراض العظام</p>
+                        <button class="btn btn-outline-warning btn-sm" onclick="startSpecialtyChat('orthopedics')">ابدأ التشخيص</button>
+                    </div>
+                </div>
+
+                <!-- Dermatology -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="specialty-card p-4 text-center h-100">
+                        <div class="specialty-icon bg-success">
+                            <i class="fas fa-hand-paper"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2">الجلدية</h5>
+                        <p class="text-muted mb-3">تشخيص أمراض الجلد والحساسية</p>
+                        <button class="btn btn-outline-success btn-sm" onclick="startSpecialtyChat('dermatology')">ابدأ التشخيص</button>
+                    </div>
+                </div>
+
+                <!-- Pediatrics -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="specialty-card p-4 text-center h-100">
+                        <div class="specialty-icon bg-pink" style="background: #e91e63;">
+                            <i class="fas fa-baby"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2">طب الأطفال</h5>
+                        <p class="text-muted mb-3">تشخيص أمراض الأطفال والرضع</p>
+                        <button class="btn btn-sm" style="color: #e91e63; border-color: #e91e63;" onclick="startSpecialtyChat('pediatrics')">ابدأ التشخيص</button>
+                    </div>
+                </div>
+
+                <!-- Gynecology -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="specialty-card p-4 text-center h-100">
+                        <div class="specialty-icon bg-purple" style="background: #9c27b0;">
+                            <i class="fas fa-female"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2">النساء والتوليد</h5>
+                        <p class="text-muted mb-3">تشخيص أمراض النساء والحمل</p>
+                        <button class="btn btn-sm" style="color: #9c27b0; border-color: #9c27b0;" onclick="startSpecialtyChat('gynecology')">ابدأ التشخيص</button>
+                    </div>
+                </div>
+
+                <!-- Psychiatry -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="specialty-card p-4 text-center h-100">
+                        <div class="specialty-icon bg-dark">
+                            <i class="fas fa-head-side-virus"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2">الطب النفسي</h5>
+                        <p class="text-muted mb-3">تشخيص الاضطرابات النفسية</p>
+                        <button class="btn btn-outline-dark btn-sm" onclick="startSpecialtyChat('psychiatry')">ابدأ التشخيص</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Chatbot Section -->
+    <section class="py-5 py-md-6" style="background: #f8f9fa;">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="text-center mb-4">
+                        <h2 class="h2 fw-bold text-primary mb-3">المساعد الطبي الذكي</h2>
+                        <p class="text-muted">اوصف أعراضك واحصل على تشخيص فوري بالذكاء الاصطناعي</p>
+                    </div>
+                    
+                    <div class="chat-container">
+                        <div class="chat-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-robot me-2"></i>
+                                الدكتور الذكي
+                            </h5>
+                            <small>متاح 24/7 لمساعدتك</small>
+                        </div>
+                        
+                        <div class="chat-messages" id="chatMessages">
+                            <!-- الرسائل ستظهر هنا ديناميكياً -->
+                            
+                            <div class="typing-indicator" id="typingIndicator">
+                                <div class="typing-dots">
+                                    <span></span>
+                                    <span></span>
+                                    <span></span>
+                                </div>
+                                <span class="ms-2">الدكتور يكتب...</span>
+                            </div>
+                        </div>
+                        
+                        <div class="chat-input">
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="messageInput" placeholder="اوصف أعراضك هنا..." onkeypress="handleKeyPress(event)">
+                                <button class="btn btn-primary" onclick="sendMessage()">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Diagnosis Button -->
+    <button class="quick-diagnosis-btn" onclick="scrollToChat()" title="تشخيص سريع">
+        <i class="fas fa-stethoscope"></i>
+    </button>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Medical Knowledge Base - قاعدة المعرفة الطبية الشاملة
+        const medicalKnowledge = {
+            symptoms: {
+                // أعراض الجهاز التنفسي
+                'صداع': {
+                    conditions: ['الصداع النصفي', 'صداع التوتر', 'ارتفاع ضغط الدم', 'التهاب الجيوب الأنفية', 'الجفاف'],
+                    severity: 'متوسط',
+                    specialty: 'الأعصاب',
+                    advice: ['احصل على راحة كافية', 'اشرب كمية كافية من الماء', 'تجنب الضوضاء والأضواء الساطعة', 'ضع كمادات باردة على الجبهة'],
+                    questions: ['منذ متى بدأ الصداع؟', 'هل الألم في جانب واحد أم الجانبين؟', 'هل يصاحبه غثيان؟']
+                },
+                'حمى': {
+                    conditions: ['عدوى فيروسية', 'عدوى بكتيرية', 'الإنفلونزا', 'التهاب الحلق', 'التهاب المسالك البولية'],
+                    severity: 'عالي',
+                    specialty: 'الطب الباطني',
+                    advice: ['اشرب سوائل كثيرة', 'احصل على راحة تامة', 'راجع الطبيب إذا ارتفعت الحرارة عن 39°', 'استخدم خافض حرارة حسب الحاجة'],
+                    questions: ['كم درجة الحرارة؟', 'منذ متى بدأت الحمى؟', 'هل تصاحبها رعشة؟']
+                },
+                'سعال': {
+                    conditions: ['نزلة برد', 'التهاب الشعب الهوائية', 'الربو', 'الحساسية', 'التهاب الرئة'],
+                    severity: 'متوسط',
+                    specialty: 'أمراض الصدر',
+                    advice: ['اشرب مشروبات دافئة', 'تجنب المهيجات', 'استخدم مرطب الهواء', 'تناول العسل الطبيعي'],
+                    questions: ['هل السعال جاف أم مصحوب ببلغم؟', 'منذ متى بدأ؟', 'هل يزداد ليلاً؟']
+                },
+                'ألم في الصدر': {
+                    conditions: ['ذبحة صدرية', 'التهاب عضلة القلب', 'ارتجاع المريء', 'التهاب الغضروف الضلعي', 'جلطة رئوية'],
+                    severity: 'عالي',
+                    specialty: 'أمراض القلب',
+                    advice: ['توجه للطوارئ فوراً إذا كان الألم شديد', 'تجنب المجهود الشاق', 'راجع طبيب القلب', 'لا تتجاهل الألم'],
+                    questions: ['هل الألم حاد أم ضاغط؟', 'هل ينتشر للذراع أو الفك؟', 'هل يزداد مع المجهود؟']
+                },
+                'ضيق في التنفس': {
+                    conditions: ['الربو', 'أمراض القلب', 'فقر الدم', 'القلق', 'انسداد رئوي'],
+                    severity: 'عالي',
+                    specialty: 'أمراض القلب',
+                    advice: ['اجلس في وضع مستقيم', 'تنفس ببطء وعمق', 'راجع الطبيب فوراً', 'تجنب المجهود الشاق'],
+                    questions: ['هل يحدث مع المجهود أم في الراحة؟', 'هل تستطيع النوم مسطحاً؟', 'هل يصاحبه ألم في الصدر؟']
+                },
+
+                // أعراض الجهاز الهضمي
+                'ألم في البطن': {
+                    conditions: ['التهاب المعدة', 'قرحة المعدة', 'التهاب الزائدة الدودية', 'متلازمة القولون العصبي', 'حصوات المرارة'],
+                    severity: 'متوسط',
+                    specialty: 'الطب الباطني',
+                    advice: ['تجنب الأطعمة الحارة والدهنية', 'تناول وجبات صغيرة', 'اشرب ماء بكميات قليلة ومتكررة', 'ضع كمادات دافئة'],
+                    questions: ['أين مكان الألم بالتحديد؟', 'هل يزداد بعد الأكل؟', 'هل يصاحبه غثيان أو قيء؟']
+                },
+                'إسهال': {
+                    conditions: ['التسمم الغذائي', 'عدوى معوية', 'متلازمة القولون العصبي', 'عدم تحمل اللاكتوز', 'التهاب القولون'],
+                    severity: 'متوسط',
+                    specialty: 'أمراض الجهاز الهضمي',
+                    advice: ['اشرب محلول الجفاف', 'تجنب منتجات الألبان', 'تناول الأرز المسلوق والموز', 'تجنب الأطعمة الدهنية'],
+                    questions: ['منذ متى بدأ الإسهال؟', 'هل يصاحبه دم؟', 'كم مرة في اليوم؟']
+                },
+                'غثيان': {
+                    conditions: ['التسمم الغذائي', 'الحمل', 'الصداع النصفي', 'التهاب المعدة', 'دوار الحركة'],
+                    severity: 'منخفض',
+                    specialty: 'الطب الباطني',
+                    questions: ['هل يصاحبه قيء؟', 'متى يحدث أكثر؟', 'هل تتناولين أدوية معينة؟']
+                },
+                'إمساك': {
+                    conditions: ['قلة الألياف', 'قلة السوائل', 'متلازمة القولون العصبي', 'أدوية معينة', 'خمول الغدة الدرقية'],
+                    severity: 'منخفض',
+                    specialty: 'أمراض الجهاز الهضمي',
+                    questions: ['منذ متى لم تتبرز؟', 'هل تشرب كمية كافية من الماء؟', 'هل تأكل خضروات وفواكه؟']
+                },
+
+                // أعراض عامة
+                'دوخة': {
+                    conditions: ['انخفاض ضغط الدم', 'فقر الدم', 'التهاب الأذن الداخلية', 'الجفاف', 'انخفاض السكر'],
+                    severity: 'متوسط',
+                    specialty: 'الأعصاب',
+                    questions: ['هل تشعر بدوران أم عدم توازن؟', 'هل يحدث عند الوقوف؟', 'هل تتناول أدوية؟']
+                },
+                'تعب': {
+                    conditions: ['فقر الدم', 'خمول الغدة الدرقية', 'السكري', 'الاكتئاب', 'قلة النوم'],
+                    severity: 'منخفض',
+                    specialty: 'الطب الباطني',
+                    questions: ['منذ متى تشعر بالتعب؟', 'هل تنام جيداً؟', 'هل فقدت وزناً؟']
+                },
+                'فقدان الوزن': {
+                    conditions: ['السكري', 'فرط نشاط الغدة الدرقية', 'الاكتئاب', 'أمراض الجهاز الهضمي', 'السرطان'],
+                    severity: 'عالي',
+                    specialty: 'الطب الباطني',
+                    questions: ['كم كيلو فقدت؟', 'في كم شهر؟', 'هل تأكل بشكل طبيعي؟']
+                },
+
+                // أعراض الجلد
+                'طفح جلدي': {
+                    conditions: ['الأكزيما', 'الحساسية', 'العدوى الفطرية', 'الصدفية', 'التهاب الجلد التماسي'],
+                    severity: 'منخفض',
+                    specialty: 'الجلدية',
+                    questions: ['أين ظهر الطفح؟', 'هل يسبب حكة؟', 'هل تعرضت لمواد جديدة؟']
+                },
+                'حكة': {
+                    conditions: ['الحساسية', 'جفاف الجلد', 'الأكزيما', 'العدوى الفطرية', 'أمراض الكبد'],
+                    severity: 'منخفض',
+                    specialty: 'الجلدية',
+                    questions: ['هل الحكة في مكان محدد؟', 'هل تزداد ليلاً؟', 'هل استخدمت منتجات جديدة؟']
+                },
+
+                // أعراض العظام والمفاصل
+                'ألم في المفاصل': {
+                    conditions: ['التهاب المفاصل', 'النقرس', 'الروماتيزم', 'إصابة رياضية', 'التهاب المفاصل الروماتويدي'],
+                    severity: 'متوسط',
+                    specialty: 'العظام',
+                    questions: ['أي مفاصل تؤلمك؟', 'هل يزداد الألم صباحاً؟', 'هل هناك تورم؟']
+                },
+                'ألم في الظهر': {
+                    conditions: ['شد عضلي', 'انزلاق غضروفي', 'التهاب المفاصل', 'هشاشة العظام', 'إجهاد'],
+                    severity: 'متوسط',
+                    specialty: 'العظام',
+                    questions: ['أين الألم بالتحديد؟', 'هل ينتشر للساق؟', 'هل يزداد مع الحركة؟']
+                },
+
+                // أعراض نفسية
+                'قلق': {
+                    conditions: ['اضطراب القلق العام', 'نوبات الهلع', 'الاكتئاب', 'اضطراب ما بعد الصدمة', 'فرط نشاط الغدة الدرقية'],
+                    severity: 'متوسط',
+                    specialty: 'الطب النفسي',
+                    questions: ['منذ متى تشعر بالقلق؟', 'هل يؤثر على نومك؟', 'هل تحدث نوبات هلع؟']
+                },
+                'اكتئاب': {
+                    conditions: ['الاكتئاب الشديد', 'اضطراب ثنائي القطب', 'اكتئاب ما بعد الولادة', 'اضطراب الشخصية', 'خمول الغدة الدرقية'],
+                    severity: 'عالي',
+                    specialty: 'الطب النفسي',
+                    questions: ['منذ متى تشعر بالحزن؟', 'هل فقدت الاهتمام بالأنشطة؟', 'هل تفكر في إيذاء نفسك؟']
+                },
+
+                // أعراض العيون والأذن
+                'ألم في العين': {
+                    conditions: ['التهاب الملتحمة', 'جفاف العين', 'الجلوكوما', 'إجهاد العين', 'عدوى'],
+                    severity: 'متوسط',
+                    specialty: 'طب العيون',
+                    questions: ['هل العين حمراء؟', 'هل هناك إفرازات؟', 'هل تؤثر على الرؤية؟']
+                },
+                'ألم في الأذن': {
+                    conditions: ['التهاب الأذن الوسطى', 'التهاب الأذن الخارجية', 'تراكم الشمع', 'عدوى', 'ضغط الطيران'],
+                    severity: 'متوسط',
+                    specialty: 'أنف وأذن وحنجرة',
+                    questions: ['هل يصاحبه إفرازات؟', 'هل تؤثر على السمع؟', 'هل هناك حمى؟']
+                },
+
+                // أعراض إضافية شاملة
+                'ألم في الحلق': {
+                    conditions: ['التهاب الحلق الفيروسي', 'التهاب الحلق البكتيري', 'التهاب اللوزتين', 'ارتجاع المريء', 'الحساسية'],
+                    severity: 'متوسط',
+                    specialty: 'أنف وأذن وحنجرة',
+                    questions: ['هل يصعب البلع؟', 'هل هناك حمى؟', 'هل اللوزتان متورمتان؟']
+                },
+                'احتقان الأنف': {
+                    conditions: ['نزلة برد', 'التهاب الجيوب الأنفية', 'الحساسية الموسمية', 'انحراف الحاجز الأنفي'],
+                    severity: 'منخفض',
+                    specialty: 'أنف وأذن وحنجرة',
+                    questions: ['هل يصاحبه صداع؟', 'هل هناك إفرازات؟', 'هل يحدث في موسم معين؟']
+                },
+                'نزيف الأنف': {
+                    conditions: ['جفاف الهواء', 'إصابة', 'ارتفاع ضغط الدم', 'اضطرابات التخثر', 'التهاب الأنف'],
+                    severity: 'متوسط',
+                    specialty: 'أنف وأذن وحنجرة',
+                    questions: ['هل النزيف متكرر؟', 'هل تتناول أدوية مسيلة للدم؟', 'هل هناك إصابة؟']
+                },
+                'ضعف السمع': {
+                    conditions: ['تراكم الشمع', 'التهاب الأذن', 'ضعف السمع الحسي العصبي', 'تصلب الأذن الوسطى'],
+                    severity: 'متوسط',
+                    specialty: 'أنف وأذن وحنجرة',
+                    questions: ['هل الضعف مفاجئ أم تدريجي؟', 'في أذن واحدة أم الاثنتين؟', 'هل يصاحبه طنين؟']
+                },
+                'طنين الأذن': {
+                    conditions: ['تراكم الشمع', 'ضعف السمع', 'التهاب الأذن', 'الأدوية', 'ضغط الدم'],
+                    severity: 'منخفض',
+                    specialty: 'أنف وأذن وحنجرة',
+                    questions: ['هل الطنين مستمر؟', 'هل يؤثر على النوم؟', 'هل تتناول أدوية؟']
+                },
+                'ضعف البصر': {
+                    conditions: ['قصر النظر', 'طول النظر', 'إعتام عدسة العين', 'الجلوكوما', 'اعتلال الشبكية'],
+                    severity: 'متوسط',
+                    specialty: 'طب العيون',
+                    questions: ['هل الضعف مفاجئ؟', 'في عين واحدة أم الاثنتين؟', 'هل ترى هالات حول الأضواء؟']
+                },
+                'احمرار العين': {
+                    conditions: ['التهاب الملتحمة', 'جفاف العين', 'الحساسية', 'إجهاد العين', 'عدوى'],
+                    severity: 'منخفض',
+                    specialty: 'طب العيون',
+                    questions: ['هل يصاحبه حكة؟', 'هل هناك إفرازات؟', 'هل تؤلم العين؟']
+                },
+                'إفرازات العين': {
+                    conditions: ['التهاب الملتحمة البكتيري', 'التهاب الملتحمة الفيروسي', 'انسداد القناة الدمعية', 'الحساسية'],
+                    severity: 'متوسط',
+                    specialty: 'طب العيون',
+                    questions: ['ما لون الإفرازات؟', 'هل تلتصق الجفون صباحاً؟', 'هل هناك ألم؟']
+                },
+
+                // أعراض الجهاز البولي والتناسلي
+                'حرقة في البول': {
+                    conditions: ['التهاب المسالك البولية', 'التهاب المثانة', 'حصوات الكلى', 'التهاب الإحليل'],
+                    severity: 'متوسط',
+                    specialty: 'المسالك البولية',
+                    questions: ['هل يصاحبه تكرار التبول؟', 'هل هناك دم في البول؟', 'هل هناك حمى؟']
+                },
+                'تكرار التبول': {
+                    conditions: ['التهاب المسالك البولية', 'السكري', 'تضخم البروستاتا', 'فرط نشاط المثانة'],
+                    severity: 'متوسط',
+                    specialty: 'المسالك البولية',
+                    questions: ['كم مرة تتبول يومياً؟', 'هل يحدث ليلاً؟', 'هل تشرب كمية كبيرة من السوائل؟']
+                },
+                'دم في البول': {
+                    conditions: ['التهاب المسالك البولية', 'حصوات الكلى', 'التهاب الكلى', 'أورام المسالك البولية'],
+                    severity: 'عالي',
+                    specialty: 'المسالك البولية',
+                    questions: ['هل الدم مرئي أم مجهري؟', 'هل يصاحبه ألم؟', 'هل هناك جلطات؟']
+                },
+                'ألم في الخاصرة': {
+                    conditions: ['حصوات الكلى', 'التهاب الكلى', 'التهاب الحالب', 'مغص كلوي'],
+                    severity: 'عالي',
+                    specialty: 'المسالك البولية',
+                    questions: ['هل الألم شديد ومفاجئ؟', 'هل ينتشر للأسفل؟', 'هل يصاحبه غثيان؟']
+                },
+
+                // أعراض الغدد الصماء
+                'زيادة العطش': {
+                    conditions: ['السكري', 'مرض السكري الكاذب', 'فرط نشاط الغدة الدرقية', 'أدوية معينة'],
+                    severity: 'متوسط',
+                    specialty: 'الغدد الصماء',
+                    questions: ['كم لتر ماء تشرب يومياً؟', 'هل يصاحبه تكرار التبول؟', 'هل فقدت وزناً؟']
+                },
+                'زيادة الجوع': {
+                    conditions: ['السكري', 'فرط نشاط الغدة الدرقية', 'نقص السكر', 'اضطرابات الأكل'],
+                    severity: 'متوسط',
+                    specialty: 'الغدد الصماء',
+                    questions: ['هل تأكل كثيراً ولا تزيد في الوزن؟', 'هل تشعر بالجوع بعد الأكل مباشرة؟', 'هل هناك رعشة؟']
+                },
+                'تساقط الشعر': {
+                    conditions: ['الثعلبة الذكورية', 'خمول الغدة الدرقية', 'فرط نشاط الغدة الدرقية', 'نقص الحديد', 'التوتر'],
+                    severity: 'منخفض',
+                    specialty: 'الجلدية',
+                    questions: ['هل التساقط في مناطق محددة؟', 'هل بدأ مؤخراً؟', 'هل هناك تغيرات هرمونية؟']
+                },
+                'تغيرات في الوزن': {
+                    conditions: ['اضطرابات الغدة الدرقية', 'السكري', 'الاكتئاب', 'اضطرابات الأكل'],
+                    severity: 'متوسط',
+                    specialty: 'الغدد الصماء',
+                    questions: ['هل الزيادة أم النقصان؟', 'في كم شهر؟', 'هل تغيرت عاداتك الغذائية؟']
+                },
+
+                // أعراض الدم والمناعة
+                'تورم الغدد الليمفاوية': {
+                    conditions: ['عدوى فيروسية', 'عدوى بكتيرية', 'أمراض المناعة الذاتية', 'أورام الدم'],
+                    severity: 'متوسط',
+                    specialty: 'أمراض الدم',
+                    questions: ['أين التورم؟', 'هل مؤلم؟', 'هل يصاحبه حمى؟', 'منذ متى؟']
+                },
+                'نزيف غير طبيعي': {
+                    conditions: ['اضطرابات التخثر', 'نقص الصفائح الدموية', 'أمراض الكبد', 'أدوية مسيلة للدم'],
+                    severity: 'عالي',
+                    specialty: 'أمراض الدم',
+                    questions: ['أين النزيف؟', 'هل يحدث تلقائياً؟', 'هل تتناول أدوية؟', 'هل هناك كدمات؟']
+                },
+                'شحوب': {
+                    conditions: ['فقر الدم', 'نقص الحديد', 'نقص فيتامين ب12', 'أمراض مزمنة'],
+                    severity: 'متوسط',
+                    specialty: 'أمراض الدم',
+                    questions: ['هل تشعر بالتعب؟', 'هل تلاحظ شحوب الأظافر؟', 'هل هناك ضيق في التنفس؟']
+                }
+            },
+
+            specialties: {
+                'internal': 'الطب الباطني',
+                'cardiology': 'أمراض القلب',
+                'neurology': 'الأعصاب',
+                'orthopedics': 'العظام',
+                'dermatology': 'الجلدية',
+                'pediatrics': 'طب الأطفال',
+                'gynecology': 'النساء والتوليد',
+                'psychiatry': 'الطب النفسي',
+                'pulmonology': 'أمراض الصدر',
+                'gastroenterology': 'أمراض الجهاز الهضمي',
+                'ophthalmology': 'طب العيون',
+                'ent': 'أنف وأذن وحنجرة'
+            },
+
+            // قاعدة البيانات الغذائية الشاملة
+            nutritionDatabase: {
+                // الأنظمة الغذائية العلاجية
+                therapeuticDiets: {
+                    'السكري': {
+                        name: 'نظام غذائي لمرضى السكري',
+                        description: 'نظام غذائي متوازن للتحكم في مستوى السكر',
+                        allowedFoods: [
+                            'الخضروات الورقية (سبانخ، جرجير، خس)',
+                            'البروتينات الخالية من الدهون (دجاج، سمك، بقوليات)',
+                            'الحبوب الكاملة (شوفان، أرز بني، خبز أسمر)',
+                            'المكسرات (لوز، جوز، بذور)',
+                            'الفواكه قليلة السكر (تفاح، كمثرى، توت)'
+                        ],
+                        avoidFoods: [
+                            'السكريات المكررة والحلويات',
+                            'المشروبات الغازية والعصائر المحلاة',
+                            'الخبز الأبيض والأرز الأبيض',
+                            'الأطعمة المقلية والدهنية',
+                            'الفواكه عالية السكر (عنب، تين، تمر بكثرة)'
+                        ],
+                        mealPlan: {
+                            breakfast: 'شوفان بالحليب قليل الدسم + حبة فاكهة + مكسرات',
+                            lunch: 'سلطة خضراء + قطعة دجاج مشوي + أرز بني + خضار مطبوخة',
+                            dinner: 'سمك مشوي + خضار سوتيه + خبز أسمر',
+                            snacks: 'خضار نيئة، مكسرات، زبادي طبيعي'
+                        }
+                    },
+                    'ضغط الدم': {
+                        name: 'نظام DASH لضغط الدم',
+                        description: 'نظام غذائي لخفض ضغط الدم المرتفع',
+                        allowedFoods: [
+                            'الفواكه والخضروات الطازجة',
+                            'الحبوب الكاملة',
+                            'منتجات الألبان قليلة الدسم',
+                            'البروتينات الخالية من الدهون',
+                            'المكسرات والبذور'
+                        ],
+                        avoidFoods: [
+                            'الملح والأطعمة المالحة',
+                            'الأطعمة المصنعة والمعلبة',
+                            'اللحوم الحمراء الدهنية',
+                            'الحلويات والسكريات',
+                            'الكافيين الزائد'
+                        ],
+                        mealPlan: {
+                            breakfast: 'شوفان بالفواكه + حليب قليل الدسم',
+                            lunch: 'سلطة كبيرة + دجاج مشوي + أرز بني',
+                            dinner: 'سمك + خضار مشوية + بطاطا مسلوقة',
+                            snacks: 'فواكه طازجة، مكسرات غير مملحة'
+                        }
+                    },
+                    'القولون العصبي': {
+                        name: 'نظام FODMAP المنخفض',
+                        description: 'نظام غذائي لتهدئة أعراض القولون العصبي',
+                        allowedFoods: [
+                            'الأرز والشوفان',
+                            'الدجاج والسمك',
+                            'الجزر والكوسا والسبانخ',
+                            'الموز والعنب البري',
+                            'زيت الزيتون'
+                        ],
+                        avoidFoods: [
+                            'البقوليات (فول، حمص، عدس)',
+                            'منتجات الألبان عالية اللاكتوز',
+                            'البصل والثوم',
+                            'التفاح والكمثرى',
+                            'الأطعمة الحارة والدهنية'
+                        ],
+                        mealPlan: {
+                            breakfast: 'شوفان بالموز + حليب خالي اللاكتوز',
+                            lunch: 'أرز أبيض + دجاج مسلوق + جزر مطبوخ',
+                            dinner: 'سمك مشوي + كوسا + بطاطا',
+                            snacks: 'موز، أرز مسلوق، شاي أعشاب'
+                        }
+                    },
+                    'إنقاص الوزن': {
+                        name: 'نظام غذائي لإنقاص الوزن',
+                        description: 'نظام متوازن وصحي لفقدان الوزن التدريجي',
+                        allowedFoods: [
+                            'الخضروات الورقية والملونة',
+                            'البروتينات الخالية من الدهون',
+                            'الفواكه الطازجة',
+                            'الحبوب الكاملة بكميات محدودة',
+                            'الماء والشاي الأخضر'
+                        ],
+                        avoidFoods: [
+                            'الأطعمة المقلية والدهنية',
+                            'الحلويات والسكريات',
+                            'المشروبات الغازية',
+                            'الوجبات السريعة',
+                            'الخبز الأبيض والمعجنات'
+                        ],
+                        mealPlan: {
+                            breakfast: 'بيضتان مسلوقتان + خضار + شاي أخضر',
+                            lunch: 'سلطة كبيرة + قطعة دجاج مشوي',
+                            dinner: 'شوربة خضار + سمك مشوي',
+                            snacks: 'خضار نيئة، فواكه قليلة السكر'
+                        }
+                    },
+                    'زيادة الوزن': {
+                        name: 'نظام غذائي لزيادة الوزن الصحي',
+                        description: 'نظام عالي السعرات لزيادة الوزن بطريقة صحية',
+                        allowedFoods: [
+                            'المكسرات والبذور',
+                            'الأفوكادو وزيت الزيتون',
+                            'اللحوم والأسماك الدهنية',
+                            'الحبوب الكاملة',
+                            'منتجات الألبان كاملة الدسم'
+                        ],
+                        avoidFoods: [
+                            'الأطعمة المصنعة عالية السكر',
+                            'المشروبات الغازية',
+                            'الوجبات السريعة غير الصحية'
+                        ],
+                        mealPlan: {
+                            breakfast: 'شوفان بالمكسرات والعسل + حليب كامل الدسم',
+                            lunch: 'أرز + لحم + خضار + سلطة بزيت الزيتون',
+                            dinner: 'سمك سلمون + بطاطا + خضار',
+                            snacks: 'مكسرات، تمر، عصائر طبيعية'
+                        }
+                    }
+                },
+
+                // الفيتامينات والمعادن
+                vitaminsAndMinerals: {
+                    'فيتامين د': {
+                        sources: ['السمك الدهني', 'صفار البيض', 'الحليب المدعم', 'التعرض لأشعة الشمس'],
+                        benefits: ['صحة العظام', 'تقوية المناعة', 'تحسين المزاج'],
+                        deficiencySymptoms: ['ألم العظام', 'ضعف العضلات', 'التعب']
+                    },
+                    'فيتامين ب12': {
+                        sources: ['اللحوم', 'الأسماك', 'منتجات الألبان', 'البيض'],
+                        benefits: ['صحة الأعصاب', 'تكوين خلايا الدم الحمراء', 'الطاقة'],
+                        deficiencySymptoms: ['التعب', 'ضعف الذاكرة', 'تنميل الأطراف']
+                    },
+                    'الحديد': {
+                        sources: ['اللحوم الحمراء', 'السبانخ', 'العدس', 'الكبد'],
+                        benefits: ['نقل الأكسجين', 'الطاقة', 'صحة الدم'],
+                        deficiencySymptoms: ['فقر الدم', 'التعب', 'شحوب الوجه']
+                    },
+                    'الكالسيوم': {
+                        sources: ['منتجات الألبان', 'السردين', 'اللوز', 'الخضروات الورقية'],
+                        benefits: ['صحة العظام والأسنان', 'وظائف العضلات', 'تخثر الدم'],
+                        deficiencySymptoms: ['ضعف العظام', 'تشنجات العضلات']
+                    }
+                }
+            },
+
+            // نصائح طبية عامة
+            generalAdvice: {
+                'emergency': [
+                    '🚨 اتصل بالإسعاف فوراً إذا كانت الأعراض شديدة',
+                    '🏥 توجه لأقرب قسم طوارئ',
+                    '📞 لا تتردد في طلب المساعدة الطبية'
+                ],
+                'urgent': [
+                    '⏰ احجز موعداً عاجلاً مع طبيب مختص',
+                    '📋 راقب الأعراض عن كثب',
+                    '📞 اتصل بالطبيب إذا ساءت الأعراض'
+                ],
+                'routine': [
+                    '👨‍⚕️ استشر طبيباً مختصاً في الوقت المناسب',
+                    '📝 سجل الأعراض ومتى تحدث',
+                    '💊 تجنب العلاج الذاتي'
+                ],
+                'lifestyle': [
+                    '💧 اشرب 8-10 أكواب ماء يومياً',
+                    '😴 احصل على 7-8 ساعات نوم',
+                    '🍎 تناول غذاء متوازن غني بالخضروات والفواكه',
+                    '🚶‍♂️ مارس الرياضة بانتظام',
+                    '🚭 تجنب التدخين والكحول',
+                    '🧘‍♀️ مارس تقنيات الاسترخاء'
+                ]
+            },
+
+            // كلمات مفتاحية للطوارئ
+            emergencyKeywords: [
+                'ألم شديد في الصدر', 'صعوبة شديدة في التنفس', 'فقدان الوعي',
+                'نزيف شديد', 'ألم شديد في البطن', 'حمى عالية جداً',
+                'شلل', 'تشنجات', 'صداع شديد مفاجئ', 'ألم شديد في الرأس'
+            ],
+
+            // ردود ذكية للمحادثة
+            smartResponses: {
+                'greeting': [
+                    'مرحباً! أنا الدكتور الذكي، مساعدك الطبي الشخصي 👨‍⚕️',
+                    'أهلاً وسهلاً! كيف يمكنني مساعدتك اليوم؟ 🩺',
+                    'مرحباً بك في النظام الطبي الذكي! اوصف لي أعراضك 💙'
+                ],
+                'thanks': [
+                    'عفواً! صحتك تهمني 💙',
+                    'أتمنى لك الشفاء العاجل! لا تتردد في العودة 🌟',
+                    'سعيد لمساعدتك! اعتن بصحتك 🌸'
+                ],
+                'unclear': [
+                    'لم أفهم تماماً، هل يمكنك توضيح الأعراض أكثر؟ 🤔',
+                    'يرجى وصف الأعراض بشكل أكثر تفصيلاً 📝',
+                    'أحتاج معلومات أكثر لأساعدك بشكل أفضل 💭'
+                ]
+            }
+        };
+
+        let currentSpecialty = null;
+        let conversationHistory = [];
+        let userProfile = {
+            age: null,
+            gender: null,
+            symptoms: [],
+            currentSymptoms: [],
+            followUpNeeded: [],
+            conversationStage: 'initial' // initial, gathering, analyzing, follow_up
+        };
+
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+
+            if (!message) return;
+
+            // Add user message
+            addMessage(message, 'user');
+            input.value = '';
+
+            // Show typing indicator
+            showTypingIndicator();
+
+            // Process message and respond with realistic delay
+            const delay = Math.random() * 1000 + 1500; // 1.5-2.5 seconds
+            setTimeout(() => {
+                try {
+                    const response = processMessage(message);
+                    hideTypingIndicator();
+                    addMessage(response, 'bot');
+                } catch (error) {
+                    console.error('Error processing message:', error);
+                    hideTypingIndicator();
+                    addMessage('عذراً، حدث خطأ. يرجى المحاولة مرة أخرى.', 'bot');
+                }
+            }, delay);
+        }
+
+        function addMessage(content, sender) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            contentDiv.innerHTML = content;
+
+            // Add timestamp
+            const timeDiv = document.createElement('div');
+            timeDiv.className = 'message-time';
+            timeDiv.style.cssText = 'font-size: 0.7rem; opacity: 0.7; margin-top: 0.25rem;';
+            timeDiv.textContent = new Date().toLocaleTimeString('ar-SA', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+
+            messageDiv.appendChild(contentDiv);
+            messageDiv.appendChild(timeDiv);
+            messagesContainer.appendChild(messageDiv);
+
+            // Animate message appearance
+            messageDiv.style.opacity = '0';
+            messageDiv.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+                messageDiv.style.transition = 'all 0.3s ease';
+                messageDiv.style.opacity = '1';
+                messageDiv.style.transform = 'translateY(0)';
+            }, 100);
+
+            // Scroll to bottom smoothly
+            setTimeout(() => {
+                messagesContainer.scrollTo({
+                    top: messagesContainer.scrollHeight,
+                    behavior: 'smooth'
+                });
+            }, 150);
+
+            // Save to conversation history
+            conversationHistory.push({sender, content, timestamp: new Date()});
+
+            // Save to localStorage for persistence
+            localStorage.setItem('medicalChatHistory', JSON.stringify(conversationHistory));
+        }
+
+        function processMessage(message) {
+            const lowerMessage = message.toLowerCase();
+
+            // Save message to history
+            conversationHistory.push({
+                type: 'user',
+                message: message,
+                timestamp: new Date()
+            });
+
+            // Check for greetings first
+            if (lowerMessage.includes('مرحبا') || lowerMessage.includes('السلام') || lowerMessage.includes('أهلا')) {
+                return 'مرحباً بك! أنا الدكتور الذكي 👨‍⚕️ كيف يمكنني مساعدتك اليوم؟';
+            }
+
+            // Check for thanks
+            if (lowerMessage.includes('شكرا') || lowerMessage.includes('شكراً')) {
+                return 'عفواً! أتمنى لك الشفاء العاجل 💙';
+            }
+
+            // Check for nutrition queries
+            if (lowerMessage.includes('نظام غذائي') || lowerMessage.includes('سكري') || lowerMessage.includes('ريجيم')) {
+                return handleNutritionQuery(lowerMessage);
+            }
+
+            // Check for emergency
+            if (lowerMessage.includes('ألم شديد في الصدر') || lowerMessage.includes('صعوبة شديدة في التنفس')) {
+                return generateEmergencyResponse();
+            }
+
+            // Detect symptoms
+            const detectedSymptoms = detectSymptomsSimple(lowerMessage);
+
+            if (detectedSymptoms.length > 0) {
+                return generateSimpleDiagnosis(detectedSymptoms);
+            }
+
+            // Default response
+            return `لم أفهم تماماً. يمكنني مساعدتك في:
+                   <br><br><strong>🩺 التشخيص الطبي:</strong>
+                   <br>• "أشعر بصداع"
+                   <br>• "لدي حمى وسعال"
+                   <br>• "ألم في البطن"
+
+                   <br><br><strong>🥗 الأنظمة الغذائية:</strong>
+                   <br>• "نظام غذائي للسكري"
+                   <br>• "كيف أنقص وزني؟"
+
+                   <br><br>أو اختر من الأزرار السريعة أعلاه 👆`;
+        }
+
+        function handleNutritionQuery(message) {
+            const lowerMessage = message.toLowerCase();
+
+            // كشف نوع الاستفسار الغذائي
+            if (lowerMessage.includes('سكري') || lowerMessage.includes('سكر')) {
+                return generateDietPlan('السكري');
+            }
+
+            if (lowerMessage.includes('ضغط') || lowerMessage.includes('ضغط الدم')) {
+                return generateDietPlan('ضغط الدم');
+            }
+
+            if (lowerMessage.includes('قولون') || lowerMessage.includes('قولون عصبي')) {
+                return generateDietPlan('القولون العصبي');
+            }
+
+            if (lowerMessage.includes('إنقاص') || lowerMessage.includes('تخسيس') || lowerMessage.includes('ريجيم') || lowerMessage.includes('نحف')) {
+                return generateDietPlan('إنقاص الوزن');
+            }
+
+            if (lowerMessage.includes('زيادة الوزن') || lowerMessage.includes('سمن') || lowerMessage.includes('وزن أكثر')) {
+                return generateDietPlan('زيادة الوزن');
+            }
+
+            if (lowerMessage.includes('فيتامين')) {
+                return generateVitaminInfo(lowerMessage);
+            }
+
+            if (lowerMessage.includes('كالسيوم') || lowerMessage.includes('حديد')) {
+                return generateMineralInfo(lowerMessage);
+            }
+
+            // استفسار غذائي عام
+            return generateGeneralNutritionAdvice();
+        }
+
+        function generateDietPlan(condition) {
+            console.log('generateDietPlan called with condition:', condition);
+            console.log('medicalKnowledge:', medicalKnowledge);
+            console.log('nutritionDatabase:', medicalKnowledge.nutritionDatabase);
+            console.log('therapeuticDiets:', medicalKnowledge.nutritionDatabase.therapeuticDiets);
+
+            const diet = medicalKnowledge.nutritionDatabase.therapeuticDiets[condition];
+            console.log('Found diet:', diet);
+
+            if (!diet) {
+                console.log('No diet found for condition:', condition);
+                return `عذراً، لا توجد معلومات متاحة عن النظام الغذائي "${condition}". الأنظمة المتاحة: ${Object.keys(medicalKnowledge.nutritionDatabase.therapeuticDiets).join('، ')}`;
+            }
+
+            let response = '<div class="diagnosis-result">';
+            response += `<h6><i class="fas fa-utensils me-2"></i>${diet.name}</h6>`;
+            response += `<p><strong>الوصف:</strong> ${diet.description}</p>`;
+
+            response += '<div class="row">';
+
+            // الأطعمة المسموحة
+            response += '<div class="col-md-6">';
+            response += '<h6 class="text-success"><i class="fas fa-check-circle me-2"></i>الأطعمة المسموحة:</h6>';
+            response += '<ul>';
+            if (diet.allowedFoods && Array.isArray(diet.allowedFoods)) {
+                diet.allowedFoods.forEach(food => {
+                    response += `<li>✅ ${food}</li>`;
+                });
+            } else {
+                response += '<li>لا توجد معلومات متاحة</li>';
+            }
+            response += '</ul>';
+            response += '</div>';
+
+            // الأطعمة الممنوعة
+            response += '<div class="col-md-6">';
+            response += '<h6 class="text-danger"><i class="fas fa-times-circle me-2"></i>الأطعمة المتجنبة:</h6>';
+            response += '<ul>';
+            if (diet.avoidFoods && Array.isArray(diet.avoidFoods)) {
+                diet.avoidFoods.forEach(food => {
+                    response += `<li>❌ ${food}</li>`;
+                });
+            } else {
+                response += '<li>لا توجد معلومات متاحة</li>';
+            }
+            response += '</ul>';
+            response += '</div>';
+
+            response += '</div>';
+
+            // خطة الوجبات
+            response += '<h6 class="mt-3"><i class="fas fa-calendar-alt me-2"></i>خطة الوجبات اليومية:</h6>';
+            response += '<div class="meal-plan">';
+            if (diet.mealPlan) {
+                response += `<p><strong>🌅 الإفطار:</strong> ${diet.mealPlan.breakfast || 'غير محدد'}</p>`;
+                response += `<p><strong>🌞 الغداء:</strong> ${diet.mealPlan.lunch || 'غير محدد'}</p>`;
+                response += `<p><strong>🌙 العشاء:</strong> ${diet.mealPlan.dinner || 'غير محدد'}</p>`;
+                response += `<p><strong>🍎 الوجبات الخفيفة:</strong> ${diet.mealPlan.snacks || 'غير محدد'}</p>`;
+            } else {
+                response += '<p>لا توجد خطة وجبات متاحة</p>';
+            }
+            response += '</div>';
+
+            response += '</div>';
+
+            response += '<br><p><small><i class="fas fa-info-circle text-info me-1"></i>';
+            response += '<strong>تنبيه:</strong> هذه توصيات عامة. يُنصح باستشارة أخصائي تغذية لخطة مخصصة لحالتك.</small></p>';
+
+            return response;
+        }
+
+        function generateVitaminInfo(message) {
+            let response = '<div class="diagnosis-result">';
+            response += '<h6><i class="fas fa-pills me-2"></i>معلومات الفيتامينات</h6>';
+
+            const vitamins = medicalKnowledge.nutritionDatabase.vitaminsAndMinerals;
+
+            if (message.includes('د')) {
+                const vitD = vitamins['فيتامين د'];
+                response += '<h6>فيتامين د ☀️</h6>';
+                response += `<p><strong>المصادر:</strong> ${vitD.sources.join('، ')}</p>`;
+                response += `<p><strong>الفوائد:</strong> ${vitD.benefits.join('، ')}</p>`;
+                response += `<p><strong>أعراض النقص:</strong> ${vitD.deficiencySymptoms.join('، ')}</p>`;
+            } else if (message.includes('ب12') || message.includes('ب 12')) {
+                const vitB12 = vitamins['فيتامين ب12'];
+                response += '<h6>فيتامين ب12 🧠</h6>';
+                response += `<p><strong>المصادر:</strong> ${vitB12.sources.join('، ')}</p>`;
+                response += `<p><strong>الفوائد:</strong> ${vitB12.benefits.join('، ')}</p>`;
+                response += `<p><strong>أعراض النقص:</strong> ${vitB12.deficiencySymptoms.join('، ')}</p>`;
+            } else {
+                response += '<p>الفيتامينات المتاحة: فيتامين د، فيتامين ب12</p>';
+                response += '<p>اكتب "فيتامين د" أو "فيتامين ب12" للحصول على معلومات مفصلة.</p>';
+            }
+
+            response += '</div>';
+            return response;
+        }
+
+        function generateMineralInfo(message) {
+            let response = '<div class="diagnosis-result">';
+            response += '<h6><i class="fas fa-atom me-2"></i>معلومات المعادن</h6>';
+
+            const minerals = medicalKnowledge.nutritionDatabase.vitaminsAndMinerals;
+
+            if (message.includes('حديد')) {
+                const iron = minerals['الحديد'];
+                response += '<h6>الحديد 🩸</h6>';
+                response += `<p><strong>المصادر:</strong> ${iron.sources.join('، ')}</p>`;
+                response += `<p><strong>الفوائد:</strong> ${iron.benefits.join('، ')}</p>`;
+                response += `<p><strong>أعراض النقص:</strong> ${iron.deficiencySymptoms.join('، ')}</p>`;
+            } else if (message.includes('كالسيوم')) {
+                const calcium = minerals['الكالسيوم'];
+                response += '<h6>الكالسيوم 🦴</h6>';
+                response += `<p><strong>المصادر:</strong> ${calcium.sources.join('، ')}</p>`;
+                response += `<p><strong>الفوائد:</strong> ${calcium.benefits.join('، ')}</p>`;
+                response += `<p><strong>أعراض النقص:</strong> ${calcium.deficiencySymptoms.join('، ')}</p>`;
+            }
+
+            response += '</div>';
+            return response;
+        }
+
+        function generateGeneralNutritionAdvice() {
+            return `<div class="diagnosis-result">
+                <h6><i class="fas fa-apple-alt me-2"></i>نصائح غذائية عامة</h6>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="text-success">🥗 الأطعمة الصحية:</h6>
+                        <ul>
+                            <li>الخضروات والفواكه الطازجة</li>
+                            <li>الحبوب الكاملة</li>
+                            <li>البروتينات الخالية من الدهون</li>
+                            <li>المكسرات والبذور</li>
+                            <li>الأسماك الدهنية</li>
+                        </ul>
+                    </div>
+
+                    <div class="col-md-6">
+                        <h6 class="text-warning">⚠️ نصائح مهمة:</h6>
+                        <ul>
+                            <li>اشرب 8-10 أكواب ماء يومياً</li>
+                            <li>تناول 5 وجبات صغيرة</li>
+                            <li>قلل من السكر والملح</li>
+                            <li>مارس الرياضة بانتظام</li>
+                            <li>تجنب الأطعمة المصنعة</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <p class="mt-3"><strong>💡 للحصول على نظام غذائي مخصص، اكتب:</strong></p>
+                <p>"نظام غذائي للسكري" أو "كيف أنقص وزني؟" أو "نظام غذائي لضغط الدم"</p>
+            </div>`;
+        }
+
+        function detectSymptomsSimple(text) {
+            const symptoms = [];
+
+            // قائمة الأعراض الشاملة مع المرادفات
+            const symptomMap = {
+                // أعراض عامة
+                'صداع': ['صداع', 'وجع رأس', 'ألم في الرأس', 'وجع الرأس', 'ألم رأس'],
+                'حمى': ['حمى', 'حرارة', 'سخونة', 'حرارة عالية', 'ارتفاع حرارة'],
+                'تعب': ['تعب', 'إعياء', 'إرهاق', 'خمول', 'كسل', 'ضعف عام'],
+                'دوخة': ['دوخة', 'دوار', 'دوخه', 'عدم توازن', 'دوران'],
+
+                // أعراض الجهاز التنفسي
+                'سعال': ['سعال', 'كحة', 'كحه', 'سعلة', 'كحة جافة', 'كحة ببلغم'],
+                'ضيق في التنفس': ['ضيق في التنفس', 'ضيق نفس', 'صعوبة في التنفس', 'ضيق تنفس', 'لهاث'],
+                'ألم في الصدر': ['ألم في الصدر', 'وجع صدر', 'ألم صدر', 'وجع في الصدر', 'ضغط في الصدر'],
+                'ألم في الحلق': ['ألم في الحلق', 'وجع حلق', 'التهاب حلق', 'حلق مؤلم', 'صعوبة بلع'],
+                'احتقان الأنف': ['احتقان الأنف', 'انسداد الأنف', 'أنف مسدود', 'زكام'],
+                'نزيف الأنف': ['نزيف الأنف', 'دم من الأنف', 'رعاف'],
+
+                // أعراض الجهاز الهضمي
+                'ألم في البطن': ['ألم في البطن', 'وجع بطن', 'ألم بطن', 'وجع في البطن', 'مغص', 'تقلصات'],
+                'إسهال': ['إسهال', 'اسهال', 'براز سائل', 'براز مائي'],
+                'إمساك': ['إمساك', 'عدم تبرز', 'صعوبة في التبرز', 'براز صلب'],
+                'غثيان': ['غثيان', 'ميل للقيء', 'رغبة في القيء', 'استفراغ'],
+                'قيء': ['قيء', 'استفراغ', 'ترجيع'],
+                'حرقة المعدة': ['حرقة المعدة', 'حموضة', 'ارتجاع', 'حرقة'],
+
+                // أعراض العضلات والمفاصل
+                'ألم في المفاصل': ['ألم في المفاصل', 'وجع مفاصل', 'ألم مفاصل', 'التهاب مفاصل'],
+                'ألم في الظهر': ['ألم في الظهر', 'وجع ظهر', 'ألم ظهر', 'وجع في الظهر'],
+                'ألم في العضلات': ['ألم في العضلات', 'وجع عضلات', 'تشنج عضلي', 'شد عضلي'],
+
+                // أعراض الجلد
+                'طفح جلدي': ['طفح جلدي', 'طفح', 'حساسية جلدية', 'التهاب جلد'],
+                'حكة': ['حكة', 'هرش', 'حكة جلدية'],
+                'تساقط الشعر': ['تساقط الشعر', 'فقدان الشعر', 'صلع', 'شعر يتساقط'],
+
+                // أعراض العيون والأذن
+                'ألم في العين': ['ألم في العين', 'وجع عين', 'ألم عين', 'وجع في العين'],
+                'احمرار العين': ['احمرار العين', 'عين حمراء', 'التهاب عين'],
+                'ضعف البصر': ['ضعف البصر', 'عدم وضوح الرؤية', 'زغللة', 'رؤية ضبابية'],
+                'إفرازات العين': ['إفرازات العين', 'صديد في العين', 'دموع كثيرة'],
+                'ألم في الأذن': ['ألم في الأذن', 'وجع أذن', 'ألم أذن', 'وجع في الأذن'],
+                'ضعف السمع': ['ضعف السمع', 'فقدان السمع', 'صمم', 'عدم سماع جيد'],
+                'طنين الأذن': ['طنين الأذن', 'صوت في الأذن', 'أزيز', 'صفير في الأذن'],
+
+                // أعراض الجهاز البولي
+                'حرقة في البول': ['حرقة في البول', 'ألم عند التبول', 'حرقان بول', 'التهاب بولي'],
+                'تكرار التبول': ['تكرار التبول', 'كثرة التبول', 'تبول متكرر', 'بول كثير'],
+                'دم في البول': ['دم في البول', 'بول دموي', 'بول أحمر'],
+                'ألم في الخاصرة': ['ألم في الخاصرة', 'ألم كلوي', 'مغص كلوي', 'ألم في الكلى'],
+
+                // أعراض الغدد الصماء
+                'زيادة العطش': ['زيادة العطش', 'عطش شديد', 'عطش مستمر', 'جفاف الفم'],
+                'زيادة الجوع': ['زيادة الجوع', 'جوع شديد', 'جوع مستمر', 'شهية مفتوحة'],
+                'تغيرات في الوزن': ['زيادة الوزن', 'فقدان الوزن', 'نقص الوزن', 'تغير الوزن'],
+
+                // أعراض الدم والمناعة
+                'تورم الغدد الليمفاوية': ['تورم الغدد', 'انتفاخ الغدد', 'غدد متورمة', 'غدد منتفخة'],
+                'نزيف غير طبيعي': ['نزيف', 'كدمات', 'نزيف اللثة', 'نزيف الأنف'],
+                'شحوب': ['شحوب', 'بهتان', 'لون شاحب', 'فقر دم'],
+
+                // أعراض نفسية
+                'قلق': ['قلق', 'توتر', 'خوف', 'قلق نفسي', 'هلع', 'رهاب'],
+                'اكتئاب': ['اكتئاب', 'حزن', 'اكتئاب نفسي', 'يأس', 'إحباط']
+            };
+
+            // البحث عن الأعراض في النص
+            for (const [symptom, variations] of Object.entries(symptomMap)) {
+                for (const variation of variations) {
+                    if (text.includes(variation)) {
+                        if (!symptoms.includes(symptom)) {
+                            symptoms.push(symptom);
+                        }
+                        break;
+                    }
+                }
+            }
+
+            return symptoms;
+        }
+
+        function generateSimpleDiagnosis(symptoms) {
+            let response = '<div class="diagnosis-result">';
+            response += '<h6><i class="fas fa-stethoscope me-2"></i>التشخيص الطبي</h6>';
+
+            response += '<p><strong>الأعراض المكتشفة:</strong> ' + symptoms.join('، ') + '</p>';
+
+            // تحليل الأعراض باستخدام قاعدة البيانات الموجودة
+            const allConditions = [];
+            const allAdvice = [];
+            let maxSeverity = 'منخفض';
+            let recommendedSpecialty = 'الطب الباطني';
+
+            symptoms.forEach(symptom => {
+                const data = medicalKnowledge.symptoms[symptom];
+                if (data) {
+                    allConditions.push(...data.conditions);
+                    if (data.advice) {
+                        allAdvice.push(...data.advice);
+                    } else {
+                        // نصائح افتراضية إذا لم تكن موجودة
+                        allAdvice.push('استشر طبيباً مختصاً', 'احصل على راحة كافية', 'اشرب سوائل كثيرة');
+                    }
+                    recommendedSpecialty = data.specialty;
+
+                    if (data.severity === 'عالي') maxSeverity = 'عالي';
+                    else if (data.severity === 'متوسط' && maxSeverity !== 'عالي') maxSeverity = 'متوسط';
+                }
+            });
+
+            // إزالة التكرارات
+            const uniqueConditions = [...new Set(allConditions)];
+            const uniqueAdvice = [...new Set(allAdvice)];
+
+            // عرض التشخيصات المحتملة
+            response += '<p><strong>التشخيصات المحتملة:</strong></p>';
+            response += '<ul>';
+            uniqueConditions.slice(0, 4).forEach((condition, index) => {
+                const probability = Math.max(85 - (index * 15), 40);
+                const severityClass = maxSeverity === 'عالي' ? 'high' : maxSeverity === 'متوسط' ? 'medium' : 'low';
+                response += `<li>${condition} <span class="severity-badge severity-${severityClass}">احتمالية: ${probability}%</span></li>`;
+            });
+            response += '</ul>';
+
+            // مستوى الخطورة
+            response += '<p><strong>مستوى الخطورة:</strong> ';
+            const severityClass = maxSeverity === 'عالي' ? 'danger' : maxSeverity === 'متوسط' ? 'warning' : 'success';
+            response += `<span class="badge bg-${severityClass}">${maxSeverity}</span></p>`;
+
+            // التخصص المقترح
+            response += `<p><strong>التخصص المقترح:</strong> ${recommendedSpecialty}</p>`;
+
+            // النصائح
+            response += '<p><strong>النصائح والتوصيات:</strong></p>';
+            response += '<ul>';
+
+            if (maxSeverity === 'عالي') {
+                response += '<li>🚨 <strong>راجع الطبيب فوراً أو توجه للطوارئ</strong></li>';
+            } else if (maxSeverity === 'متوسط') {
+                response += '<li>👨‍⚕️ احجز موعداً مع طبيب مختص خلال يومين</li>';
+            } else {
+                response += '<li>🏠 يمكن المتابعة في المنزل مع الراحة</li>';
+            }
+
+            uniqueAdvice.slice(0, 3).forEach(advice => {
+                response += `<li>💡 ${advice}</li>`;
+            });
+
+            response += '</ul>';
+            response += '</div>';
+
+            response += '<br><p><small><i class="fas fa-info-circle text-info me-1"></i>';
+            response += '<strong>تنبيه مهم:</strong> هذا التشخيص استرشادي فقط ولا يغني عن استشارة الطبيب المختص. يُنصح بمراجعة طبيب للتأكد من التشخيص والعلاج المناسب.</small></p>';
+
+            return response;
+        }
+
+        function generateAdvancedDiagnosis(symptoms, severity, originalMessage) {
+            let response = '<div class="diagnosis-result">';
+            response += '<h6><i class="fas fa-stethoscope me-2"></i>التشخيص الطبي المتقدم</h6>';
+
+            response += '<p><strong>الأعراض المكتشفة:</strong> ' + symptoms.join('، ') + '</p>';
+            response += '<p><strong>شدة الأعراض المقدرة:</strong> ';
+
+            const severityClass = severity === 'عالي' ? 'danger' : severity === 'متوسط' ? 'warning' : 'success';
+            response += `<span class="badge bg-${severityClass}">${severity}</span></p>`;
+
+            // تحليل الأعراض المتقدم
+            const analysis = analyzeMultipleSymptoms(symptoms, severity);
+
+            response += '<p><strong>التشخيصات المحتملة (مرتبة حسب الاحتمالية):</strong></p>';
+            response += '<ol>';
+
+            analysis.conditions.forEach((condition, index) => {
+                const probability = Math.max(90 - (index * 10), 30);
+                const conditionSeverity = analysis.overallSeverity;
+                const severityClass = conditionSeverity === 'عالي' ? 'high' : conditionSeverity === 'متوسط' ? 'medium' : 'low';
+                response += `<li>${condition}
+                    <span class="severity-badge severity-${severityClass}">احتمالية: ${probability}%</span>
+                </li>`;
+            });
+
+            response += '</ol>';
+
+            // التخصص المقترح
+            response += `<p><strong>التخصص المقترح:</strong> ${analysis.recommendedSpecialty}</p>`;
+
+            // مستوى الإلحاح
+            response += '<p><strong>مستوى الإلحاح:</strong> ';
+            if (analysis.overallSeverity === 'عالي' || severity === 'عالي') {
+                response += '<span class="badge bg-danger">عاجل - راجع الطبيب فوراً</span>';
+            } else if (analysis.overallSeverity === 'متوسط') {
+                response += '<span class="badge bg-warning">متوسط - راجع الطبيب خلال يومين</span>';
+            } else {
+                response += '<span class="badge bg-success">غير عاجل - يمكن المتابعة في المنزل</span>';
+            }
+            response += '</p>';
+
+            // النصائح المتقدمة
+            response += '<p><strong>النصائح والتوصيات:</strong></p>';
+            response += '<ul>';
+
+            if (analysis.overallSeverity === 'عالي' || severity === 'عالي') {
+                response += '<li>🚨 <strong>توجه للطوارئ فوراً</strong> إذا كانت الأعراض شديدة</li>';
+                response += '<li>📞 اتصل بالطبيب أو الإسعاف</li>';
+                response += '<li>⚠️ لا تتجاهل الأعراض الشديدة</li>';
+            } else if (analysis.overallSeverity === 'متوسط') {
+                response += '<li>👨‍⚕️ احجز موعداً مع طبيب مختص خلال 24-48 ساعة</li>';
+                response += '<li>📋 راقب الأعراض وسجل أي تغييرات</li>';
+                response += '<li>📞 اتصل بالطبيب إذا ساءت الأعراض</li>';
+            } else {
+                response += '<li>🏠 يمكن المتابعة في المنزل مع الراحة</li>';
+                response += '<li>📅 راجع طبيباً إذا لم تتحسن خلال أسبوع</li>';
+                response += '<li>💊 تجنب العلاج الذاتي</li>';
+            }
+
+            // نصائح مخصصة للأعراض
+            const customAdvice = getCustomAdviceForSymptoms(symptoms);
+            customAdvice.forEach(advice => {
+                response += `<li>💡 ${advice}</li>`;
+            });
+
+            response += '</ul>';
+
+            // تحليل إضافي إذا كان هناك أعراض متعددة
+            if (symptoms.length > 1) {
+                response += '<div class="mt-3 p-3" style="background: rgba(255,255,255,0.1); border-radius: 10px;">';
+                response += '<h6><i class="fas fa-lightbulb me-2"></i>تحليل الأعراض المتعددة:</h6>';
+                response += `<p>لديك ${symptoms.length} أعراض مختلفة، مما قد يشير إلى:</p>`;
+                response += '<ul>';
+                if (symptoms.includes('حمى') && (symptoms.includes('سعال') || symptoms.includes('ألم في الحلق'))) {
+                    response += '<li>🦠 عدوى في الجهاز التنفسي (نزلة برد، إنفلونزا)</li>';
+                }
+                if (symptoms.includes('ألم في البطن') && symptoms.includes('إسهال')) {
+                    response += '<li>🤢 اضطراب في الجهاز الهضمي (تسمم غذائي، عدوى معوية)</li>';
+                }
+                if (symptoms.includes('صداع') && symptoms.includes('حمى')) {
+                    response += '<li>🤒 عدوى عامة تحتاج متابعة طبية</li>';
+                }
+                response += '</ul>';
+                response += '</div>';
+            }
+
+            response += '</div>';
+
+            response += '<br><p><small><i class="fas fa-info-circle text-info me-1"></i>';
+            response += '<strong>تنبيه مهم:</strong> هذا التشخيص استرشادي ويعتمد على الذكاء الاصطناعي. يُنصح بشدة باستشارة طبيب مختص للتأكد من التشخيص والعلاج المناسب. في حالة الأعراض الشديدة، توجه للطوارئ فوراً.</small></p>';
+
+            return response;
+        }
+
+        function analyzeMultipleSymptoms(symptoms, severity) {
+            const allConditions = [];
+            const specialties = new Set();
+            let maxSeverity = 'منخفض';
+
+            symptoms.forEach(symptom => {
+                const data = medicalKnowledge.symptoms[symptom];
+                if (data) {
+                    allConditions.push(...data.conditions);
+                    specialties.add(data.specialty);
+
+                    if (data.severity === 'عالي') maxSeverity = 'عالي';
+                    else if (data.severity === 'متوسط' && maxSeverity !== 'عالي') maxSeverity = 'متوسط';
+                }
+            });
+
+            // تحديد الشدة الإجمالية
+            const overallSeverity = severity === 'عالي' || maxSeverity === 'عالي' ? 'عالي' :
+                                   severity === 'متوسط' || maxSeverity === 'متوسط' ? 'متوسط' : 'منخفض';
+
+            // إحصاء التشخيصات وترتيبها
+            const conditionCounts = {};
+            allConditions.forEach(condition => {
+                conditionCounts[condition] = (conditionCounts[condition] || 0) + 1;
+            });
+
+            const sortedConditions = Object.entries(conditionCounts)
+                .sort(([,a], [,b]) => b - a)
+                .slice(0, 5)
+                .map(([condition]) => condition);
+
+            // تحديد التخصص الأنسب
+            const specialtyArray = Array.from(specialties);
+            const recommendedSpecialty = specialtyArray.length > 0 ? specialtyArray[0] : 'الطب الباطني';
+
+            return {
+                conditions: sortedConditions,
+                overallSeverity,
+                recommendedSpecialty,
+                specialties: specialtyArray
+            };
+        }
+
+        function getCustomAdviceForSymptoms(symptoms) {
+            const advice = [];
+
+            if (symptoms.includes('حمى')) {
+                advice.push('اشرب سوائل كثيرة ومتنوعة');
+                advice.push('احصل على راحة تامة');
+            }
+
+            if (symptoms.includes('سعال')) {
+                advice.push('اشرب مشروبات دافئة مع العسل');
+                advice.push('تجنب المهيجات والدخان');
+            }
+
+            if (symptoms.includes('ألم في البطن')) {
+                advice.push('تناول وجبات خفيفة ومتكررة');
+                advice.push('تجنب الأطعمة الحارة والدهنية');
+            }
+
+            if (symptoms.includes('صداع')) {
+                advice.push('استرح في مكان هادئ ومظلم');
+                advice.push('ضع كمادات باردة على الجبهة');
+            }
+
+            if (symptoms.includes('ألم في المفاصل')) {
+                advice.push('ضع كمادات دافئة أو باردة حسب الراحة');
+                advice.push('تجنب الحركات المؤلمة');
+            }
+
+            if (symptoms.includes('حرقة في البول')) {
+                advice.push('اشرب ماء كثير لطرد البكتيريا');
+                advice.push('تجنب الكافيين والكحول');
+            }
+
+            // نصائح عامة
+            advice.push('حافظ على نظافة شخصية جيدة');
+            advice.push('تجنب التوتر والإجهاد');
+
+            return advice.slice(0, 4); // أقصى 4 نصائح
+        }
+
+        // دالة بسيطة لاستجابة الطوارئ
+        function generateEmergencyResponse() {
+            return `<div class="alert alert-danger">
+                <h5><i class="fas fa-exclamation-triangle me-2"></i>⚠️ حالة طوارئ محتملة!</h5>
+                <p><strong>🚨 يُنصح بالتوجه فوراً لأقرب قسم طوارئ أو الاتصال بالإسعاف</strong></p>
+                <p>الأعراض التي وصفتها قد تشير إلى حالة طبية عاجلة تتطلب تدخلاً طبياً فورياً.</p>
+                <hr>
+                <p class="mb-0"><strong>📞 أرقام الطوارئ:</strong><br>
+                🚑 الإسعاف: 123<br>
+                🆘 الطوارئ العامة: 911</p>
+            </div>`;
+        }
+
+
+
+
+
+
+
+        function startSpecialtyChat(specialty) {
+            currentSpecialty = specialty;
+            const specialtyName = medicalKnowledge.specialties[specialty];
+
+            const message = `تم اختيار تخصص ${specialtyName}. يرجى وصف الأعراض المتعلقة بهذا التخصص.`;
+            addMessage(message, 'bot');
+
+            // Scroll to chat
+            scrollToChat();
+        }
+
+        function showTypingIndicator() {
+            document.getElementById('typingIndicator').style.display = 'block';
+            const messagesContainer = document.getElementById('chatMessages');
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function hideTypingIndicator() {
+            document.getElementById('typingIndicator').style.display = 'none';
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function scrollToChat() {
+            document.querySelector('.chat-container').scrollIntoView({
+                behavior: 'smooth'
+            });
+        }
+
+        // Initialize chat
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load previous conversation if exists
+            loadPreviousConversation();
+
+            // Add welcome message with delay if no previous conversation
+            if (conversationHistory.length === 0) {
+                setTimeout(() => {
+                    const welcomeMsg = `
+                        <div class="welcome-message">
+                            <h6><i class="fas fa-robot me-2"></i>مرحباً بك في النظام الطبي الذكي!</h6>
+                            <p>أنا الدكتور الذكي، مساعدك الطبي الشخصي 🩺</p>
+
+                            <div class="quick-options mt-3">
+                                <p><strong>🩺 الأعراض الشائعة:</strong></p>
+                                <div class="d-flex flex-wrap gap-2 mb-3">
+                                    <button class="btn btn-outline-light btn-sm" onclick="quickSymptom('صداع')">
+                                        🤕 صداع
+                                    </button>
+                                    <button class="btn btn-outline-light btn-sm" onclick="quickSymptom('ألم في الصدر')">
+                                        💔 ألم في الصدر
+                                    </button>
+                                    <button class="btn btn-outline-light btn-sm" onclick="quickSymptom('حمى')">
+                                        🌡️ حمى
+                                    </button>
+                                    <button class="btn btn-outline-light btn-sm" onclick="quickSymptom('سعال')">
+                                        😷 سعال
+                                    </button>
+                                    <button class="btn btn-outline-light btn-sm" onclick="quickSymptom('ألم في البطن')">
+                                        🤢 ألم في البطن
+                                    </button>
+                                    <button class="btn btn-outline-light btn-sm" onclick="quickSymptom('دوخة')">
+                                        😵 دوخة
+                                    </button>
+                                    <button class="btn btn-outline-light btn-sm" onclick="quickSymptom('ألم في الحلق')">
+                                        🗣️ ألم في الحلق
+                                    </button>
+                                    <button class="btn btn-outline-light btn-sm" onclick="quickSymptom('تعب')">
+                                        😴 تعب وإرهاق
+                                    </button>
+                                    <button class="btn btn-outline-light btn-sm" onclick="quickSymptom('حرقة في البول')">
+                                        🔥 حرقة في البول
+                                    </button>
+                                    <button class="btn btn-outline-light btn-sm" onclick="quickSymptom('ألم في المفاصل')">
+                                        🦴 ألم في المفاصل
+                                    </button>
+                                    <button class="btn btn-outline-light btn-sm" onclick="quickSymptom('طفح جلدي')">
+                                        🔴 طفح جلدي
+                                    </button>
+                                    <button class="btn btn-outline-light btn-sm" onclick="quickSymptom('قلق')">
+                                        😰 قلق وتوتر
+                                    </button>
+                                </div>
+
+                                <p><strong>🥗 الأنظمة الغذائية:</strong></p>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <button class="btn btn-outline-light btn-sm" onclick="quickNutrition('نظام غذائي للسكري')">
+                                        🍎 نظام السكري
+                                    </button>
+                                    <button class="btn btn-outline-light btn-sm" onclick="quickNutrition('نظام غذائي لضغط الدم')">
+                                        💗 نظام ضغط الدم
+                                    </button>
+                                    <button class="btn btn-outline-light btn-sm" onclick="quickNutrition('كيف أنقص وزني')">
+                                        ⚖️ إنقاص الوزن
+                                    </button>
+                                    <button class="btn btn-outline-light btn-sm" onclick="quickNutrition('نظام زيادة الوزن')">
+                                        💪 زيادة الوزن
+                                    </button>
+                                    <button class="btn btn-outline-light btn-sm" onclick="quickNutrition('نظام القولون العصبي')">
+                                        🤲 القولون العصبي
+                                    </button>
+                                    <button class="btn btn-outline-light btn-sm" onclick="quickNutrition('فيتامين د')">
+                                        ☀️ فيتامين د
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="mt-3">
+                                <small class="text-white-50">
+                                    💡 اوصف أعراضك بالتفصيل للحصول على تشخيص دقيق
+                                </small>
+                            </div>
+                        </div>
+                    `;
+                    addMessage(welcomeMsg, 'bot');
+                }, 1000);
+            } else {
+                // Show continuation message for returning users
+                setTimeout(() => {
+                    const continuationMsg = `
+                        <div class="alert alert-info">
+                            <i class="fas fa-history me-2"></i>
+                            مرحباً بعودتك! تم استعادة محادثتك السابقة.
+                            يمكنك المتابعة من حيث توقفت أو بدء محادثة جديدة.
+                        </div>
+                    `;
+                    addMessage(continuationMsg, 'bot');
+                }, 500);
+            }
+        });
+
+        // Load previous conversation
+        function loadPreviousConversation() {
+            const savedHistory = localStorage.getItem('medicalChatHistory');
+            if (savedHistory) {
+                try {
+                    const history = JSON.parse(savedHistory);
+                    // Only load recent conversations (last 24 hours)
+                    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+                    const recentHistory = history.filter(msg =>
+                        new Date(msg.timestamp) > oneDayAgo
+                    );
+
+                    if (recentHistory.length > 0) {
+                        conversationHistory = recentHistory;
+                        // Restore messages to UI
+                        recentHistory.forEach(msg => {
+                            if (msg.sender && msg.content) {
+                                const messagesContainer = document.getElementById('chatMessages');
+                                const messageDiv = document.createElement('div');
+                                messageDiv.className = `message ${msg.sender}`;
+
+                                const contentDiv = document.createElement('div');
+                                contentDiv.className = 'message-content';
+                                contentDiv.innerHTML = msg.content;
+
+                                const timeDiv = document.createElement('div');
+                                timeDiv.className = 'message-time';
+                                timeDiv.style.cssText = 'font-size: 0.7rem; opacity: 0.7; margin-top: 0.25rem;';
+                                timeDiv.textContent = new Date(msg.timestamp).toLocaleTimeString('ar-SA', {
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                });
+
+                                messageDiv.appendChild(contentDiv);
+                                messageDiv.appendChild(timeDiv);
+                                messagesContainer.appendChild(messageDiv);
+                            }
+                        });
+
+                        // Scroll to bottom
+                        setTimeout(() => {
+                            const messagesContainer = document.getElementById('chatMessages');
+                            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                        }, 100);
+                    }
+                } catch (e) {
+                    console.error('Error loading conversation history:', e);
+                }
+            }
+        }
+
+        // Clear chat function
+        function clearChat() {
+            if (confirm('هل أنت متأكد من مسح المحادثة؟')) {
+                document.getElementById('chatMessages').innerHTML = '';
+                conversationHistory = [];
+                userProfile = {
+                    age: null,
+                    gender: null,
+                    symptoms: [],
+                    currentSymptoms: [],
+                    followUpNeeded: [],
+                    conversationStage: 'initial'
+                };
+                localStorage.removeItem('medicalChatHistory');
+
+                // Add new welcome message
+                setTimeout(() => {
+                    const welcomeMsg = 'تم مسح المحادثة. كيف يمكنني مساعدتك اليوم؟';
+                    addMessage(welcomeMsg, 'bot');
+                }, 500);
+            }
+        }
+
+        // Export chat function
+        function exportChat() {
+            if (conversationHistory.length === 0) {
+                alert('لا توجد محادثة لتصديرها');
+                return;
+            }
+
+            let exportText = 'تقرير المحادثة الطبية\n';
+            exportText += '===================\n\n';
+            exportText += `التاريخ: ${new Date().toLocaleDateString('ar-SA')}\n`;
+            exportText += `الوقت: ${new Date().toLocaleTimeString('ar-SA')}\n\n`;
+
+            conversationHistory.forEach((msg, index) => {
+                const sender = msg.sender === 'user' ? 'المريض' : 'الدكتور الذكي';
+                const time = new Date(msg.timestamp).toLocaleTimeString('ar-SA');
+                exportText += `[${time}] ${sender}: ${msg.content.replace(/<[^>]*>/g, '')}\n\n`;
+            });
+
+            exportText += '\n===================\n';
+            exportText += 'تنبيه: هذا التقرير للمراجعة فقط ولا يغني عن استشارة طبيب مختص';
+
+            // Create and download file
+            const blob = new Blob([exportText], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `medical-chat-${new Date().toISOString().split('T')[0]}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Quick symptom selection
+        function quickSymptom(symptom) {
+            // Clear input and add the symptom
+            const input = document.getElementById('messageInput');
+            input.value = `أشعر بـ ${symptom}`;
+
+            // Trigger send message
+            sendMessage();
+        }
+
+        // Quick nutrition selection
+        function quickNutrition(query) {
+            // Clear input and add the nutrition query
+            const input = document.getElementById('messageInput');
+            input.value = query;
+
+            // Trigger send message
+            sendMessage();
+        }
+    </script>

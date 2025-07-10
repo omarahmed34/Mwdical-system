@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حجز موعد - مساعد طبي ذكي</title>
+    <meta name="description" content="احجز موعدك مع أفضل الأطباء المتخصصين">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap RTL -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <!-- Unified Theme CSS -->
+    <link rel="stylesheet" href="css/unified-theme.css">
+    <!-- Medical Enhancements CSS -->
+    <link rel="stylesheet" href="css/medical-enhancements.css">
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+
+        .specialty-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid transparent;
+        }
+
+        .specialty-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+
+        .specialty-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.6s;
+            z-index: 1;
+        }
+
+        .specialty-card:hover::before {
+            left: 100%;
+        }
+
+        .specialty-card .card-body {
+            position: relative;
+            z-index: 2;
+        }
+
+        .specialty-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .specialty-card:hover .specialty-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .step {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 15px;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            position: relative;
+        }
+
+        .step.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .step.completed {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+        }
+
+        .step.pending {
+            background: #e9ecef;
+            color: #6c757d;
+        }
+
+        .step::after {
+            content: '';
+            position: absolute;
+            width: 100px;
+            height: 2px;
+            background: #dee2e6;
+            right: -57px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .step:last-child::after {
+            display: none;
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .specialty-card {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        .specialty-card:nth-child(1) { animation-delay: 0.1s; }
+        .specialty-card:nth-child(2) { animation-delay: 0.2s; }
+        .specialty-card:nth-child(3) { animation-delay: 0.3s; }
+        .specialty-card:nth-child(4) { animation-delay: 0.4s; }
+        .specialty-card:nth-child(5) { animation-delay: 0.5s; }
+        .specialty-card:nth-child(6) { animation-delay: 0.6s; }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="index.html">
+                <i class="fas fa-heartbeat text-primary me-2"></i>
+                <span class="fw-bold">مساعد طبي ذكي</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">الرئيسية</a></li>
+                    <li class="nav-item"><a class="nav-link" href="medical-diagnosis.html">التشخيص</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="appointments.html">حجز موعد</a></li>
+                    <li class="nav-item"><a class="nav-link" href="team.html">القائمون بالعمل</a></li>
+                    <li class="nav-item" id="userMenuContainer" style="display: none;">
+                        <div class="dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user-circle me-1"></i>
+                                <span id="userDisplayName">المستخدم</span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="my-appointments.html"><i class="fas fa-calendar me-2"></i>مواعيدي</a></li>
+                                <li><a class="dropdown-item" href="profile.html"><i class="fas fa-user me-2"></i>الملف الشخصي</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#" id="logoutBtn"><i class="fas fa-sign-out-alt me-2"></i>تسجيل الخروج</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="nav-item" id="loginMenuContainer">
+                        <a href="login.html" class="btn btn-outline-primary">
+                            <i class="fas fa-sign-in-alt me-1"></i>
+                            تسجيل الدخول
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="py-5 py-md-6 mt-5">
+        <div class="container">
+            <!-- Step Indicator -->
+            <div class="step-indicator">
+                <div class="step active" id="step1">1</div>
+                <div class="step pending" id="step2">2</div>
+                <div class="step pending" id="step3">3</div>
+                <div class="step pending" id="step4">4</div>
+            </div>
+
+            <!-- Header -->
+            <div class="text-center mb-5">
+                <h1 class="display-4 fw-bold text-gradient mb-3">حجز موعد مع طبيب</h1>
+                <p class="lead text-muted">اختر التخصص المناسب لحالتك الصحية</p>
+            </div>
+
+            <!-- Specialties Grid -->
+            <div class="row g-4" id="specialtiesGrid">
+                <div class="col-md-6 col-lg-4">
+                    <div class="card specialty-card border-0 shadow-sm rounded-4 h-100" data-specialty="cardiology">
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-heart specialty-icon text-danger"></i>
+                            <h5 class="fw-bold mb-2">أمراض القلب</h5>
+                            <p class="text-muted mb-3">تشخيص وعلاج أمراض القلب والأوعية الدموية</p>
+                            <small class="text-primary">5 أطباء متاحين</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 col-lg-4">
+                    <div class="card specialty-card border-0 shadow-sm rounded-4 h-100" data-specialty="neurology">
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-brain specialty-icon text-info"></i>
+                            <h5 class="fw-bold mb-2">أمراض الأعصاب</h5>
+                            <p class="text-muted mb-3">تشخيص وعلاج اضطرابات الجهاز العصبي</p>
+                            <small class="text-primary">3 أطباء متاحين</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="card specialty-card border-0 shadow-sm rounded-4 h-100" data-specialty="orthopedics">
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-bone specialty-icon text-warning"></i>
+                            <h5 class="fw-bold mb-2">العظام</h5>
+                            <p class="text-muted mb-3">علاج إصابات وأمراض العظام والمفاصل</p>
+                            <small class="text-primary">4 أطباء متاحين</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="card specialty-card border-0 shadow-sm rounded-4 h-100" data-specialty="dermatology">
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-user-md specialty-icon text-success"></i>
+                            <h5 class="fw-bold mb-2">الجلدية</h5>
+                            <p class="text-muted mb-3">علاج أمراض الجلد والشعر والأظافر</p>
+                            <small class="text-primary">6 أطباء متاحين</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="card specialty-card border-0 shadow-sm rounded-4 h-100" data-specialty="pediatrics">
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-baby specialty-icon text-primary"></i>
+                            <h5 class="fw-bold mb-2">طب الأطفال</h5>
+                            <p class="text-muted mb-3">رعاية صحية شاملة للأطفال والمراهقين</p>
+                            <small class="text-primary">7 أطباء متاحين</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="card specialty-card border-0 shadow-sm rounded-4 h-100" data-specialty="general">
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-stethoscope specialty-icon text-secondary"></i>
+                            <h5 class="fw-bold mb-2">طب عام</h5>
+                            <p class="text-muted mb-3">فحص شامل وتشخيص أولي للحالات العامة</p>
+                            <small class="text-primary">8 أطباء متاحين</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="d-flex justify-content-between mt-5">
+                <a href="index.html" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-right me-2"></i>
+                    العودة للرئيسية
+                </a>
+                <button class="btn btn-primary" id="nextBtn" disabled>
+                    التالي
+                    <i class="fas fa-arrow-left ms-2"></i>
+                </button>
+            </div>
+        </div>
+    </main>
+
+
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Common Functions -->
+    <script src="js/common.js"></script>
+    <!-- Arabic Localization -->
+    <script src="js/arabic-localization.js"></script>
+    <!-- Appointments Fix JS -->
+    <script src="js/appointments-fix.js"></script>
+    <script>
+        let selectedSpecialty = null;
+
+        // إضافة تأثيرات صوتية (اختيارية)
+        function playClickSound() {
+            // يمكن إضافة ملف صوتي هنا إذا رغبت
+            // const audio = new Audio('click-sound.mp3');
+            // audio.play().catch(e => console.log('Sound not available'));
+        }
+
+        // إضافة تأثير الاهتزاز للهواتف المحمولة
+        function vibrateDevice() {
+            if (navigator.vibrate) {
+                navigator.vibrate(50);
+            }
+        }
+
+        // إضافة تأثير الجسيمات
+        function createParticleEffect(element) {
+            for (let i = 0; i < 6; i++) {
+                const particle = document.createElement('div');
+                particle.style.cssText = `
+                    position: absolute;
+                    width: 6px;
+                    height: 6px;
+                    background: linear-gradient(45deg, #667eea, #764ba2);
+                    border-radius: 50%;
+                    pointer-events: none;
+                    z-index: 1000;
+                `;
+
+                const rect = element.getBoundingClientRect();
+                particle.style.left = (rect.left + rect.width / 2) + 'px';
+                particle.style.top = (rect.top + rect.height / 2) + 'px';
+
+                document.body.appendChild(particle);
+
+                const angle = (i * 60) * Math.PI / 180;
+                const distance = 50 + Math.random() * 30;
+                const duration = 800 + Math.random() * 400;
+
+                particle.animate([
+                    {
+                        transform: 'translate(0, 0) scale(1)',
+                        opacity: 1
+                    },
+                    {
+                        transform: `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px) scale(0)`,
+                        opacity: 0
+                    }
+                ], {
+                    duration: duration,
+                    easing: 'cubic-bezier(0.4, 0, 0.2, 1)'
+                }).onfinish = () => particle.remove();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const specialtyCards = document.querySelectorAll('.specialty-card');
+            const nextBtn = document.getElementById('nextBtn');
+
+            // إضافة تأثير التحميل المتدرج
+            specialtyCards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 150);
+            });
+
+            specialtyCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    // تشغيل التأثيرات
+                    playClickSound();
+                    vibrateDevice();
+                    createParticleEffect(this);
+
+                    // Remove previous selection with animation
+                    specialtyCards.forEach(c => {
+                        c.classList.remove('border-primary', 'bg-light', 'selected');
+                        c.style.transform = '';
+                        c.style.boxShadow = '';
+
+                        // إزالة أيقونة الاختيار
+                        const checkIcon = c.querySelector('.selection-check');
+                        if (checkIcon) {
+                            checkIcon.style.animation = 'fadeOut 0.3s ease-out forwards';
+                            setTimeout(() => checkIcon.remove(), 300);
+                        }
+                    });
+
+                    // Add selection to clicked card with enhanced animation
+                    this.classList.add('border-primary', 'bg-light', 'selected');
+                    this.style.transform = 'translateY(-10px) scale(1.05)';
+                    this.style.boxShadow = '0 20px 40px rgba(102, 126, 234, 0.3)';
+                    this.style.borderColor = '#667eea';
+                    this.style.borderWidth = '3px';
+
+                    // إضافة أيقونة الاختيار
+                    const checkIcon = document.createElement('div');
+                    checkIcon.className = 'selection-check position-absolute';
+                    checkIcon.innerHTML = '<i class="fas fa-check-circle"></i>';
+                    checkIcon.style.cssText = `
+                        top: 15px; right: 15px; z-index: 10;
+                        font-size: 2rem; color: #667eea;
+                        animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+                        background: white; border-radius: 50%; padding: 3px;
+                        box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+                    `;
+                    this.appendChild(checkIcon);
+
+                    selectedSpecialty = this.dataset.specialty;
+
+                    // Enable next button with animation
+                    nextBtn.disabled = false;
+                    nextBtn.classList.remove('btn-secondary');
+                    nextBtn.classList.add('btn-primary');
+                    nextBtn.style.animation = 'pulse 0.6s ease-in-out';
+
+                    setTimeout(() => {
+                        nextBtn.style.animation = '';
+                    }, 600);
+                });
+
+                // إضافة تأثيرات hover محسنة
+                card.addEventListener('mouseenter', function() {
+                    if (!this.classList.contains('selected')) {
+                        this.style.transform = 'translateY(-5px) scale(1.02)';
+                        this.style.boxShadow = '0 15px 30px rgba(0,0,0,0.1)';
+                    }
+                });
+
+                card.addEventListener('mouseleave', function() {
+                    if (!this.classList.contains('selected')) {
+                        this.style.transform = '';
+                        this.style.boxShadow = '';
+                    }
+                });
+            });
+
+            nextBtn.addEventListener('click', function() {
+                if (selectedSpecialty) {
+                    // إضافة تأثير انتقال سلس
+                    document.body.style.transition = 'opacity 0.3s ease-out';
+                    document.body.style.opacity = '0';
+
+                    setTimeout(() => {
+                        window.location.href = `doctors.html?specialty=${selectedSpecialty}`;
+                    }, 300);
+                }
+            });
+        });
+
+        // إضافة CSS للأنيميشن
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes bounceIn {
+                0% { opacity: 0; transform: scale(0.3) rotate(-10deg); }
+                50% { opacity: 1; transform: scale(1.1) rotate(5deg); }
+                100% { opacity: 1; transform: scale(1) rotate(0deg); }
+            }
+
+            @keyframes fadeOut {
+                0% { opacity: 1; transform: scale(1); }
+                100% { opacity: 0; transform: scale(0.8); }
+            }
+
+            @keyframes pulse {
+                0%, 100% { transform: scale(1); }
+                50% { transform: scale(1.05); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Authentication check
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuthStatus();
+        });
+
+        function checkAuthStatus() {
+            const userData = localStorage.getItem('currentUser');
+            if (userData) {
+                const user = JSON.parse(userData);
+                document.getElementById('userMenuContainer').style.display = 'block';
+                document.getElementById('loginMenuContainer').style.display = 'none';
+                document.getElementById('userDisplayName').textContent = user.name;
+            } else {
+                document.getElementById('userMenuContainer').style.display = 'none';
+                document.getElementById('loginMenuContainer').style.display = 'block';
+            }
+        }
+
+        // Logout functionality
+        document.getElementById('logoutBtn')?.addEventListener('click', function(e) {
+            e.preventDefault();
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('rememberUser');
+            checkAuthStatus();
+            showAlert('تم تسجيل الخروج بنجاح', 'info');
+        });
+
+        function showAlert(message, type) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+            alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            document.body.appendChild(alertDiv);
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.remove();
+                }
+            }, 5000);
+        }
+    </script>
+
+    <!-- Quick Diagnosis Button -->
+    <a href="medical-diagnosis.html" class="btn btn-primary rounded-circle position-fixed"
+       style="bottom: 30px; right: 30px; width: 60px; height: 60px; z-index: 1000; box-shadow: 0 10px 30px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center;"
+       title="تشخيص سريع">
+        <i class="fas fa-stethoscope" style="font-size: 1.5rem;"></i>
+    </a>
+</body>
+</html>

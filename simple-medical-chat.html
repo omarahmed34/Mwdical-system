@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المساعد الطبي الذكي - نسخة مبسطة</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        body { 
+            font-family: 'Cairo', sans-serif; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .chat-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            height: 600px;
+            display: flex;
+            flex-direction: column;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .chat-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem;
+            border-radius: 20px 20px 0 0;
+            text-align: center;
+        }
+        .chat-messages {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            max-height: 400px;
+        }
+        .message {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: flex-start;
+        }
+        .message.user {
+            justify-content: flex-end;
+        }
+        .message.bot {
+            justify-content: flex-start;
+        }
+        .message-content {
+            max-width: 70%;
+            padding: 0.75rem 1rem;
+            border-radius: 15px;
+            word-wrap: break-word;
+        }
+        .message.user .message-content {
+            background: #667eea;
+            color: white;
+            border-bottom-right-radius: 5px;
+        }
+        .message.bot .message-content {
+            background: #f8f9fa;
+            color: #333;
+            border-bottom-left-radius: 5px;
+        }
+        .chat-input {
+            padding: 1rem;
+            border-top: 1px solid #eee;
+            border-radius: 0 0 20px 20px;
+        }
+        .diagnosis-result {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin: 1rem 0;
+        }
+        .severity-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .severity-low { background: #d4edda; color: #155724; }
+        .severity-medium { background: #fff3cd; color: #856404; }
+        .severity-high { background: #f8d7da; color: #721c24; }
+        .quick-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+        .quick-btn {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .quick-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="chat-container">
+            <div class="chat-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-robot me-2"></i>
+                    المساعد الطبي الذكي
+                </h5>
+                <small>متاح 24/7 لمساعدتك</small>
+                
+                <div class="quick-buttons">
+                    <button class="quick-btn" onclick="quickMessage('صداع')">🤕 صداع</button>
+                    <button class="quick-btn" onclick="quickMessage('حمى')">🌡️ حمى</button>
+                    <button class="quick-btn" onclick="quickMessage('سعال')">😷 سعال</button>
+                    <button class="quick-btn" onclick="quickMessage('ألم في البطن')">🤢 ألم في البطن</button>
+                </div>
+
+                <div class="quick-buttons mt-2">
+                    <small class="text-muted">🥗 الأنظمة الغذائية:</small>
+                    <button class="quick-btn" onclick="quickMessage('نظام غذائي للسكري')">🍎 نظام السكري</button>
+                    <button class="quick-btn" onclick="quickMessage('نظام غذائي لضغط الدم')">💗 ضغط الدم</button>
+                    <button class="quick-btn" onclick="quickMessage('نظام غذائي لإنقاص الوزن')">⚖️ إنقاص الوزن</button>
+                </div>
+            </div>
+            
+            <div class="chat-messages" id="chatMessages">
+                <!-- الرسائل ستظهر هنا -->
+            </div>
+            
+            <div class="chat-input">
+                <div class="input-group">
+                    <input type="text" class="form-control" id="messageInput" placeholder="اوصف أعراضك أو اسأل عن نظام غذائي..." onkeypress="if(event.key==='Enter') sendMessage()">
+                    <button class="btn btn-primary" onclick="sendMessage()">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // قاعدة بيانات طبية مبسطة
+        const medicalData = {
+            'صداع': {
+                conditions: ['الصداع النصفي', 'صداع التوتر', 'ارتفاع ضغط الدم'],
+                severity: 'متوسط',
+                advice: ['احصل على راحة', 'اشرب ماء كثير', 'تجنب الضوضاء']
+            },
+            'حمى': {
+                conditions: ['عدوى فيروسية', 'عدوى بكتيرية', 'الإنفلونزا'],
+                severity: 'عالي',
+                advice: ['اشرب سوائل كثيرة', 'احصل على راحة', 'راجع الطبيب إذا ارتفعت الحرارة']
+            },
+            'سعال': {
+                conditions: ['نزلة برد', 'التهاب الشعب الهوائية', 'الحساسية'],
+                severity: 'متوسط',
+                advice: ['اشرب مشروبات دافئة', 'تجنب المهيجات', 'استخدم مرطب الهواء']
+            },
+            'ألم في البطن': {
+                conditions: ['التهاب المعدة', 'قرحة المعدة', 'القولون العصبي'],
+                severity: 'متوسط',
+                advice: ['تجنب الأطعمة الحارة', 'تناول وجبات صغيرة', 'اشرب ماء']
+            }
+        };
+
+        const nutritionData = {
+            'نظام غذائي للسكري': {
+                name: 'نظام غذائي لمرضى السكري',
+                allowed: ['خضروات ورقية', 'بروتينات خالية من الدهون', 'حبوب كاملة', 'مكسرات', 'فواكه قليلة السكر'],
+                avoid: ['سكريات مكررة', 'مشروبات غازية', 'خبز أبيض', 'حلويات', 'أطعمة مقلية'],
+                meals: {
+                    breakfast: 'شوفان بالحليب قليل الدسم + فاكهة + مكسرات',
+                    lunch: 'سلطة خضراء + دجاج مشوي + أرز بني + خضار',
+                    dinner: 'سمك مشوي + خضار سوتيه + خبز أسمر'
+                }
+            },
+            'نظام غذائي لضغط الدم': {
+                name: 'نظام DASH لضغط الدم',
+                allowed: ['فواكه وخضروات طازجة', 'حبوب كاملة', 'منتجات ألبان قليلة الدسم', 'مكسرات غير مملحة'],
+                avoid: ['ملح زائد', 'أطعمة معلبة', 'وجبات سريعة', 'لحوم مصنعة'],
+                meals: {
+                    breakfast: 'شوفان بالفواكه + حليب قليل الدسم',
+                    lunch: 'سلطة كبيرة + دجاج مشوي + أرز بني',
+                    dinner: 'سمك + خضار مشوية + بطاطا مسلوقة'
+                }
+            },
+            'نظام غذائي لإنقاص الوزن': {
+                name: 'نظام غذائي لإنقاص الوزن',
+                allowed: ['خضروات ورقية', 'بروتينات خالية من الدهون', 'فواكه طازجة', 'ماء وشاي أخضر'],
+                avoid: ['أطعمة مقلية', 'حلويات', 'مشروبات غازية', 'وجبات سريعة'],
+                meals: {
+                    breakfast: 'بيض مسلوق + خضار + شاي أخضر',
+                    lunch: 'سلطة كبيرة + قطعة دجاج مشوي',
+                    dinner: 'شوربة خضار + سمك مشوي'
+                }
+            }
+        };
+
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            addMessage(message, 'user');
+            input.value = '';
+            
+            setTimeout(() => {
+                const response = processMessage(message);
+                addMessage(response, 'bot');
+            }, 1000);
+        }
+
+        function addMessage(content, sender) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            contentDiv.innerHTML = content;
+            
+            messageDiv.appendChild(contentDiv);
+            messagesContainer.appendChild(messageDiv);
+            
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function processMessage(message) {
+            const lowerMessage = message.toLowerCase();
+            
+            // تحية
+            if (lowerMessage.includes('مرحبا') || lowerMessage.includes('السلام')) {
+                return 'مرحباً بك! أنا المساعد الطبي الذكي. كيف يمكنني مساعدتك؟';
+            }
+            
+            // شكر
+            if (lowerMessage.includes('شكرا')) {
+                return 'عفواً! أتمنى لك الشفاء العاجل 💙';
+            }
+            
+            // نظام غذائي
+            if (lowerMessage.includes('نظام غذائي') || lowerMessage.includes('سكري') ||
+                lowerMessage.includes('ضغط') || lowerMessage.includes('إنقاص') ||
+                lowerMessage.includes('ريجيم') || lowerMessage.includes('تخسيس')) {
+                return generateNutritionPlan(lowerMessage);
+            }
+            
+            // أعراض طبية
+            for (const symptom in medicalData) {
+                if (lowerMessage.includes(symptom)) {
+                    return generateDiagnosis(symptom);
+                }
+            }
+            
+            return 'يرجى وصف أعراضك بوضوح أو اختيار من الأزرار السريعة أعلاه.';
+        }
+
+        function generateDiagnosis(symptom) {
+            const data = medicalData[symptom];
+            if (!data) return 'عذراً، لا توجد معلومات عن هذا العرض.';
+            
+            let response = '<div class="diagnosis-result">';
+            response += '<h6><i class="fas fa-stethoscope me-2"></i>التشخيص الطبي</h6>';
+            response += `<p><strong>العرض:</strong> ${symptom}</p>`;
+            response += '<p><strong>التشخيصات المحتملة:</strong></p>';
+            response += '<ul>';
+            data.conditions.forEach(condition => {
+                response += `<li>${condition}</li>`;
+            });
+            response += '</ul>';
+            response += '<p><strong>النصائح:</strong></p>';
+            response += '<ul>';
+            data.advice.forEach(advice => {
+                response += `<li>💡 ${advice}</li>`;
+            });
+            response += '</ul>';
+            response += '</div>';
+            response += '<p><small>⚠️ هذا تشخيص استرشادي. يُنصح باستشارة طبيب مختص.</small></p>';
+            
+            return response;
+        }
+
+        function generateNutritionPlan(message) {
+            let dietType = '';
+
+            // تحديد نوع النظام الغذائي
+            if (message.includes('سكري') || message.includes('سكر')) {
+                dietType = 'نظام غذائي للسكري';
+            } else if (message.includes('ضغط')) {
+                dietType = 'نظام غذائي لضغط الدم';
+            } else if (message.includes('إنقاص') || message.includes('تخسيس') || message.includes('ريجيم')) {
+                dietType = 'نظام غذائي لإنقاص الوزن';
+            } else {
+                // عرض الخيارات المتاحة
+                return `<div class="diagnosis-result">
+                    <h6><i class="fas fa-utensils me-2"></i>الأنظمة الغذائية المتاحة</h6>
+                    <p>اختر النظام الغذائي المناسب لك:</p>
+                    <ul>
+                        <li>🍎 نظام غذائي للسكري</li>
+                        <li>💗 نظام غذائي لضغط الدم</li>
+                        <li>⚖️ نظام غذائي لإنقاص الوزن</li>
+                    </ul>
+                    <p>اكتب اسم النظام الذي تريده للحصول على التفاصيل.</p>
+                </div>`;
+            }
+
+            const data = nutritionData[dietType];
+            if (!data) {
+                return 'عذراً، لا توجد معلومات متاحة عن هذا النظام الغذائي.';
+            }
+
+            let response = '<div class="diagnosis-result">';
+            response += `<h6><i class="fas fa-utensils me-2"></i>${data.name}</h6>`;
+            response += '<p><strong>الأطعمة المسموحة:</strong></p>';
+            response += '<ul>';
+            data.allowed.forEach(food => {
+                response += `<li>✅ ${food}</li>`;
+            });
+            response += '</ul>';
+            response += '<p><strong>الأطعمة المتجنبة:</strong></p>';
+            response += '<ul>';
+            data.avoid.forEach(food => {
+                response += `<li>❌ ${food}</li>`;
+            });
+            response += '</ul>';
+            response += '<p><strong>خطة الوجبات اليومية:</strong></p>';
+            response += `<p>🌅 <strong>الإفطار:</strong> ${data.meals.breakfast}</p>`;
+            response += `<p>🌞 <strong>الغداء:</strong> ${data.meals.lunch}</p>`;
+            response += `<p>🌙 <strong>العشاء:</strong> ${data.meals.dinner}</p>`;
+            response += '<p><small>⚠️ هذه توصيات عامة. يُنصح باستشارة أخصائي تغذية.</small></p>';
+            response += '</div>';
+
+            return response;
+        }
+
+        function quickMessage(message) {
+            document.getElementById('messageInput').value = message;
+            sendMessage();
+        }
+
+        // رسالة ترحيبية
+        window.onload = function() {
+            setTimeout(() => {
+                addMessage('مرحباً! أنا المساعد الطبي الذكي. يمكنني مساعدتك في التشخيص الطبي والأنظمة الغذائية. اختر من الأزرار أعلاه أو اكتب استفسارك.', 'bot');
+            }, 500);
+        };
+    </script>
+</body>
+</html>

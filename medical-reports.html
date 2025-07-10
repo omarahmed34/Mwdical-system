@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>التقارير الطبية - النظام الطبي الذكي</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success-gradient: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            --warning-gradient: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+            --danger-gradient: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%);
+            --info-gradient: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+            --card-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            --border-radius: 20px;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: var(--primary-gradient);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .navbar {
+            background: white !important;
+            box-shadow: var(--card-shadow);
+            border-radius: var(--border-radius);
+            margin-bottom: 2rem;
+        }
+
+        .navbar-brand {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .reports-header {
+            background: var(--primary-gradient);
+            color: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .report-card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .report-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-left: 5px solid;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .stat-card.primary { border-left-color: #667eea; }
+        .stat-card.success { border-left-color: #28a745; }
+        .stat-card.warning { border-left-color: #ffc107; }
+        .stat-card.danger { border-left-color: #dc3545; }
+        .stat-card.info { border-left-color: #17a2b8; }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #6c757d;
+            font-weight: 600;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin: 2rem 0;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .table th {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            font-weight: 600;
+        }
+
+        .table td {
+            border-color: #f8f9fa;
+            vertical-align: middle;
+        }
+
+        .badge-custom {
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-weight: 600;
+        }
+
+        .btn-custom {
+            border-radius: 25px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-primary-custom {
+            background: var(--primary-gradient);
+            border: none;
+            color: white;
+        }
+
+        .btn-success-custom {
+            background: var(--success-gradient);
+            border: none;
+            color: white;
+        }
+
+        .filter-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .progress-custom {
+            height: 25px;
+            border-radius: 15px;
+            background: #e9ecef;
+        }
+
+        .progress-bar-custom {
+            border-radius: 15px;
+            font-weight: 600;
+        }
+
+        .timeline {
+            position: relative;
+            padding: 1rem 0;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding: 1rem 0 1rem 3rem;
+            border-left: 2px solid #e9ecef;
+        }
+
+        .timeline-item:before {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: 1.5rem;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: #667eea;
+        }
+
+        .timeline-item:last-child {
+            border-left: none;
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 0 10px;
+            }
+            
+            .report-card {
+                padding: 1rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+            
+            .chart-container {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container">
+            <a class="navbar-brand" href="unified-medical-system.html">
+                <i class="fas fa-heartbeat me-2"></i>النظام الطبي الذكي
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="unified-medical-system.html">
+                            <i class="fas fa-home me-1"></i>الرئيسية
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="profile.html">
+                            <i class="fas fa-user me-1"></i>الملف الشخصي
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="medical-reports.html">
+                            <i class="fas fa-chart-line me-1"></i>التقارير
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="settings.html">
+                            <i class="fas fa-cog me-1"></i>الإعدادات
+                        </a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="logout()">
+                            <i class="fas fa-sign-out-alt me-1"></i>تسجيل الخروج
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <!-- Header -->
+        <div class="reports-header">
+            <h2><i class="fas fa-chart-line me-3"></i>التقارير الطبية والإحصائيات</h2>
+            <p class="mb-0">تحليل شامل لاستخدامك للنظام الطبي</p>
+        </div>
+
+        <!-- Filter Section -->
+        <div class="filter-section">
+            <div class="row">
+                <div class="col-md-3">
+                    <label class="form-label">الفترة الزمنية:</label>
+                    <select class="form-select" id="timeFilter">
+                        <option value="week">آخر أسبوع</option>
+                        <option value="month" selected>آخر شهر</option>
+                        <option value="quarter">آخر 3 أشهر</option>
+                        <option value="year">آخر سنة</option>
+                        <option value="all">جميع الفترات</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">نوع التقرير:</label>
+                    <select class="form-select" id="reportType">
+                        <option value="all" selected>جميع الأنواع</option>
+                        <option value="medical">طبي</option>
+                        <option value="nutrition">تغذية</option>
+                        <option value="general">عام</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">&nbsp;</label>
+                    <button class="btn btn-primary-custom btn-custom w-100" onclick="updateReports()">
+                        <i class="fas fa-sync me-2"></i>تحديث التقارير
+                    </button>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">&nbsp;</label>
+                    <button class="btn btn-success-custom btn-custom w-100" onclick="exportReport()">
+                        <i class="fas fa-download me-2"></i>تصدير التقرير
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="stats-grid">
+            <div class="stat-card primary">
+                <div class="stat-number text-primary" id="totalConsultations">0</div>
+                <div class="stat-label">إجمالي الاستشارات</div>
+            </div>
+            <div class="stat-card success">
+                <div class="stat-number text-success" id="medicalConsultations">0</div>
+                <div class="stat-label">استشارات طبية</div>
+            </div>
+            <div class="stat-card warning">
+                <div class="stat-number text-warning" id="nutritionConsultations">0</div>
+                <div class="stat-label">استشارات غذائية</div>
+            </div>
+            <div class="stat-card info">
+                <div class="stat-number text-info" id="avgResponseTime">0</div>
+                <div class="stat-label">متوسط وقت الاستجابة (ثانية)</div>
+            </div>
+            <div class="stat-card danger">
+                <div class="stat-number text-danger" id="emergencyCases">0</div>
+                <div class="stat-label">حالات طوارئ</div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="report-card">
+                    <h5><i class="fas fa-chart-pie me-2"></i>توزيع أنواع الاستشارات</h5>
+                    <div class="chart-container">
+                        <canvas id="consultationTypesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="report-card">
+                    <h5><i class="fas fa-chart-line me-2"></i>الاستشارات عبر الوقت</h5>
+                    <div class="chart-container">
+                        <canvas id="timelineChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Most Common Symptoms -->
+        <div class="report-card">
+            <h5><i class="fas fa-list-ol me-2"></i>الأعراض الأكثر شيوعاً</h5>
+            <div id="symptomsChart">
+                <!-- سيتم ملؤها بـ JavaScript -->
+            </div>
+        </div>
+
+        <!-- Recent Activity Timeline -->
+        <div class="report-card">
+            <h5><i class="fas fa-history me-2"></i>النشاط الأخير</h5>
+            <div class="timeline" id="activityTimeline">
+                <!-- سيتم ملؤها بـ JavaScript -->
+            </div>
+        </div>
+
+        <!-- Detailed Table -->
+        <div class="table-container">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>التاريخ</th>
+                        <th>النوع</th>
+                        <th>الاستفسار</th>
+                        <th>الأعراض</th>
+                        <th>الحالة</th>
+                        <th>الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody id="consultationsTable">
+                    <!-- سيتم ملؤها بـ JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let consultationTypesChart, timelineChart;
+
+        // تحميل التقارير
+        function loadReports() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (!currentUser) {
+                alert('يجب تسجيل الدخول أولاً');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const consultations = JSON.parse(localStorage.getItem('userConsultations') || '[]');
+            const userConsultations = consultations.filter(c => c.userId === currentUser.id);
+
+            updateStatistics(userConsultations);
+            createCharts(userConsultations);
+            updateSymptomsChart(userConsultations);
+            updateActivityTimeline(userConsultations);
+            updateConsultationsTable(userConsultations);
+        }
+
+        // تحديث الإحصائيات
+        function updateStatistics(consultations) {
+            const total = consultations.length;
+            const medical = consultations.filter(c => c.type === 'تشخيص طبي').length;
+            const nutrition = consultations.filter(c => c.type === 'تغذية').length;
+            const emergency = consultations.filter(c => c.response && c.response.includes('طوارئ')).length;
+
+            // حساب متوسط وقت الاستجابة (محاكاة)
+            const avgResponse = Math.floor(Math.random() * 3) + 1;
+
+            document.getElementById('totalConsultations').textContent = total;
+            document.getElementById('medicalConsultations').textContent = medical;
+            document.getElementById('nutritionConsultations').textContent = nutrition;
+            document.getElementById('avgResponseTime').textContent = avgResponse;
+            document.getElementById('emergencyCases').textContent = emergency;
+        }
+
+        // إنشاء الرسوم البيانية
+        function createCharts(consultations) {
+            createConsultationTypesChart(consultations);
+            createTimelineChart(consultations);
+        }
+
+        // رسم بياني لأنواع الاستشارات
+        function createConsultationTypesChart(consultations) {
+            const ctx = document.getElementById('consultationTypesChart').getContext('2d');
+
+            const types = {};
+            consultations.forEach(c => {
+                types[c.type] = (types[c.type] || 0) + 1;
+            });
+
+            if (consultationTypesChart) {
+                consultationTypesChart.destroy();
+            }
+
+            consultationTypesChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(types),
+                    datasets: [{
+                        data: Object.values(types),
+                        backgroundColor: [
+                            '#667eea',
+                            '#28a745',
+                            '#ffc107',
+                            '#dc3545',
+                            '#17a2b8'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        // رسم بياني للاستشارات عبر الوقت
+        function createTimelineChart(consultations) {
+            const ctx = document.getElementById('timelineChart').getContext('2d');
+
+            // تجميع البيانات حسب التاريخ
+            const dailyData = {};
+            consultations.forEach(c => {
+                const date = new Date(c.timestamp).toLocaleDateString('ar-SA');
+                dailyData[date] = (dailyData[date] || 0) + 1;
+            });
+
+            // ترتيب التواريخ
+            const sortedDates = Object.keys(dailyData).sort();
+            const values = sortedDates.map(date => dailyData[date]);
+
+            if (timelineChart) {
+                timelineChart.destroy();
+            }
+
+            timelineChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: sortedDates,
+                    datasets: [{
+                        label: 'عدد الاستشارات',
+                        data: values,
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // تحديث رسم الأعراض
+        function updateSymptomsChart(consultations) {
+            const symptoms = {};
+            consultations.forEach(c => {
+                if (c.symptoms && c.symptoms.length > 0) {
+                    c.symptoms.forEach(symptom => {
+                        symptoms[symptom] = (symptoms[symptom] || 0) + 1;
+                    });
+                }
+            });
+
+            const sortedSymptoms = Object.entries(symptoms)
+                .sort(([,a], [,b]) => b - a)
+                .slice(0, 5);
+
+            let html = '';
+            if (sortedSymptoms.length === 0) {
+                html = '<p class="text-muted text-center py-4">لا توجد أعراض مسجلة</p>';
+            } else {
+                sortedSymptoms.forEach(([symptom, count], index) => {
+                    const percentage = Math.round((count / consultations.length) * 100);
+                    html += `
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>${symptom}</span>
+                                <span>${count} مرة (${percentage}%)</span>
+                            </div>
+                            <div class="progress progress-custom">
+                                <div class="progress-bar progress-bar-custom"
+                                     style="width: ${percentage}%; background: linear-gradient(135deg, #667eea ${index * 20}%, #764ba2 100%)">
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            document.getElementById('symptomsChart').innerHTML = html;
+        }
+
+        // تحديث الجدول الزمني للنشاط
+        function updateActivityTimeline(consultations) {
+            const recent = consultations.slice(-5).reverse();
+            let html = '';
+
+            if (recent.length === 0) {
+                html = '<p class="text-muted text-center py-4">لا توجد أنشطة حديثة</p>';
+            } else {
+                recent.forEach(consultation => {
+                    const date = new Date(consultation.timestamp);
+                    const timeAgo = getTimeAgo(date);
+
+                    html += `
+                        <div class="timeline-item">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="mb-1">${consultation.type}</h6>
+                                    <p class="mb-1 text-muted">${consultation.query.substring(0, 100)}...</p>
+                                    <small class="text-muted">${timeAgo}</small>
+                                </div>
+                                <span class="badge bg-primary">${consultation.symptoms ? consultation.symptoms.length : 0} أعراض</span>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            document.getElementById('activityTimeline').innerHTML = html;
+        }
+
+        // تحديث جدول الاستشارات
+        function updateConsultationsTable(consultations) {
+            let html = '';
+
+            if (consultations.length === 0) {
+                html = '<tr><td colspan="6" class="text-center text-muted py-4">لا توجد استشارات</td></tr>';
+            } else {
+                consultations.slice(-10).reverse().forEach(consultation => {
+                    const date = new Date(consultation.timestamp).toLocaleDateString('ar-SA');
+                    const symptoms = consultation.symptoms ? consultation.symptoms.join('، ') : 'لا يوجد';
+                    const typeClass = consultation.type === 'تشخيص طبي' ? 'success' :
+                                     consultation.type === 'تغذية' ? 'warning' : 'primary';
+
+                    html += `
+                        <tr>
+                            <td>${date}</td>
+                            <td><span class="badge bg-${typeClass}">${consultation.type}</span></td>
+                            <td>${consultation.query.substring(0, 50)}...</td>
+                            <td>${symptoms}</td>
+                            <td><span class="badge bg-success">مكتمل</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary" onclick="viewConsultation('${consultation.id}')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+
+            document.getElementById('consultationsTable').innerHTML = html;
+        }
+
+        // حساب الوقت المنقضي
+        function getTimeAgo(date) {
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMs / 3600000);
+            const diffDays = Math.floor(diffMs / 86400000);
+
+            if (diffMins < 60) {
+                return `منذ ${diffMins} دقيقة`;
+            } else if (diffHours < 24) {
+                return `منذ ${diffHours} ساعة`;
+            } else {
+                return `منذ ${diffDays} يوم`;
+            }
+        }
+
+        // تحديث التقارير
+        function updateReports() {
+            loadReports();
+            alert('تم تحديث التقارير بنجاح!');
+        }
+
+        // تصدير التقرير
+        function exportReport() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            const consultations = JSON.parse(localStorage.getItem('userConsultations') || '[]');
+            const userConsultations = consultations.filter(c => c.userId === currentUser.id);
+
+            const reportData = {
+                user: currentUser.name,
+                reportDate: new Date().toISOString(),
+                period: document.getElementById('timeFilter').value,
+                statistics: {
+                    total: userConsultations.length,
+                    medical: userConsultations.filter(c => c.type === 'تشخيص طبي').length,
+                    nutrition: userConsultations.filter(c => c.type === 'تغذية').length,
+                    emergency: userConsultations.filter(c => c.response && c.response.includes('طوارئ')).length
+                },
+                consultations: userConsultations
+            };
+
+            const jsonStr = JSON.stringify(reportData, null, 2);
+            const blob = new Blob([jsonStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `medical_report_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            alert('تم تصدير التقرير بنجاح!');
+        }
+
+        // عرض تفاصيل الاستشارة
+        function viewConsultation(id) {
+            const consultations = JSON.parse(localStorage.getItem('userConsultations') || '[]');
+            const consultation = consultations.find(c => c.id === id);
+
+            if (consultation) {
+                alert(`تفاصيل الاستشارة:\n\nالنوع: ${consultation.type}\nالاستفسار: ${consultation.query}\nالتاريخ: ${new Date(consultation.timestamp).toLocaleString('ar-SA')}`);
+            }
+        }
+
+        function logout() {
+            if (confirm('هل أنت متأكد من تسجيل الخروج؟')) {
+                localStorage.removeItem('currentUser');
+                window.location.href = 'login.html';
+            }
+        }
+
+        // تحميل التقارير عند تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', loadReports);
+    </script>
+</body>
+</html>

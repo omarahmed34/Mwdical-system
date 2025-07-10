@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الطوارئ الطبية - النظام الطبي الذكي</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        :root {
+            --danger-gradient: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%);
+            --warning-gradient: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+            --success-gradient: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --card-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            --border-radius: 20px;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: var(--danger-gradient);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .navbar {
+            background: white !important;
+            box-shadow: var(--card-shadow);
+            border-radius: var(--border-radius);
+            margin-bottom: 2rem;
+        }
+
+        .navbar-brand {
+            background: var(--danger-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+        }
+
+        .main-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .emergency-header {
+            background: var(--danger-gradient);
+            color: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        .emergency-card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .emergency-number {
+            background: var(--danger-gradient);
+            color: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            margin-bottom: 1rem;
+            transition: transform 0.3s ease;
+        }
+
+        .emergency-number:hover {
+            transform: scale(1.05);
+            cursor: pointer;
+        }
+
+        .emergency-number h3 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .symptom-checker {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .emergency-symptom {
+            background: #f8d7da;
+            border: 1px solid #dc3545;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .emergency-symptom:hover {
+            background: #dc3545;
+            color: white;
+            cursor: pointer;
+        }
+
+        .hospital-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .hospital-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .hospital-distance {
+            background: var(--success-gradient);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .btn-emergency {
+            background: var(--danger-gradient);
+            border: none;
+            color: white;
+            border-radius: 25px;
+            padding: 1rem 2rem;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            animation: glow 2s infinite;
+        }
+
+        @keyframes glow {
+            0% { box-shadow: 0 0 5px rgba(220, 53, 69, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(220, 53, 69, 0.8); }
+            100% { box-shadow: 0 0 5px rgba(220, 53, 69, 0.5); }
+        }
+
+        .btn-emergency:hover {
+            transform: scale(1.05);
+            background: #c82333;
+        }
+
+        .first-aid-step {
+            background: #d1ecf1;
+            border: 1px solid #17a2b8;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-left: 5px solid #17a2b8;
+        }
+
+        .step-number {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #17a2b8;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-left: 1rem;
+            flex-shrink: 0;
+        }
+
+        .location-card {
+            background: var(--primary-gradient);
+            color: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .emergency-contact {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .contact-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--danger-gradient);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 1rem;
+        }
+
+        .alert-emergency {
+            background: var(--danger-gradient);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.7; }
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 0 10px;
+            }
+            
+            .emergency-card {
+                padding: 1rem;
+            }
+            
+            .emergency-number h3 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container">
+            <a class="navbar-brand" href="unified-medical-system.html">
+                <i class="fas fa-heartbeat me-2"></i>النظام الطبي الذكي
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="unified-medical-system.html">
+                            <i class="fas fa-home me-1"></i>الرئيسية
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="help-support.html">
+                            <i class="fas fa-question-circle me-1"></i>المساعدة
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="emergency.html">
+                            <i class="fas fa-ambulance me-1"></i>الطوارئ
+                        </a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="logout()">
+                            <i class="fas fa-sign-out-alt me-1"></i>تسجيل الخروج
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <!-- Emergency Alert -->
+        <div class="alert alert-emergency">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-exclamation-triangle fa-2x me-3"></i>
+                <div>
+                    <h5 class="mb-1">⚠️ تحذير: هذه صفحة الطوارئ الطبية</h5>
+                    <p class="mb-0">في حالة الطوارئ الحقيقية، اتصل بالإسعاف فوراً على الرقم 997</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Header -->
+        <div class="emergency-header">
+            <h2><i class="fas fa-ambulance me-3"></i>الطوارئ الطبية</h2>
+            <p class="mb-0">مساعدة فورية في الحالات العاجلة</p>
+        </div>
+
+        <!-- Emergency Numbers -->
+        <div class="emergency-card">
+            <h4><i class="fas fa-phone me-2"></i>أرقام الطوارئ</h4>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="emergency-number" onclick="callEmergency('997')">
+                        <h3>997</h3>
+                        <h6>الإسعاف</h6>
+                        <small>خدمة طوارئ طبية</small>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="emergency-number" onclick="callEmergency('911')">
+                        <h3>911</h3>
+                        <h6>الطوارئ العامة</h6>
+                        <small>جميع أنواع الطوارئ</small>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="emergency-number" onclick="callEmergency('998')">
+                        <h3>998</h3>
+                        <h6>الدفاع المدني</h6>
+                        <small>الحرائق والإنقاذ</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Symptom Checker -->
+        <div class="emergency-card">
+            <h4><i class="fas fa-heartbeat me-2"></i>فحص الأعراض العاجلة</h4>
+            <div class="symptom-checker">
+                <h6><i class="fas fa-exclamation-circle me-2"></i>اتصل بالإسعاف فوراً إذا كنت تعاني من:</h6>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="emergency-symptom" onclick="handleEmergencySymptom('chest-pain')">
+                            💔 ألم شديد في الصدر
+                        </div>
+                        <div class="emergency-symptom" onclick="handleEmergencySymptom('breathing')">
+                            🫁 صعوبة شديدة في التنفس
+                        </div>
+                        <div class="emergency-symptom" onclick="handleEmergencySymptom('consciousness')">
+                            😵 فقدان الوعي
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="emergency-symptom" onclick="handleEmergencySymptom('bleeding')">
+                            🩸 نزيف شديد لا يتوقف
+                        </div>
+                        <div class="emergency-symptom" onclick="handleEmergencySymptom('stroke')">
+                            🧠 أعراض السكتة الدماغية
+                        </div>
+                        <div class="emergency-symptom" onclick="handleEmergencySymptom('poisoning')">
+                            ☠️ التسمم
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Location Services -->
+        <div class="location-card">
+            <h5><i class="fas fa-map-marker-alt me-2"></i>العثور على أقرب مستشفى</h5>
+            <p class="mb-3">اضغط للعثور على أقرب مستشفى أو مركز طوارئ</p>
+            <button class="btn btn-light btn-lg" onclick="findNearestHospital()">
+                <i class="fas fa-location-arrow me-2"></i>تحديد الموقع
+            </button>
+        </div>
+
+        <!-- Nearest Hospitals -->
+        <div class="emergency-card">
+            <h4><i class="fas fa-hospital me-2"></i>أقرب المستشفيات</h4>
+            <div id="hospitalsList">
+                <!-- سيتم ملؤها بـ JavaScript -->
+            </div>
+        </div>
+
+        <!-- First Aid Instructions -->
+        <div class="emergency-card">
+            <h4><i class="fas fa-first-aid me-2"></i>إرشادات الإسعافات الأولية</h4>
+            <div class="row">
+                <div class="col-md-6">
+                    <h6>الإنعاش القلبي الرئوي (CPR)</h6>
+                    <div class="first-aid-step">
+                        <div class="d-flex align-items-start">
+                            <div class="step-number">1</div>
+                            <div>
+                                <strong>تحقق من الاستجابة</strong>
+                                <p class="mb-0 small">اهز الشخص بلطف واصرخ "هل أنت بخير؟"</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="first-aid-step">
+                        <div class="d-flex align-items-start">
+                            <div class="step-number">2</div>
+                            <div>
+                                <strong>اتصل بالإسعاف</strong>
+                                <p class="mb-0 small">اتصل بـ 997 فوراً</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="first-aid-step">
+                        <div class="d-flex align-items-start">
+                            <div class="step-number">3</div>
+                            <div>
+                                <strong>ابدأ الضغط</strong>
+                                <p class="mb-0 small">30 ضغطة على الصدر، ثم نفسين</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <h6>إيقاف النزيف</h6>
+                    <div class="first-aid-step">
+                        <div class="d-flex align-items-start">
+                            <div class="step-number">1</div>
+                            <div>
+                                <strong>اضغط مباشرة</strong>
+                                <p class="mb-0 small">اضغط بقوة على مكان النزيف</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="first-aid-step">
+                        <div class="d-flex align-items-start">
+                            <div class="step-number">2</div>
+                            <div>
+                                <strong>ارفع المنطقة</strong>
+                                <p class="mb-0 small">ارفع الجزء المصاب فوق مستوى القلب</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="first-aid-step">
+                        <div class="d-flex align-items-start">
+                            <div class="step-number">3</div>
+                            <div>
+                                <strong>لا تزيل الضمادة</strong>
+                                <p class="mb-0 small">أضف ضمادات إضافية إذا لزم الأمر</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Emergency Contacts -->
+        <div class="emergency-card">
+            <h4><i class="fas fa-address-book me-2"></i>جهات اتصال إضافية</h4>
+            <div class="emergency-contact">
+                <div class="d-flex align-items-center">
+                    <div class="contact-icon">
+                        <i class="fas fa-poison"></i>
+                    </div>
+                    <div>
+                        <h6 class="mb-0">مركز السموم</h6>
+                        <small class="text-muted">للتسمم والحوادث الكيميائية</small>
+                    </div>
+                </div>
+                <button class="btn btn-outline-danger btn-sm" onclick="callEmergency('920000120')">
+                    920000120
+                </button>
+            </div>
+            
+            <div class="emergency-contact">
+                <div class="d-flex align-items-center">
+                    <div class="contact-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <div>
+                        <h6 class="mb-0">خط المساعدة النفسية</h6>
+                        <small class="text-muted">للأزمات النفسية والانتحار</small>
+                    </div>
+                </div>
+                <button class="btn btn-outline-danger btn-sm" onclick="callEmergency('920033360')">
+                    920033360
+                </button>
+            </div>
+        </div>
+
+        <!-- Emergency Action Button -->
+        <div class="text-center">
+            <button class="btn btn-emergency btn-lg" onclick="emergencyCall()">
+                <i class="fas fa-phone me-2"></i>اتصال طوارئ فوري
+            </button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // قائمة المستشفيات (محاكاة)
+        const hospitals = [
+            {
+                name: "مستشفى الملك فهد الطبي",
+                address: "شارع الملك فهد، الرياض",
+                phone: "011-464-7272",
+                distance: "2.3 كم",
+                emergency: true,
+                rating: 4.5
+            },
+            {
+                name: "مستشفى الملك خالد الجامعي",
+                address: "جامعة الملك سعود، الرياض",
+                phone: "011-467-9999",
+                distance: "3.7 كم",
+                emergency: true,
+                rating: 4.3
+            },
+            {
+                name: "مستشفى الملك فيصل التخصصي",
+                address: "شارع التخصصي، الرياض",
+                phone: "011-464-7272",
+                distance: "5.1 كم",
+                emergency: true,
+                rating: 4.8
+            },
+            {
+                name: "مستشفى الأمن العام",
+                address: "حي النزهة، الرياض",
+                phone: "011-401-9999",
+                distance: "6.2 كم",
+                emergency: true,
+                rating: 4.2
+            }
+        ];
+
+        // تحميل قائمة المستشفيات
+        function loadHospitals() {
+            const container = document.getElementById('hospitalsList');
+            let html = '';
+
+            hospitals.forEach(hospital => {
+                const stars = '★'.repeat(Math.floor(hospital.rating)) + '☆'.repeat(5 - Math.floor(hospital.rating));
+
+                html += `
+                    <div class="hospital-card">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <h6 class="mb-1">${hospital.name}</h6>
+                                <p class="text-muted mb-1">
+                                    <i class="fas fa-map-marker-alt me-1"></i>${hospital.address}
+                                </p>
+                                <p class="text-muted mb-0">
+                                    <i class="fas fa-phone me-1"></i>${hospital.phone}
+                                </p>
+                            </div>
+                            <div class="text-end">
+                                <div class="hospital-distance mb-1">${hospital.distance}</div>
+                                <div class="text-warning small">${stars}</div>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-danger btn-sm" onclick="callHospital('${hospital.phone}')">
+                                <i class="fas fa-phone me-1"></i>اتصال
+                            </button>
+                            <button class="btn btn-outline-primary btn-sm" onclick="getDirections('${hospital.name}')">
+                                <i class="fas fa-directions me-1"></i>الاتجاهات
+                            </button>
+                            <button class="btn btn-outline-success btn-sm" onclick="shareLocation('${hospital.name}')">
+                                <i class="fas fa-share me-1"></i>مشاركة
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // الاتصال بأرقام الطوارئ
+        function callEmergency(number) {
+            if (confirm(`هل تريد الاتصال بـ ${number}؟\n\nسيتم فتح تطبيق الهاتف للاتصال.`)) {
+                // محاكاة الاتصال
+                window.open(`tel:${number}`);
+
+                // تسجيل حالة الطوارئ
+                logEmergencyCall(number);
+            }
+        }
+
+        // تسجيل مكالمة الطوارئ
+        function logEmergencyCall(number) {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (!currentUser) return;
+
+            const emergencyLog = JSON.parse(localStorage.getItem('emergencyLog') || '[]');
+
+            const logEntry = {
+                id: Date.now().toString(),
+                userId: currentUser.id,
+                number: number,
+                timestamp: new Date().toISOString(),
+                type: getEmergencyType(number)
+            };
+
+            emergencyLog.push(logEntry);
+            localStorage.setItem('emergencyLog', JSON.stringify(emergencyLog));
+        }
+
+        // تحديد نوع الطوارئ
+        function getEmergencyType(number) {
+            switch(number) {
+                case '997': return 'إسعاف';
+                case '911': return 'طوارئ عامة';
+                case '998': return 'دفاع مدني';
+                case '920000120': return 'مركز السموم';
+                case '920033360': return 'مساعدة نفسية';
+                default: return 'مستشفى';
+            }
+        }
+
+        // التعامل مع الأعراض العاجلة
+        function handleEmergencySymptom(symptom) {
+            const symptoms = {
+                'chest-pain': {
+                    title: 'ألم شديد في الصدر',
+                    action: 'اتصل بالإسعاف فوراً على 997',
+                    instructions: [
+                        'اجلس في وضع مريح',
+                        'فك الملابس الضيقة',
+                        'لا تتحرك كثيراً',
+                        'انتظر وصول الإسعاف'
+                    ]
+                },
+                'breathing': {
+                    title: 'صعوبة شديدة في التنفس',
+                    action: 'اتصل بالإسعاف فوراً على 997',
+                    instructions: [
+                        'اجلس في وضع مستقيم',
+                        'تنفس ببطء وعمق',
+                        'افتح النوافذ للهواء النقي',
+                        'ابق هادئاً'
+                    ]
+                },
+                'consciousness': {
+                    title: 'فقدان الوعي',
+                    action: 'اتصل بالإسعاف فوراً على 997',
+                    instructions: [
+                        'ضع الشخص في وضع الإفاقة',
+                        'تأكد من وضوح مجرى التنفس',
+                        'راقب التنفس والنبض',
+                        'لا تترك الشخص وحده'
+                    ]
+                },
+                'bleeding': {
+                    title: 'نزيف شديد',
+                    action: 'اتصل بالإسعاف فوراً على 997',
+                    instructions: [
+                        'اضغط مباشرة على الجرح',
+                        'ارفع المنطقة المصابة',
+                        'لا تزيل الضمادة المشبعة',
+                        'حافظ على دفء المصاب'
+                    ]
+                },
+                'stroke': {
+                    title: 'أعراض السكتة الدماغية',
+                    action: 'اتصل بالإسعاف فوراً على 997',
+                    instructions: [
+                        'اختبار FAST: الوجه، الذراعين، الكلام، الوقت',
+                        'لا تعط أي أدوية',
+                        'سجل وقت بداية الأعراض',
+                        'ابق مع المصاب'
+                    ]
+                },
+                'poisoning': {
+                    title: 'التسمم',
+                    action: 'اتصل بمركز السموم على 920000120',
+                    instructions: [
+                        'لا تحفز على القيء',
+                        'احتفظ بعبوة المادة السامة',
+                        'اشطف الفم بالماء إذا كان التسمم عن طريق الفم',
+                        'انقل المصاب للهواء النقي'
+                    ]
+                }
+            };
+
+            const symptomData = symptoms[symptom];
+            if (symptomData) {
+                let message = `🚨 ${symptomData.title}\n\n`;
+                message += `⚡ الإجراء الفوري: ${symptomData.action}\n\n`;
+                message += `📋 الإرشادات:\n`;
+                symptomData.instructions.forEach((instruction, index) => {
+                    message += `${index + 1}. ${instruction}\n`;
+                });
+
+                if (confirm(message + '\nهل تريد الاتصال بالطوارئ الآن؟')) {
+                    if (symptom === 'poisoning') {
+                        callEmergency('920000120');
+                    } else {
+                        callEmergency('997');
+                    }
+                }
+            }
+        }
+
+        // العثور على أقرب مستشفى
+        function findNearestHospital() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        const lat = position.coords.latitude;
+                        const lng = position.coords.longitude;
+
+                        alert(`تم تحديد موقعك:\nخط العرض: ${lat.toFixed(6)}\nخط الطول: ${lng.toFixed(6)}\n\nسيتم عرض أقرب المستشفيات أدناه.`);
+
+                        // إعادة ترتيب المستشفيات حسب المسافة (محاكاة)
+                        loadHospitals();
+                    },
+                    function(error) {
+                        alert('لا يمكن تحديد موقعك. يرجى السماح بالوصول للموقع أو الاتصال بـ 997 مباشرة.');
+                        console.error('خطأ في تحديد الموقع:', error);
+                    }
+                );
+            } else {
+                alert('متصفحك لا يدعم خدمات تحديد الموقع. يرجى الاتصال بـ 997 مباشرة.');
+            }
+        }
+
+        // الاتصال بالمستشفى
+        function callHospital(phone) {
+            callEmergency(phone);
+        }
+
+        // الحصول على الاتجاهات
+        function getDirections(hospitalName) {
+            const googleMapsUrl = `https://www.google.com/maps/search/${encodeURIComponent(hospitalName + ' الرياض')}`;
+            window.open(googleMapsUrl, '_blank');
+        }
+
+        // مشاركة الموقع
+        function shareLocation(hospitalName) {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'موقع المستشفى',
+                    text: `أنا في طريقي إلى ${hospitalName}`,
+                    url: window.location.href
+                });
+            } else {
+                // نسخ الرابط للحافظة
+                const text = `أنا في طريقي إلى ${hospitalName}. يمكنك متابعة موقعي على: ${window.location.href}`;
+                navigator.clipboard.writeText(text).then(() => {
+                    alert('تم نسخ معلومات الموقع للحافظة');
+                });
+            }
+        }
+
+        // اتصال طوارئ فوري
+        function emergencyCall() {
+            const options = [
+                { number: '997', name: 'الإسعاف' },
+                { number: '911', name: 'الطوارئ العامة' },
+                { number: '998', name: 'الدفاع المدني' }
+            ];
+
+            let message = 'اختر رقم الطوارئ المناسب:\n\n';
+            options.forEach((option, index) => {
+                message += `${index + 1}. ${option.name} (${option.number})\n`;
+            });
+
+            const choice = prompt(message + '\nأدخل رقم الخيار (1-3):');
+
+            if (choice && choice >= 1 && choice <= 3) {
+                const selectedOption = options[choice - 1];
+                callEmergency(selectedOption.number);
+            }
+        }
+
+        function logout() {
+            if (confirm('هل أنت متأكد من تسجيل الخروج؟')) {
+                localStorage.removeItem('currentUser');
+                window.location.href = 'login.html';
+            }
+        }
+
+        // تحميل المحتوى عند تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', function() {
+            // التحقق من تسجيل الدخول
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (!currentUser) {
+                alert('يجب تسجيل الدخول أولاً');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            loadHospitals();
+
+            // تحذير عند مغادرة الصفحة
+            window.addEventListener('beforeunload', function(e) {
+                e.preventDefault();
+                e.returnValue = 'هل أنت متأكد من مغادرة صفحة الطوارئ؟';
+            });
+        });
+    </script>
+</body>
+</html>

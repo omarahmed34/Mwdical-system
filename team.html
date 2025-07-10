@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>القائمون بالعمل - مساعد طبي ذكي</title>
+  <meta name="description" content="تعرف على فريق العمل المتميز وراء نظام المساعد الطبي الذكي">
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap RTL -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="style-bootstrap.css">
+  <style>
+    body { font-family: 'Cairo', sans-serif; }
+    .team-hero {
+      background: linear-gradient(135deg, var(--bs-primary) 0%, var(--bs-info) 100%);
+      color: white;
+      padding: 6rem 0 4rem;
+      margin-top: -4rem;
+      padding-top: 8rem;
+    }
+    .team-card {
+      transition: all 0.3s ease;
+      border: none;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    .team-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    }
+    .team-avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 4px solid white;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+      object-fit: cover;
+    }
+    .role-badge {
+      background: linear-gradient(135deg, var(--bs-primary) 0%, var(--bs-info) 100%);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 25px;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+    .skill-tag {
+      background: var(--bs-light);
+      color: var(--bs-dark);
+      padding: 0.25rem 0.75rem;
+      border-radius: 15px;
+      font-size: 0.8rem;
+      margin: 0.25rem;
+      display: inline-block;
+    }
+    .contact-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0.25rem;
+      transition: all 0.3s ease;
+    }
+    .contact-icon:hover {
+      transform: scale(1.1);
+    }
+    .stats-section {
+      background: var(--bs-light);
+      border-radius: 20px;
+      padding: 2rem;
+      margin: 2rem 0;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top shadow-sm">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center" href="index.html">
+        <i class="fas fa-heartbeat text-primary me-2"></i>
+        <span class="fw-bold">مساعد طبي ذكي</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">الرئيسية</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="medical-diagnosis.html">التشخيص</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="appointments.html">حجز موعد</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="team.html">القائمون بالعمل</a>
+          </li>
+          <!-- User Menu (when logged in) -->
+          <li class="nav-item dropdown ms-lg-3 mt-2 mt-lg-0" id="userMenuContainer" style="display: none;">
+            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-2" style="width: 35px; height: 35px;">
+                <i class="fas fa-user"></i>
+              </div>
+              <span id="userDisplayName" class="fw-semibold">المستخدم</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end shadow rounded-3" aria-labelledby="userDropdown">
+              <li><a class="dropdown-item" href="profile.html"><i class="fas fa-user-circle me-2"></i>الملف الشخصي</a></li>
+              <li><a class="dropdown-item" href="my-appointments.html"><i class="fas fa-calendar-check me-2"></i>مواعيدي</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="#" id="logoutBtn"><i class="fas fa-sign-out-alt me-2"></i>تسجيل الخروج</a></li>
+            </ul>
+          </li>
+          <!-- Login Button (when not logged in) -->
+          <li class="nav-item ms-lg-3 mt-2 mt-lg-0" id="loginMenuContainer">
+            <a href="login.html" class="btn btn-primary rounded-pill px-4">
+              <i class="fas fa-sign-in-alt me-2"></i>تسجيل الدخول
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="team-hero">
+    <div class="container">
+      <div class="row justify-content-center text-center">
+        <div class="col-lg-8">
+          <div class="d-inline-flex align-items-center justify-content-center bg-white bg-opacity-20 rounded-circle p-3 mb-4">
+            <i class="fas fa-users" style="font-size: 3rem;"></i>
+          </div>
+          <h1 class="display-4 fw-bold mb-4">القائمون بالعمل</h1>
+          <p class="lead fs-4 mb-4">
+            فريق متخصص ومتفاني من المطورين والخبراء يعمل على تطوير أفضل الحلول الطبية الذكية
+          </p>
+          <div class="stats-section bg-white bg-opacity-10 rounded-4 p-4">
+            <div class="row g-4">
+              <div class="col-md-3 col-6">
+                <h3 class="fw-bold mb-1">2+</h3>
+                <p class="mb-0">أعضاء الفريق</p>
+              </div>
+              <div class="col-md-3 col-6">
+                <h3 class="fw-bold mb-1">5+</h3>
+                <p class="mb-0">تخصصات مختلفة</p>
+              </div>
+              <div class="col-md-3 col-6">
+                <h3 class="fw-bold mb-1">100%</h3>
+                <p class="mb-0">التزام بالجودة</p>
+              </div>
+              <div class="col-md-3 col-6">
+                <h3 class="fw-bold mb-1">24/7</h3>
+                <p class="mb-0">دعم مستمر</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Team Members Section -->
+  <section class="py-5 py-md-6">
+    <div class="container">
+      <!-- Project Leaders -->
+      <div class="text-center mb-5">
+        <h2 class="h2 fw-bold text-primary mb-3">
+          <i class="fas fa-crown me-3 text-warning"></i>
+          قادة المشروع
+        </h2>
+        <p class="text-muted fs-5">الأعضاء الرئيسيون المسؤولون عن قيادة وتوجيه المشروع</p>
+      </div>
+
+      <div class="row g-4 justify-content-center mb-5">
+        <!-- عمر أحمد فتحي -->
+        <div class="col-md-6 col-lg-4">
+          <div class="team-card bg-white p-4 h-100">
+            <div class="text-center mb-4">
+              <img src="WhatsApp Image 2025-05-12 at 10.29.15_f6df5c52.jpg" alt="عمر أحمد فتحي" class="team-avatar mb-3">
+              <h4 class="fw-bold mb-2 text-dark">عمر أحمد فتحي</h4>
+              <div class="role-badge mb-3">قائد المشروع الأول</div>
+              <p class="text-muted mb-3">مهندس DevOps ومطور متخصص في البنية التحتية والأنظمة السحابية</p>
+            </div>
+            <div class="mb-3">
+              <h6 class="fw-bold text-primary mb-2">المهارات:</h6>
+              <span class="skill-tag">DevOps</span>
+              <span class="skill-tag">Cloud Computing</span>
+              <span class="skill-tag">Docker</span>
+              <span class="skill-tag">Kubernetes</span>
+              <span class="skill-tag">CI/CD</span>
+            </div>
+            <div class="text-center">
+              <a href="#" class="contact-icon bg-primary text-white">
+                <i class="fab fa-linkedin"></i>
+              </a>
+              <a href="#" class="contact-icon bg-info text-white">
+                <i class="fab fa-twitter"></i>
+              </a>
+              <a href="#" class="contact-icon bg-success text-white">
+                <i class="fas fa-envelope"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- أحمد هاني النجار -->
+        <div class="col-md-6 col-lg-4">
+          <div class="team-card bg-white p-4 h-100">
+            <div class="text-center mb-4">
+              <img src="WhatsApp Image 2025-05-12 at 10.29.14_088c3e14.jpg" alt="أحمد هاني النجار" class="team-avatar mb-3">
+              <h4 class="fw-bold mb-2 text-dark">أحمد هاني النجار</h4>
+              <div class="role-badge mb-3">قائد المشروع الثاني</div>
+              <p class="text-muted mb-3">مهندس معماري للأنظمة ومتخصص في تصميم البنية التقنية المتقدمة</p>
+            </div>
+            <div class="mb-3">
+              <h6 class="fw-bold text-primary mb-2">المهارات:</h6>
+              <span class="skill-tag">System Architecture</span>
+              <span class="skill-tag">Microservices</span>
+              <span class="skill-tag">Database Design</span>
+              <span class="skill-tag">API Development</span>
+              <span class="skill-tag">Performance Optimization</span>
+            </div>
+            <div class="text-center">
+              <a href="#" class="contact-icon bg-primary text-white">
+                <i class="fab fa-linkedin"></i>
+              </a>
+              <a href="#" class="contact-icon bg-info text-white">
+                <i class="fab fa-twitter"></i>
+              </a>
+              <a href="#" class="contact-icon bg-success text-white">
+                <i class="fas fa-envelope"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+  <!-- Bootstrap JS Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <!-- User Authentication Script -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      checkAuthStatus();
+      
+      // Logout functionality
+      document.getElementById('logoutBtn')?.addEventListener('click', function(e) {
+        e.preventDefault();
+        logout();
+      });
+    });
+
+    function checkAuthStatus() {
+      const userData = localStorage.getItem('currentUser');
+      if (userData) {
+        const user = JSON.parse(userData);
+        // Show user menu and hide login button
+        document.getElementById('userMenuContainer').style.display = 'block';
+        document.getElementById('loginMenuContainer').style.display = 'none';
+        document.getElementById('userDisplayName').textContent = user.name;
+      } else {
+        // Show login button and hide user menu
+        document.getElementById('userMenuContainer').style.display = 'none';
+        document.getElementById('loginMenuContainer').style.display = 'block';
+      }
+    }
+
+    function logout() {
+      // Clear user data
+      localStorage.removeItem('currentUser');
+      
+      // Show success message
+      alert('تم تسجيل الخروج بنجاح');
+      
+      // Update UI
+      checkAuthStatus();
+    }
+  </script>
+
+  <!-- Quick Diagnosis Button -->
+  <a href="medical-diagnosis.html" class="btn btn-primary rounded-circle position-fixed"
+     style="bottom: 30px; right: 30px; width: 60px; height: 60px; z-index: 1000; box-shadow: 0 10px 30px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center;"
+     title="تشخيص سريع">
+      <i class="fas fa-stethoscope" style="font-size: 1.5rem;"></i>
+  </a>
+</body>
+</html>

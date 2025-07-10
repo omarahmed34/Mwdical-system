@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختيار الطبيب - مساعد طبي ذكي</title>
+    <meta name="description" content="اختر الطبيب المناسب لحجز موعدك">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap RTL -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <!-- Unified Theme CSS -->
+    <link rel="stylesheet" href="css/unified-theme.css">
+    <!-- Medical Enhancements CSS -->
+    <link rel="stylesheet" href="css/medical-enhancements.css">
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+
+        .doctor-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid transparent;
+        }
+
+        .doctor-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.12);
+        }
+
+        .doctor-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.6s;
+            z-index: 1;
+        }
+
+        .doctor-card:hover::before {
+            left: 100%;
+        }
+
+        .doctor-card .card-body {
+            position: relative;
+            z-index: 2;
+        }
+
+        .doctor-card.selected {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f8f9ff 100%);
+            border-color: #2196f3;
+            border-width: 3px;
+            transform: translateY(-5px) scale(1.03);
+            box-shadow: 0 20px 40px rgba(33, 150, 243, 0.2);
+        }
+
+        .doctor-image {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            transition: all 0.3s ease;
+        }
+
+        .doctor-card:hover .doctor-image {
+            transform: scale(1.1);
+        }
+
+        .doctor-card.selected .doctor-image {
+            transform: scale(1.05);
+            border: 3px solid #2196f3;
+        }
+
+        .rating {
+            color: #ffc107;
+            transition: all 0.3s ease;
+        }
+
+        .doctor-card.selected .rating {
+            color: #ff9800;
+            transform: scale(1.1);
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .step {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 15px;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .step.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .step.completed {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+        }
+
+        .step.pending {
+            background: #e9ecef;
+            color: #6c757d;
+        }
+
+        .availability-badge {
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+
+        .doctor-card.selected .availability-badge {
+            background: linear-gradient(45deg, #4caf50, #8bc34a) !important;
+            transform: scale(1.1);
+        }
+
+        .selection-indicator {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            z-index: 10;
+            opacity: 0;
+            transform: scale(0) rotate(-45deg);
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .doctor-card.selected .selection-indicator {
+            opacity: 1;
+            transform: scale(1) rotate(0deg);
+        }
+
+        .pulse-ring {
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            border: 2px solid #2196f3;
+            border-radius: 20px;
+            opacity: 0;
+            animation: pulse 2s infinite;
+        }
+
+        .doctor-card.selected .pulse-ring {
+            opacity: 1;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.05);
+                opacity: 0.7;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.3) rotate(-10deg);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.1) rotate(5deg);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) rotate(0deg);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .doctor-card {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        .doctor-card:nth-child(1) { animation-delay: 0.1s; }
+        .doctor-card:nth-child(2) { animation-delay: 0.2s; }
+        .doctor-card:nth-child(3) { animation-delay: 0.3s; }
+        .doctor-card:nth-child(4) { animation-delay: 0.4s; }
+        .doctor-card:nth-child(5) { animation-delay: 0.5s; }
+        .doctor-card:nth-child(6) { animation-delay: 0.6s; }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="index.html">
+                <i class="fas fa-heartbeat text-primary me-2"></i>
+                <span class="fw-bold">مساعد طبي ذكي</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">الرئيسية</a></li>
+                    <li class="nav-item"><a class="nav-link" href="diagnosis.html">التشخيص</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="appointments.html">حجز موعد</a></li>
+                    <li class="nav-item" id="userMenuContainer" style="display: none;">
+                        <div class="dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user-circle me-1"></i>
+                                <span id="userDisplayName">المستخدم</span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="my-appointments.html"><i class="fas fa-calendar me-2"></i>مواعيدي</a></li>
+                                <li><a class="dropdown-item" href="profile.html"><i class="fas fa-user me-2"></i>الملف الشخصي</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#" id="logoutBtn"><i class="fas fa-sign-out-alt me-2"></i>تسجيل الخروج</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="nav-item" id="loginMenuContainer">
+                        <button class="btn btn-outline-primary" onclick="window.location.href='index.html#login'">
+                            <i class="fas fa-sign-in-alt me-1"></i>
+                            تسجيل الدخول
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="py-5 py-md-6 mt-5">
+        <div class="container">
+            <!-- Step Indicator -->
+            <div class="step-indicator">
+                <div class="step completed" id="step1">1</div>
+                <div class="step active" id="step2">2</div>
+                <div class="step pending" id="step3">3</div>
+                <div class="step pending" id="step4">4</div>
+            </div>
+
+            <!-- Header -->
+            <div class="text-center mb-5">
+                <h1 class="display-4 fw-bold text-gradient mb-3">اختيار الطبيب</h1>
+                <p class="lead text-muted" id="specialtyTitle">أطباء متخصصون في التخصص المحدد</p>
+            </div>
+
+            <!-- Doctors Grid -->
+            <div class="row g-4" id="doctorsGrid">
+                <!-- Doctor cards will be populated by JavaScript -->
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="d-flex justify-content-between mt-5">
+                <a href="appointments.html" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-right me-2"></i>
+                    السابق
+                </a>
+                <button class="btn btn-primary" id="nextBtn" disabled>
+                    التالي
+                    <i class="fas fa-arrow-left ms-2"></i>
+                </button>
+            </div>
+        </div>
+    </main>
+
+
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Arabic Localization -->
+    <script src="js/arabic-localization.js"></script>
+    <!-- Appointments Fix JS -->
+    <script src="js/appointments-fix.js"></script>
+    <script>
+        let selectedDoctor = null;
+        let currentSpecialty = null;
+        
+        // Sample doctors data
+        const doctorsData = {
+            cardiology: [
+                { id: 1, name: 'د. أحمد محمد', image: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=150&h=150&fit=crop&crop=face', rating: 4.8, experience: 15, price: 300, availability: 'متاح اليوم' },
+                { id: 2, name: 'د. فاطمة علي', image: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=150&h=150&fit=crop&crop=face', rating: 4.9, experience: 12, price: 350, availability: 'متاح غداً' },
+                { id: 3, name: 'د. محمد حسن', image: 'https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=150&h=150&fit=crop&crop=face', rating: 4.7, experience: 18, price: 400, availability: 'متاح اليوم' }
+            ],
+            neurology: [
+                { id: 4, name: 'د. سارة أحمد', image: 'https://images.unsplash.com/photo-1594824475317-d3c5b8b8e8e8?w=150&h=150&fit=crop&crop=face', rating: 4.9, experience: 20, price: 450, availability: 'متاح غداً' },
+                { id: 5, name: 'د. عمر محمود', image: 'https://images.unsplash.com/photo-1607990281513-2c110a25bd8c?w=150&h=150&fit=crop&crop=face', rating: 4.6, experience: 14, price: 380, availability: 'متاح اليوم' }
+            ],
+            orthopedics: [
+                { id: 6, name: 'د. ليلى حسام', image: 'https://images.unsplash.com/photo-1594824475317-d3c5b8b8e8e8?w=150&h=150&fit=crop&crop=face', rating: 4.8, experience: 16, price: 320, availability: 'متاح اليوم' },
+                { id: 7, name: 'د. كريم فؤاد', image: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=150&h=150&fit=crop&crop=face', rating: 4.7, experience: 11, price: 280, availability: 'متاح غداً' }
+            ],
+            dermatology: [
+                { id: 8, name: 'د. نور الهدى', image: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=150&h=150&fit=crop&crop=face', rating: 4.9, experience: 13, price: 250, availability: 'متاح اليوم' },
+                { id: 9, name: 'د. حسام الدين', image: 'https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=150&h=150&fit=crop&crop=face', rating: 4.5, experience: 9, price: 220, availability: 'متاح غداً' }
+            ],
+            pediatrics: [
+                { id: 10, name: 'د. منى سالم', image: 'https://images.unsplash.com/photo-1594824475317-d3c5b8b8e8e8?w=150&h=150&fit=crop&crop=face', rating: 4.8, experience: 17, price: 200, availability: 'متاح اليوم' },
+                { id: 11, name: 'د. يوسف عادل', image: 'https://images.unsplash.com/photo-1607990281513-2c110a25bd8c?w=150&h=150&fit=crop&crop=face', rating: 4.6, experience: 8, price: 180, availability: 'متاح غداً' }
+            ],
+            general: [
+                { id: 12, name: 'د. رانيا طارق', image: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=150&h=150&fit=crop&crop=face', rating: 4.7, experience: 10, price: 150, availability: 'متاح اليوم' },
+                { id: 13, name: 'د. خالد نبيل', image: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=150&h=150&fit=crop&crop=face', rating: 4.4, experience: 7, price: 120, availability: 'متاح غداً' }
+            ]
+        };
+
+        const specialtyNames = {
+            cardiology: 'أمراض القلب',
+            neurology: 'أمراض الأعصاب',
+            orthopedics: 'العظام',
+            dermatology: 'الجلدية',
+            pediatrics: 'طب الأطفال',
+            general: 'طب عام'
+        };
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get specialty from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            currentSpecialty = urlParams.get('specialty') || 'general';
+            
+            // Update title
+            document.getElementById('specialtyTitle').textContent = `أطباء ${specialtyNames[currentSpecialty]}`;
+            
+            // Load doctors
+            loadDoctors(currentSpecialty);
+            
+            const nextBtn = document.getElementById('nextBtn');
+            nextBtn.addEventListener('click', function() {
+                if (selectedDoctor) {
+                    window.location.href = `booking.html?doctor=${selectedDoctor}&specialty=${currentSpecialty}`;
+                }
+            });
+        });
+        
+        function loadDoctors(specialty) {
+            const doctorsGrid = document.getElementById('doctorsGrid');
+            const doctors = doctorsData[specialty] || [];
+            
+            doctorsGrid.innerHTML = doctors.map((doctor, index) => `
+                <div class="col-md-6 col-lg-4">
+                    <div class="card doctor-card border-0 shadow-sm rounded-4 h-100" data-doctor="${doctor.id}" style="opacity: 0; transform: translateY(30px);">
+                        <div class="pulse-ring"></div>
+                        <div class="selection-indicator">
+                            <i class="fas fa-check-circle text-primary fs-2"></i>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <img src="${doctor.image}" alt="${doctor.name}" class="doctor-image rounded-circle me-3">
+                                <div>
+                                    <h5 class="fw-bold mb-1">${doctor.name}</h5>
+                                    <div class="rating mb-1">
+                                        ${'★'.repeat(Math.floor(doctor.rating))} ${doctor.rating}
+                                    </div>
+                                    <small class="text-muted">${doctor.experience} سنة خبرة</small>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="fw-bold text-primary">${doctor.price} جنيه</span>
+                                <span class="badge bg-success availability-badge">${doctor.availability}</span>
+                            </div>
+                            <button class="btn btn-outline-primary w-100 select-doctor-btn">اختيار الطبيب</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            // إضافة أنيميشن دخول متدرج
+            setTimeout(() => {
+                document.querySelectorAll('.doctor-card').forEach((card, index) => {
+                    setTimeout(() => {
+                        card.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }, index * 150);
+                });
+            }, 100);
+            
+            // إضافة event listeners متقدمة
+            document.querySelectorAll('.doctor-card').forEach(card => {
+                // تأثير hover
+                card.addEventListener('mouseenter', function() {
+                    if (!this.classList.contains('selected')) {
+                        this.style.transform = 'translateY(-8px) scale(1.02)';
+                        this.style.boxShadow = '0 15px 35px rgba(0,0,0,0.12)';
+                    }
+                });
+
+                card.addEventListener('mouseleave', function() {
+                    if (!this.classList.contains('selected')) {
+                        this.style.transform = 'translateY(0) scale(1)';
+                        this.style.boxShadow = '';
+                    }
+                });
+
+                // تأثير النقر
+                card.addEventListener('click', function() {
+                    // إضافة تأثيرات صوتية وبصرية
+                    playSelectionEffects(this);
+
+                    // إزالة التحديد السابق مع أنيميشن
+                    document.querySelectorAll('.doctor-card').forEach(c => {
+                        c.classList.remove('border-primary', 'bg-light', 'selected');
+                        c.style.transform = 'translateY(0) scale(1)';
+                        c.style.boxShadow = '';
+                        c.style.borderColor = '';
+                    });
+
+                    // إضافة التحديد الجديد مع أنيميشن متقدم
+                    this.classList.add('border-primary', 'bg-light', 'selected');
+                    selectedDoctor = this.dataset.doctor;
+
+                    // تأثير الاهتزاز الخفيف
+                    this.style.animation = 'gentleShake 0.5s ease-in-out';
+                    setTimeout(() => {
+                        this.style.animation = '';
+                    }, 500);
+
+                    // تفعيل زر التالي مع أنيميشن
+                    const nextBtn = document.getElementById('nextBtn');
+                    nextBtn.disabled = false;
+                    nextBtn.classList.remove('btn-secondary');
+                    nextBtn.classList.add('btn-primary');
+                    nextBtn.style.animation = 'pulse 0.6s ease-in-out';
+                    setTimeout(() => {
+                        nextBtn.style.animation = '';
+                    }, 600);
+
+                    console.log('تم اختيار الطبيب:', selectedDoctor);
+                });
+            });
+        }
+
+        // إضافة تأثيرات بصرية عند الاختيار
+        function playSelectionEffects(element) {
+            // تأثير الاهتزاز للهواتف المحمولة
+            if (navigator.vibrate) {
+                navigator.vibrate(50);
+            }
+
+            // تأثير الجسيمات المتطايرة
+            createParticleEffect(element);
+
+            // تأثير الضوء المتحرك
+            createLightEffect(element);
+        }
+
+        // إنشاء تأثير الجسيمات
+        function createParticleEffect(element) {
+            for (let i = 0; i < 8; i++) {
+                const particle = document.createElement('div');
+                particle.style.cssText = `
+                    position: absolute;
+                    width: 8px;
+                    height: 8px;
+                    background: linear-gradient(45deg, #2196f3, #64b5f6);
+                    border-radius: 50%;
+                    pointer-events: none;
+                    z-index: 1000;
+                `;
+
+                const rect = element.getBoundingClientRect();
+                particle.style.left = (rect.left + rect.width / 2) + 'px';
+                particle.style.top = (rect.top + rect.height / 2) + 'px';
+
+                document.body.appendChild(particle);
+
+                const angle = (i * 45) * Math.PI / 180;
+                const distance = 60 + Math.random() * 40;
+                const duration = 1000 + Math.random() * 500;
+
+                particle.animate([
+                    {
+                        transform: 'translate(0, 0) scale(1)',
+                        opacity: 1
+                    },
+                    {
+                        transform: `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px) scale(0)`,
+                        opacity: 0
+                    }
+                ], {
+                    duration: duration,
+                    easing: 'cubic-bezier(0.4, 0, 0.2, 1)'
+                }).onfinish = () => particle.remove();
+            }
+        }
+
+        // إنشاء تأثير الضوء
+        function createLightEffect(element) {
+            const light = document.createElement('div');
+            light.style.cssText = `
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: radial-gradient(circle, rgba(33, 150, 243, 0.3) 0%, transparent 70%);
+                border-radius: 20px;
+                pointer-events: none;
+                z-index: 5;
+                animation: lightPulse 0.8s ease-out;
+            `;
+
+            element.appendChild(light);
+
+            setTimeout(() => {
+                if (light.parentNode) {
+                    light.remove();
+                }
+            }, 800);
+        }
+
+        // إضافة CSS للأنيميشن الإضافي
+        const additionalStyles = document.createElement('style');
+        additionalStyles.textContent = `
+            @keyframes gentleShake {
+                0%, 100% { transform: translateY(-5px) scale(1.03) rotate(0deg); }
+                25% { transform: translateY(-5px) scale(1.03) rotate(1deg); }
+                75% { transform: translateY(-5px) scale(1.03) rotate(-1deg); }
+            }
+
+            @keyframes lightPulse {
+                0% { opacity: 0; transform: scale(0.8); }
+                50% { opacity: 1; transform: scale(1.1); }
+                100% { opacity: 0; transform: scale(1.3); }
+            }
+
+            .select-doctor-btn {
+                transition: all 0.3s ease;
+            }
+
+            .doctor-card.selected .select-doctor-btn {
+                background: linear-gradient(45deg, #2196f3, #64b5f6);
+                color: white;
+                border-color: #2196f3;
+                transform: scale(1.05);
+            }
+        `;
+        document.head.appendChild(additionalStyles);
+        }
+
+        // Authentication check
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuthStatus();
+        });
+
+        function checkAuthStatus() {
+            const userData = localStorage.getItem('currentUser');
+            if (userData) {
+                const user = JSON.parse(userData);
+                document.getElementById('userMenuContainer').style.display = 'block';
+                document.getElementById('loginMenuContainer').style.display = 'none';
+                document.getElementById('userDisplayName').textContent = user.name;
+            } else {
+                document.getElementById('userMenuContainer').style.display = 'none';
+                document.getElementById('loginMenuContainer').style.display = 'block';
+            }
+        }
+
+        // Logout functionality
+        document.getElementById('logoutBtn')?.addEventListener('click', function(e) {
+            e.preventDefault();
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('rememberUser');
+            checkAuthStatus();
+            showAlert('تم تسجيل الخروج بنجاح', 'info');
+        });
+
+        function showAlert(message, type) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+            alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            document.body.appendChild(alertDiv);
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.remove();
+                }
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

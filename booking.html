@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حجز الموعد - مساعد طبي ذكي</title>
+    <meta name="description" content="اختر التاريخ والوقت المناسب لموعدك">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap RTL -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <!-- Unified Theme CSS -->
+    <link rel="stylesheet" href="css/unified-theme.css">
+    <!-- Medical Enhancements CSS -->
+    <link rel="stylesheet" href="css/medical-enhancements.css">
+    <style>
+        body { font-family: 'Cairo', sans-serif; }
+
+        /* Time slots styling */
+        .time-slot {
+            transition: all 0.3s ease;
+            cursor: pointer;
+            margin: 5px;
+            border: 2px solid #dee2e6;
+            background: white;
+        }
+        .time-slot:hover:not(.unavailable) {
+            transform: translateY(-2px);
+            border-color: var(--bs-primary);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .time-slot.selected {
+            background: var(--bs-primary) !important;
+            color: white !important;
+            border-color: var(--bs-primary) !important;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+        .time-slot.unavailable {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: #f8f9fa;
+        }
+
+        /* Calendar styling */
+        .calendar-day {
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        .calendar-day:hover:not(.unavailable) {
+            background: var(--bs-light);
+            border-color: var(--bs-primary);
+            transform: translateY(-2px);
+        }
+        .calendar-day.selected {
+            background: var(--bs-primary) !important;
+            color: white !important;
+            border-color: var(--bs-primary) !important;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+        .calendar-day.unavailable {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: #f8f9fa;
+        }
+
+        /* Step indicator */
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+        .step {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 10px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        .step.active {
+            background: var(--bs-primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+        .step.completed {
+            background: var(--bs-success);
+            color: white;
+        }
+        .step.pending {
+            background: var(--bs-gray-300);
+            color: var(--bs-gray-600);
+        }
+
+        /* Form enhancements */
+        .form-control:focus, .form-select:focus {
+            border-color: var(--bs-primary);
+            box-shadow: 0 0 0 0.25rem rgba(37, 99, 235, 0.15);
+        }
+
+        /* Button enhancements */
+        .btn-primary:disabled {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+
+        /* Card enhancements */
+        .card {
+            border: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+        }
+
+        /* Alert positioning */
+        .alert {
+            border-radius: 0.75rem;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="index.html">
+                <i class="fas fa-heartbeat text-primary me-2"></i>
+                <span class="fw-bold">مساعد طبي ذكي</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">الرئيسية</a></li>
+                    <li class="nav-item"><a class="nav-link" href="diagnosis.html">التشخيص</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="appointments.html">حجز موعد</a></li>
+                    <li class="nav-item" id="userMenuContainer" style="display: none;">
+                        <div class="dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user-circle me-1"></i>
+                                <span id="userDisplayName">المستخدم</span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="my-appointments.html"><i class="fas fa-calendar me-2"></i>مواعيدي</a></li>
+                                <li><a class="dropdown-item" href="profile.html"><i class="fas fa-user me-2"></i>الملف الشخصي</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#" id="logoutBtn"><i class="fas fa-sign-out-alt me-2"></i>تسجيل الخروج</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="nav-item" id="loginMenuContainer">
+                        <button class="btn btn-outline-primary" onclick="window.location.href='index.html#login'">
+                            <i class="fas fa-sign-in-alt me-1"></i>
+                            تسجيل الدخول
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="py-5 py-md-6 mt-5">
+        <div class="container">
+            <!-- Step Indicator -->
+            <div class="step-indicator">
+                <div class="step completed" id="step1">1</div>
+                <div class="step completed" id="step2">2</div>
+                <div class="step active" id="step3">3</div>
+                <div class="step pending" id="step4">4</div>
+            </div>
+
+            <!-- Header -->
+            <div class="text-center mb-5">
+                <h1 class="display-4 fw-bold text-gradient mb-3">اختيار موعد الحجز</h1>
+                <p class="lead text-muted">اختر التاريخ والوقت المناسب لك</p>
+            </div>
+
+            <div class="row g-5">
+                <!-- Doctor Info -->
+                <div class="col-lg-4">
+                    <div class="card border-0 shadow-sm rounded-4 sticky-top" style="top: 100px;">
+                        <div class="card-body p-4">
+                            <h5 class="fw-bold mb-3">تفاصيل الطبيب</h5>
+                            <div class="d-flex align-items-center mb-3" id="doctorInfo">
+                                <!-- Doctor info will be populated by JavaScript -->
+                            </div>
+                            <hr>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>رسوم الكشف:</span>
+                                <span class="fw-bold text-primary" id="consultationFee">300 جنيه</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>مدة الجلسة:</span>
+                                <span>30 دقيقة</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span>نوع الكشف:</span>
+                                <span>كشف عادي</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Booking Form -->
+                <div class="col-lg-8">
+                    <div class="card border-0 shadow-sm rounded-4">
+                        <div class="card-body p-4">
+                            <!-- Date Selection -->
+                            <div class="mb-5">
+                                <h5 class="fw-bold mb-3">اختيار التاريخ</h5>
+                                <div class="row g-2" id="dateGrid">
+                                    <!-- Dates will be populated by JavaScript -->
+                                </div>
+                            </div>
+
+                            <!-- Time Selection -->
+                            <div class="mb-5">
+                                <h5 class="fw-bold mb-3">اختيار الوقت</h5>
+                                <div class="alert alert-info" id="noTimesAlert" style="display: none;">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    يرجى اختيار تاريخ أولاً لعرض الأوقات المتاحة
+                                </div>
+                                <div id="timeSlots">
+                                    <!-- Time slots will be populated by JavaScript -->
+                                </div>
+                            </div>
+
+                            <!-- Patient Information -->
+                            <div class="mb-4">
+                                <h5 class="fw-bold mb-3">بيانات المريض</h5>
+                                <form id="patientForm">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label for="patientName" class="form-label">اسم المريض</label>
+                                            <input type="text" class="form-control" id="patientName" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="patientPhone" class="form-label">رقم الهاتف</label>
+                                            <input type="tel" class="form-control" id="patientPhone" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="patientAge" class="form-label">العمر</label>
+                                            <input type="number" class="form-control" id="patientAge" min="1" max="120">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="patientGender" class="form-label">الجنس</label>
+                                            <select class="form-select" id="patientGender">
+                                                <option value="">اختر...</option>
+                                                <option value="male">ذكر</option>
+                                                <option value="female">أنثى</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-12">
+                                            <label for="symptoms" class="form-label">وصف الأعراض (اختياري)</label>
+                                            <textarea class="form-control" id="symptoms" rows="3" placeholder="اكتب وصفاً مختصراً للأعراض..."></textarea>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="d-flex justify-content-between mt-5">
+                <button class="btn btn-outline-secondary" onclick="history.back()">
+                    <i class="fas fa-arrow-right me-2"></i>
+                    السابق
+                </button>
+                <button class="btn btn-primary" id="confirmBtn" disabled>
+                    تأكيد الحجز
+                    <i class="fas fa-check ms-2"></i>
+                </button>
+            </div>
+        </div>
+    </main>
+
+
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Common Functions -->
+    <script src="js/common.js"></script>
+    <!-- Arabic Localization -->
+    <script src="js/arabic-localization.js"></script>
+    <!-- Appointments Fix JS -->
+    <script src="js/appointments-fix.js"></script>
+    <script>
+        let selectedDate = null;
+        let selectedTime = null;
+        let currentDoctor = null;
+        
+        // Sample doctors data (same as doctors.html)
+        const doctorsData = {
+            1: { name: 'د. أحمد محمد', image: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=150&h=150&fit=crop&crop=face', price: 300, specialty: 'أمراض القلب' },
+            2: { name: 'د. فاطمة علي', image: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=150&h=150&fit=crop&crop=face', price: 350, specialty: 'أمراض القلب' },
+            3: { name: 'د. محمد حسن', image: 'https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=150&h=150&fit=crop&crop=face', price: 400, specialty: 'أمراض القلب' },
+            4: { name: 'د. سارة أحمد', image: 'https://images.unsplash.com/photo-1594824475317-d3c5b8b8e8e8?w=150&h=150&fit=crop&crop=face', price: 450, specialty: 'أمراض الأعصاب' },
+            5: { name: 'د. عمر محمود', image: 'https://images.unsplash.com/photo-1607990281513-2c110a25bd8c?w=150&h=150&fit=crop&crop=face', price: 380, specialty: 'أمراض الأعصاب' },
+            6: { name: 'د. ليلى حسام', image: 'https://images.unsplash.com/photo-1594824475317-d3c5b8b8e8e8?w=150&h=150&fit=crop&crop=face', price: 320, specialty: 'العظام' },
+            7: { name: 'د. كريم فؤاد', image: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=150&h=150&fit=crop&crop=face', price: 280, specialty: 'العظام' },
+            8: { name: 'د. نور الهدى', image: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=150&h=150&fit=crop&crop=face', price: 250, specialty: 'الجلدية' },
+            9: { name: 'د. حسام الدين', image: 'https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=150&h=150&fit=crop&crop=face', price: 220, specialty: 'الجلدية' },
+            10: { name: 'د. منى سالم', image: 'https://images.unsplash.com/photo-1594824475317-d3c5b8b8e8e8?w=150&h=150&fit=crop&crop=face', price: 200, specialty: 'طب الأطفال' },
+            11: { name: 'د. يوسف عادل', image: 'https://images.unsplash.com/photo-1607990281513-2c110a25bd8c?w=150&h=150&fit=crop&crop=face', price: 180, specialty: 'طب الأطفال' },
+            12: { name: 'د. رانيا طارق', image: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=150&h=150&fit=crop&crop=face', price: 150, specialty: 'طب عام' },
+            13: { name: 'د. خالد نبيل', image: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=150&h=150&fit=crop&crop=face', price: 120, specialty: 'طب عام' }
+        };
+        
+        // Available time slots
+        const timeSlots = [
+            '09:00', '09:30', '10:00', '10:30', '11:00', '11:30',
+            '12:00', '12:30', '14:00', '14:30', '15:00', '15:30',
+            '16:00', '16:30', '17:00', '17:30', '18:00', '18:30'
+        ];
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get doctor from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const doctorId = urlParams.get('doctor');
+            currentDoctor = doctorsData[doctorId];
+            
+            if (currentDoctor) {
+                loadDoctorInfo(currentDoctor);
+                generateDates();
+                setupEventListeners();
+            }
+        });
+        
+        function loadDoctorInfo(doctor) {
+            const doctorInfoElement = document.getElementById('doctorInfo');
+            const consultationFeeElement = document.getElementById('consultationFee');
+
+            if (doctorInfoElement) {
+                doctorInfoElement.innerHTML = `
+                    <img src="${doctor.image}" alt="${doctor.name}" class="rounded-circle me-3" style="width: 60px; height: 60px; object-fit: cover;">
+                    <div>
+                        <h6 class="fw-bold mb-1">${doctor.name}</h6>
+                        <small class="text-muted">${doctor.specialty || 'طبيب متخصص'}</small>
+                    </div>
+                `;
+            }
+
+            if (consultationFeeElement) {
+                consultationFeeElement.textContent = `${doctor.price} جنيه`;
+            }
+        }
+        
+        function generateDates() {
+            const dateGrid = document.getElementById('dateGrid');
+            if (!dateGrid) return;
+
+            const today = new Date();
+            const dates = [];
+
+            for (let i = 0; i < 14; i++) {
+                const date = new Date(today);
+                date.setDate(today.getDate() + i);
+                dates.push(date);
+            }
+
+            dateGrid.innerHTML = dates.map(date => {
+                const dayName = date.toLocaleDateString('ar-EG', { weekday: 'short' });
+                const dayNumber = date.getDate();
+                const monthName = date.toLocaleDateString('ar-EG', { month: 'short' });
+                const isWeekend = date.getDay() === 5 || date.getDay() === 6; // Friday or Saturday
+
+                return `
+                    <div class="col-6 col-md-4 col-lg-3">
+                        <div class="card calendar-day ${isWeekend ? 'unavailable' : ''}" data-date="${date.toISOString().split('T')[0]}" style="cursor: pointer; transition: all 0.3s ease;">
+                            <div class="card-body text-center p-2">
+                                <div class="fw-bold">${dayName}</div>
+                                <div class="h5 mb-0">${dayNumber}</div>
+                                <div class="small text-muted">${monthName}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Add event listeners after creating the calendar
+            addDateEventListeners();
+        }
+
+        function addDateEventListeners() {
+            document.querySelectorAll('.calendar-day:not(.unavailable)').forEach(day => {
+                day.addEventListener('click', function() {
+                    // Remove previous selection
+                    document.querySelectorAll('.calendar-day').forEach(d => d.classList.remove('selected'));
+
+                    // Add selection to clicked day
+                    this.classList.add('selected');
+                    selectedDate = this.dataset.date;
+
+                    // Generate time slots
+                    generateTimeSlots();
+
+                    // Hide no times alert
+                    const noTimesAlert = document.getElementById('noTimesAlert');
+                    if (noTimesAlert) {
+                        noTimesAlert.style.display = 'none';
+                    }
+
+                    // Check form completion
+                    checkFormCompletion();
+                });
+            });
+        }
+        
+        function generateTimeSlots() {
+            const timeSlotsContainer = document.getElementById('timeSlots');
+            if (!timeSlotsContainer) return;
+
+            const unavailableTimes = ['10:30', '14:30', '16:00']; // Sample unavailable times
+
+            timeSlotsContainer.innerHTML = timeSlots.map(time => {
+                const isUnavailable = unavailableTimes.includes(time);
+                return `
+                    <button class="btn btn-outline-primary time-slot ${isUnavailable ? 'unavailable' : ''}"
+                            data-time="${time}" ${isUnavailable ? 'disabled' : ''}
+                            style="margin: 5px; transition: all 0.3s ease;">
+                        ${time}
+                    </button>
+                `;
+            }).join('');
+
+            // Add event listeners for time slots
+            addTimeSlotEventListeners();
+        }
+
+        function addTimeSlotEventListeners() {
+            document.querySelectorAll('.time-slot:not(.unavailable)').forEach(slot => {
+                slot.addEventListener('click', function() {
+                    // Remove previous selection
+                    document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+
+                    // Add selection to clicked slot
+                    this.classList.add('selected');
+                    selectedTime = this.dataset.time;
+
+                    // Check form completion
+                    checkFormCompletion();
+                });
+            });
+        }
+        
+        function setupEventListeners() {
+            // Form inputs
+            const formInputs = document.querySelectorAll('#patientForm input, #patientForm select, #patientForm textarea');
+            formInputs.forEach(input => {
+                input.addEventListener('input', checkFormCompletion);
+                input.addEventListener('change', checkFormCompletion);
+            });
+
+            // Confirm button
+            const confirmBtn = document.getElementById('confirmBtn');
+            if (confirmBtn) {
+                confirmBtn.addEventListener('click', function() {
+                    if (validateForm()) {
+                        const bookingData = {
+                            doctor: currentDoctor,
+                            date: selectedDate,
+                            time: selectedTime,
+                            patient: {
+                                name: document.getElementById('patientName').value,
+                                phone: document.getElementById('patientPhone').value,
+                                age: document.getElementById('patientAge').value,
+                                gender: document.getElementById('patientGender').value,
+                                symptoms: document.getElementById('symptoms').value
+                            }
+                        };
+
+                        // Store booking data and redirect to confirmation
+                        localStorage.setItem('bookingData', JSON.stringify(bookingData));
+                        window.location.href = 'confirmation.html';
+                    }
+                });
+            }
+        }
+        
+        function checkFormCompletion() {
+            const nameElement = document.getElementById('patientName');
+            const phoneElement = document.getElementById('patientPhone');
+            const confirmBtn = document.getElementById('confirmBtn');
+
+            if (!nameElement || !phoneElement || !confirmBtn) return;
+
+            const name = nameElement.value.trim();
+            const phone = phoneElement.value.trim();
+
+            const isComplete = selectedDate && selectedTime && name && phone;
+            confirmBtn.disabled = !isComplete;
+
+            // Update button appearance
+            if (isComplete) {
+                confirmBtn.classList.remove('btn-secondary');
+                confirmBtn.classList.add('btn-primary');
+            } else {
+                confirmBtn.classList.remove('btn-primary');
+                confirmBtn.classList.add('btn-secondary');
+            }
+        }
+        
+        function validateForm() {
+            const nameElement = document.getElementById('patientName');
+            const phoneElement = document.getElementById('patientPhone');
+
+            if (!nameElement || !phoneElement) {
+                showAlert('خطأ في النموذج', 'error');
+                return false;
+            }
+
+            const name = nameElement.value.trim();
+            const phone = phoneElement.value.trim();
+
+            if (!selectedDate || !selectedTime) {
+                showAlert('يرجى اختيار التاريخ والوقت', 'warning');
+                return false;
+            }
+
+            if (!name || name.length < 2) {
+                showAlert('يرجى إدخال اسم المريض (على الأقل حرفين)', 'warning');
+                nameElement.focus();
+                return false;
+            }
+
+            if (!phone || phone.length < 10) {
+                showAlert('يرجى إدخال رقم هاتف صحيح (على الأقل 10 أرقام)', 'warning');
+                phoneElement.focus();
+                return false;
+            }
+
+            return true;
+        }
+
+        function showAlert(message, type = 'info') {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+            alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+
+            document.body.appendChild(alertDiv);
+
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.remove();
+                }
+            }, 5000);
+        }
+
+        // Authentication check and auto-fill user data
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuthStatus();
+            autoFillUserData();
+        });
+
+        function checkAuthStatus() {
+            const userData = localStorage.getItem('currentUser');
+            if (userData) {
+                const user = JSON.parse(userData);
+                document.getElementById('userMenuContainer').style.display = 'block';
+                document.getElementById('loginMenuContainer').style.display = 'none';
+                document.getElementById('userDisplayName').textContent = user.name;
+            } else {
+                document.getElementById('userMenuContainer').style.display = 'none';
+                document.getElementById('loginMenuContainer').style.display = 'block';
+            }
+        }
+
+        function autoFillUserData() {
+            const userData = localStorage.getItem('currentUser');
+            if (userData) {
+                const user = JSON.parse(userData);
+
+                // Auto-fill patient information if user is logged in
+                const nameField = document.getElementById('patientName');
+                const phoneField = document.getElementById('patientPhone');
+
+                if (nameField && !nameField.value) {
+                    nameField.value = user.name;
+                }
+
+                if (phoneField && !phoneField.value && user.phone) {
+                    phoneField.value = user.phone;
+                }
+
+                // Check form completion after auto-fill
+                setTimeout(checkFormCompletion, 100);
+            }
+        }
+
+        // Logout functionality
+        document.getElementById('logoutBtn')?.addEventListener('click', function(e) {
+            e.preventDefault();
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('rememberUser');
+            checkAuthStatus();
+
+            // Clear auto-filled data
+            document.getElementById('patientName').value = '';
+            document.getElementById('patientPhone').value = '';
+            checkFormCompletion();
+
+            showAlert('تم تسجيل الخروج بنجاح', 'info');
+        });
+    </script>
+</body>
+</html>

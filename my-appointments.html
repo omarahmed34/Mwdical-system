@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مواعيدي - مساعد طبي ذكي</title>
+    <meta name="description" content="إدارة ومتابعة مواعيدك الطبية">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap RTL -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <!-- Unified Theme CSS -->
+    <link rel="stylesheet" href="css/unified-theme.css">
+    <!-- Medical Enhancements CSS -->
+    <link rel="stylesheet" href="css/medical-enhancements.css">
+    <style>
+        body { font-family: 'Cairo', sans-serif; }
+        .appointment-card { transition: all 0.3s ease; }
+        .appointment-card:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
+        .status-badge { font-size: 0.8rem; }
+        .status-confirmed { background: var(--bs-success); }
+        .status-pending { background: var(--bs-warning); }
+        .status-cancelled { background: var(--bs-danger); }
+        .status-completed { background: var(--bs-info); }
+        .filter-tabs { border-bottom: 2px solid var(--bs-gray-200); }
+        .filter-tab { cursor: pointer; padding: 1rem; border-bottom: 3px solid transparent; transition: all 0.3s ease; }
+        .filter-tab.active { border-bottom-color: var(--bs-primary); color: var(--bs-primary); font-weight: 600; }
+        .empty-state { text-align: center; padding: 3rem 1rem; color: var(--bs-gray-500); }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="index.html">
+                <i class="fas fa-heartbeat text-primary me-2"></i>
+                <span class="fw-bold">مساعد طبي ذكي</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">الرئيسية</a></li>
+                    <li class="nav-item"><a class="nav-link" href="diagnosis.html">التشخيص</a></li>
+                    <li class="nav-item"><a class="nav-link" href="appointments.html">حجز موعد</a></li>
+                    <li class="nav-item" id="userMenuContainer" style="display: none;">
+                        <div class="dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user-circle me-1"></i>
+                                <span id="userDisplayName">المستخدم</span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="my-appointments.html"><i class="fas fa-calendar me-2"></i>مواعيدي</a></li>
+                                <li><a class="dropdown-item" href="profile.html"><i class="fas fa-user me-2"></i>الملف الشخصي</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#" id="logoutBtn"><i class="fas fa-sign-out-alt me-2"></i>تسجيل الخروج</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="nav-item" id="loginMenuContainer">
+                        <button class="btn btn-outline-primary" onclick="window.location.href='index.html#login'">
+                            <i class="fas fa-sign-in-alt me-1"></i>
+                            تسجيل الدخول
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="py-5 py-md-6 mt-5">
+        <div class="container">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-5">
+                <div>
+                    <h1 class="display-4 fw-bold text-gradient mb-2">مواعيدي</h1>
+                    <p class="lead text-muted">إدارة ومتابعة مواعيدك الطبية</p>
+                </div>
+                <a href="appointments.html" class="btn btn-primary btn-lg">
+                    <i class="fas fa-plus me-2"></i>
+                    حجز موعد جديد
+                </a>
+            </div>
+
+            <!-- Filter Tabs -->
+            <div class="filter-tabs mb-4">
+                <div class="d-flex">
+                    <div class="filter-tab active" data-filter="all">
+                        <i class="fas fa-list me-2"></i>
+                        جميع المواعيد
+                    </div>
+                    <div class="filter-tab" data-filter="upcoming">
+                        <i class="fas fa-clock me-2"></i>
+                        القادمة
+                    </div>
+                    <div class="filter-tab" data-filter="completed">
+                        <i class="fas fa-check me-2"></i>
+                        المكتملة
+                    </div>
+                    <div class="filter-tab" data-filter="cancelled">
+                        <i class="fas fa-times me-2"></i>
+                        الملغية
+                    </div>
+                </div>
+            </div>
+
+            <!-- Appointments List -->
+            <div id="appointmentsList">
+                <!-- Appointments will be populated by JavaScript -->
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <i class="fas fa-calendar-times fa-4x mb-3"></i>
+                <h4>لا توجد مواعيد</h4>
+                <p>لم تقم بحجز أي مواعيد بعد</p>
+                <a href="appointments.html" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>
+                    احجز موعدك الأول
+                </a>
+            </div>
+        </div>
+    </main>
+<!-- Cancel Appointment Modal -->
+<div class="modal fade" id="cancelModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4">
+            <div class="modal-header border-0">
+                <h5 class="modal-title">إلغاء الموعد</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center mb-4">
+                    <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
+                    <h6>هل أنت متأكد من إلغاء هذا الموعد؟</h6>
+                    <p class="text-muted">لن تتمكن من التراجع عن هذا الإجراء</p>
+                </div>
+                <div class="mb-3">
+                    <label for="cancelReason" class="form-label">سبب الإلغاء (اختياري)</label>
+                    <select class="form-select" id="cancelReason">
+                        <option value="">اختر السبب...</option>
+                        <option value="emergency">ظرف طارئ</option>
+                        <option value="schedule">تعارض في المواعيد</option>
+                        <option value="health">تحسن الحالة الصحية</option>
+                        <option value="other">سبب آخر</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">تراجع</button>
+                <button type="button" class="btn btn-danger" id="confirmCancel">تأكيد الإلغاء</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <!-- Reschedule Modal -->
+    <div class="modal fade" id="rescheduleModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-4">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title">إعادة جدولة الموعد</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted mb-4">اختر موعداً جديداً لإعادة جدولة حجزك</p>
+                    <div class="mb-3">
+                        <label for="newDate" class="form-label">التاريخ الجديد</label>
+                        <input type="date" class="form-control" id="newDate">
+                    </div>
+                    <div class="mb-3">
+                        <label for="newTime" class="form-label">الوقت الجديد</label>
+                        <select class="form-select" id="newTime">
+                            <option value="">اختر الوقت...</option>
+                            <option value="09:00">09:00 صباحاً</option>
+                            <option value="10:00">10:00 صباحاً</option>
+                            <option value="11:00">11:00 صباحاً</option>
+                            <option value="14:00">02:00 مساءً</option>
+                            <option value="15:00">03:00 مساءً</option>
+                            <option value="16:00">04:00 مساءً</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                    <button type="button" class="btn btn-primary" id="confirmReschedule">تأكيد التعديل</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Arabic Localization -->
+    <script src="js/arabic-localization.js"></script>
+    <script>
+        let appointments = [];
+        let currentFilter = 'all';
+        let appointmentToCancel = null;
+        let appointmentToReschedule = null;
+        
+        // Sample appointments data
+        const sampleAppointments = [
+            {
+                id: 1,
+                doctor: { name: 'د. أحمد محمد', image: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=150&h=150&fit=crop&crop=face', specialty: 'أمراض القلب' },
+                date: '2024-12-20',
+                time: '10:00',
+                status: 'confirmed',
+                price: 300,
+                bookingNumber: 'BK-20241220-001'
+            },
+            {
+                id: 2,
+                doctor: { name: 'د. فاطمة علي', image: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=150&h=150&fit=crop&crop=face', specialty: 'الجلدية' },
+                date: '2024-12-15',
+                time: '14:30',
+                status: 'completed',
+                price: 250,
+                bookingNumber: 'BK-20241215-002'
+            },
+            {
+                id: 3,
+                doctor: { name: 'د. محمد حسن', image: 'https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=150&h=150&fit=crop&crop=face', specialty: 'العظام' },
+                date: '2024-12-10',
+                time: '16:00',
+                status: 'cancelled',
+                price: 320,
+                bookingNumber: 'BK-20241210-003'
+            }
+        ];
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuthStatus();
+            loadUserAppointments();
+            setupEventListeners();
+        });
+
+        function checkAuthStatus() {
+            const userData = localStorage.getItem('currentUser');
+            if (userData) {
+                const user = JSON.parse(userData);
+                document.getElementById('userMenuContainer').style.display = 'block';
+                document.getElementById('loginMenuContainer').style.display = 'none';
+                document.getElementById('userDisplayName').textContent = user.name;
+            } else {
+                // Redirect to login if not authenticated
+                window.location.href = 'index.html#login';
+                return;
+            }
+        }
+
+        function loadUserAppointments() {
+            // Load appointments from localStorage
+            const userAppointments = JSON.parse(localStorage.getItem('userAppointments') || '[]');
+
+            if (userAppointments.length === 0) {
+                // Use sample data if no real appointments exist
+                appointments = sampleAppointments;
+            } else {
+                appointments = userAppointments;
+            }
+
+            renderAppointments();
+        }
+        
+        function setupEventListeners() {
+            // Filter tabs
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    currentFilter = this.dataset.filter;
+                    renderAppointments();
+                });
+            });
+            
+            // Cancel appointment
+            document.getElementById('confirmCancel').addEventListener('click', function() {
+                if (appointmentToCancel) {
+                    const appointment = appointments.find(a => a.id === appointmentToCancel);
+                    if (appointment) {
+                        appointment.status = 'cancelled';
+                        appointment.cancelledAt = new Date().toISOString();
+                        appointment.cancelReason = document.getElementById('cancelReason').value;
+
+                        // Save to localStorage
+                        localStorage.setItem('userAppointments', JSON.stringify(appointments));
+
+                        renderAppointments();
+                        bootstrap.Modal.getInstance(document.getElementById('cancelModal')).hide();
+                        showAlert('تم إلغاء الموعد بنجاح', 'success');
+                    }
+                }
+            });
+
+            // Logout functionality
+            document.getElementById('logoutBtn')?.addEventListener('click', function(e) {
+                e.preventDefault();
+                localStorage.removeItem('currentUser');
+                localStorage.removeItem('rememberUser');
+                showAlert('تم تسجيل الخروج بنجاح', 'info');
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1000);
+            });
+            
+            // Reschedule appointment
+            document.getElementById('confirmReschedule').addEventListener('click', function() {
+                const newDate = document.getElementById('newDate').value;
+                const newTime = document.getElementById('newTime').value;
+
+                if (appointmentToReschedule && newDate && newTime) {
+                    const appointment = appointments.find(a => a.id === appointmentToReschedule);
+                    if (appointment) {
+                        appointment.date = newDate;
+                        appointment.time = newTime;
+                        appointment.rescheduledAt = new Date().toISOString();
+
+                        // Save to localStorage
+                        localStorage.setItem('userAppointments', JSON.stringify(appointments));
+
+                        renderAppointments();
+                        bootstrap.Modal.getInstance(document.getElementById('rescheduleModal')).hide();
+                        showAlert('تم تعديل موعد الحجز بنجاح', 'success');
+
+                        // Clear form
+                        document.getElementById('newDate').value = '';
+                        document.getElementById('newTime').value = '';
+                    }
+                }
+            });
+        }
+        
+        function renderAppointments() {
+            const filteredAppointments = filterAppointments();
+            const appointmentsList = document.getElementById('appointmentsList');
+            const emptyState = document.getElementById('emptyState');
+            
+            if (filteredAppointments.length === 0) {
+                appointmentsList.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+            
+            emptyState.style.display = 'none';
+            appointmentsList.innerHTML = filteredAppointments.map(appointment => createAppointmentCard(appointment)).join('');
+            
+            // Add event listeners to action buttons
+            addActionListeners();
+        }
+        
+        function filterAppointments() {
+            const today = new Date().toISOString().split('T')[0];
+            
+            switch (currentFilter) {
+                case 'upcoming':
+                    return appointments.filter(a => a.date >= today && a.status === 'confirmed');
+                case 'completed':
+                    return appointments.filter(a => a.status === 'completed');
+                case 'cancelled':
+                    return appointments.filter(a => a.status === 'cancelled');
+                default:
+                    return appointments;
+            }
+        }
+        
+        function createAppointmentCard(appointment) {
+            const statusLabels = {
+                confirmed: 'مؤكد',
+                pending: 'في الانتظار',
+                completed: 'مكتمل',
+                cancelled: 'ملغي'
+            };
+            
+            const statusClasses = {
+                confirmed: 'status-confirmed',
+                pending: 'status-pending',
+                completed: 'status-completed',
+                cancelled: 'status-cancelled'
+            };
+            
+            const appointmentDate = new Date(appointment.date);
+            const formattedDate = appointmentDate.toLocaleDateString('ar-EG', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            
+            const canModify = appointment.status === 'confirmed' && appointment.date >= new Date().toISOString().split('T')[0];
+            
+            return `
+                <div class="card appointment-card border-0 shadow-sm rounded-4 mb-4">
+                    <div class="card-body p-4">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <div class="d-flex align-items-center mb-3">
+                                    <img src="${appointment.doctor.image}" alt="${appointment.doctor.name}" 
+                                         class="rounded-circle me-3" style="width: 60px; height: 60px; object-fit: cover;">
+                                    <div>
+                                        <h5 class="fw-bold mb-1">${appointment.doctor.name}</h5>
+                                        <p class="text-muted mb-1">${appointment.doctor.specialty}</p>
+                                        <small class="text-primary">رقم الحجز: #${appointment.bookingNumber}</small>
+                                    </div>
+                                </div>
+                                <div class="row g-3">
+                                    <div class="col-sm-6">
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-calendar text-primary me-2"></i>
+                                            <span>${formattedDate}</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-clock text-primary me-2"></i>
+                                            <span>${appointment.time}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                                <div class="mb-3">
+                                    <span class="badge ${statusClasses[appointment.status]} status-badge px-3 py-2">
+                                        ${statusLabels[appointment.status]}
+                                    </span>
+                                </div>
+                                <div class="mb-3">
+                                    <span class="fw-bold text-primary">${appointment.price} جنيه</span>
+                                </div>
+                                <div class="d-flex flex-column gap-2">
+                                    ${canModify ? `
+                                        <button class="btn btn-outline-primary btn-sm reschedule-btn" data-id="${appointment.id}">
+                                            <i class="fas fa-edit me-1"></i>
+                                            تعديل
+                                        </button>
+                                   <button class="btn btn-outline-danger btn-sm cancel-btn" data-id="${appointment.id}">
+    <i class="fas fa-times me-1"></i>
+    إلغاء
+</button>
+
+                                    ` : ''}
+                                    <button class="btn btn-outline-info btn-sm details-btn" data-id="${appointment.id}">
+                                        <i class="fas fa-eye me-1"></i>
+                                        التفاصيل
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function addActionListeners() {
+            // Cancel buttons
+          document.querySelectorAll('.cancel-btn').forEach(btn => {
+    btn.addEventListener('click', function () {
+        appointmentToCancel = parseInt(this.dataset.id);
+        const cancelModal = new bootstrap.Modal(document.getElementById('cancelModal'));
+        cancelModal.show();
+    });
+});
+
+            // Reschedule buttons
+            document.querySelectorAll('.reschedule-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    appointmentToReschedule = parseInt(this.dataset.id);
+                    new bootstrap.Modal(document.getElementById('rescheduleModal')).show();
+                });
+            });
+            
+            // Details buttons
+            document.querySelectorAll('.details-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const appointmentId = parseInt(this.dataset.id);
+                    showAppointmentDetails(appointmentId);
+                });
+            });
+        }
+        
+        function showAppointmentDetails(appointmentId) {
+            const appointment = appointments.find(a => a.id === appointmentId);
+            if (appointment) {
+                alert(`تفاصيل الموعد:\nالطبيب: ${appointment.doctor.name}\nالتاريخ: ${appointment.date}\nالوقت: ${appointment.time}\nالحالة: ${appointment.status}`);
+            }
+        }
+        
+        function showAlert(message, type = 'info') {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+            alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            document.body.appendChild(alertDiv);
+            
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.remove();
+                }
+            }, 5000);
+        }
+
+
+    </script>
+</body>
+</html>

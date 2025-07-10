@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>النظام الطبي الذكي الموحد</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success-gradient: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            --warning-gradient: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+            --danger-gradient: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%);
+            --card-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            --border-radius: 20px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: var(--primary-gradient);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header-card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .header-card h1 {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .chat-container {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            height: 600px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .quick-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            justify-content: center;
+        }
+
+        .quick-btn {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .quick-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+            background: #f8f9fa;
+        }
+
+        .message {
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: flex-start;
+            animation: fadeInUp 0.3s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message.bot {
+            justify-content: flex-start;
+        }
+
+        .message-content {
+            max-width: 75%;
+            padding: 1rem 1.5rem;
+            border-radius: 20px;
+            word-wrap: break-word;
+            position: relative;
+        }
+
+        .message.user .message-content {
+            background: var(--primary-gradient);
+            color: white;
+            border-bottom-right-radius: 5px;
+        }
+
+        .message.bot .message-content {
+            background: white;
+            color: #333;
+            border-bottom-left-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .message-time {
+            font-size: 0.7rem;
+            opacity: 0.7;
+            margin-top: 0.5rem;
+        }
+
+        .chat-input {
+            padding: 1.5rem;
+            background: white;
+            border-top: 1px solid #eee;
+        }
+
+        .input-group .form-control {
+            border-radius: 25px;
+            border: 2px solid #e9ecef;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+        }
+
+        .input-group .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+
+        .input-group .btn {
+            border-radius: 25px;
+            padding: 0.75rem 1.5rem;
+            background: var(--primary-gradient);
+            border: none;
+            margin-right: 0.5rem;
+        }
+
+        .diagnosis-result {
+            background: var(--success-gradient);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin: 1rem 0;
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .nutrition-result {
+            background: var(--warning-gradient);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin: 1rem 0;
+            box-shadow: 0 5px 15px rgba(255, 193, 7, 0.3);
+        }
+
+        .emergency-result {
+            background: var(--danger-gradient);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin: 1rem 0;
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        .severity-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-right: 0.5rem;
+        }
+
+        .severity-low { 
+            background: rgba(255,255,255,0.2); 
+            color: white; 
+        }
+
+        .severity-medium { 
+            background: rgba(255,255,255,0.3); 
+            color: white; 
+        }
+
+        .severity-high { 
+            background: rgba(255,255,255,0.4); 
+            color: white; 
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 1rem;
+            text-align: center;
+            color: #666;
+        }
+
+        .typing-dots {
+            display: inline-block;
+        }
+
+        .typing-dots span {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #667eea;
+            margin: 0 2px;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+
+        .typing-dots span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dots span:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes typing {
+            0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+
+        .feature-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            padding: 1.5rem;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+
+        .scrollbar-custom::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .scrollbar-custom::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .scrollbar-custom::-webkit-scrollbar-thumb {
+            background: var(--primary-gradient);
+            border-radius: 10px;
+        }
+
+        .scrollbar-custom::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 0 10px;
+            }
+            
+            .chat-container {
+                height: 500px;
+            }
+            
+            .message-content {
+                max-width: 85%;
+            }
+            
+            .quick-buttons {
+                gap: 0.3rem;
+            }
+            
+            .quick-btn {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Header -->
+        <div class="header-card">
+            <h1><i class="fas fa-heartbeat me-3"></i>النظام الطبي الذكي الموحد</h1>
+            <p class="lead mb-0">مساعدك الطبي الشخصي المتاح 24/7 للتشخيص والاستشارات الغذائية</p>
+        </div>
+
+        <!-- Feature Cards -->
+        <div class="feature-cards">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-stethoscope"></i>
+                </div>
+                <h5>التشخيص الطبي</h5>
+                <p>تشخيص ذكي لأكثر من 25 عرض طبي مع نصائح مخصصة</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-utensils"></i>
+                </div>
+                <h5>الأنظمة الغذائية</h5>
+                <p>خطط غذائية مخصصة للحالات الصحية المختلفة</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-pills"></i>
+                </div>
+                <h5>معلومات الأدوية</h5>
+                <p>معلومات شاملة عن الفيتامينات والمعادن</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h5>التقارير الطبية</h5>
+                <p>تقارير وإحصائيات مفصلة عن حالتك الصحية</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-cog"></i>
+                </div>
+                <h5>الإعدادات</h5>
+                <p>تخصيص النظام حسب تفضيلاتك الشخصية</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-ambulance"></i>
+                </div>
+                <h5>الطوارئ الطبية</h5>
+                <p>مساعدة فورية وأرقام طوارئ في الحالات العاجلة</p>
+            </div>
+        </div>
+
+        <!-- Chat Container -->
+        <div class="chat-container">
+            <div class="chat-header">
+                <h5 class="mb-2">
+                    <i class="fas fa-robot me-2"></i>
+                    الدكتور الذكي
+                </h5>
+                <small>مساعدك الطبي الشخصي</small>
+                
+                <div class="quick-buttons">
+                    <button class="quick-btn" onclick="quickMessage('صداع')">
+                        🤕 صداع
+                    </button>
+                    <button class="quick-btn" onclick="quickMessage('حمى')">
+                        🌡️ حمى
+                    </button>
+                    <button class="quick-btn" onclick="quickMessage('سعال')">
+                        😷 سعال
+                    </button>
+                    <button class="quick-btn" onclick="quickMessage('ألم في البطن')">
+                        🤢 ألم في البطن
+                    </button>
+                    <button class="quick-btn" onclick="quickMessage('ألم في الصدر')">
+                        💔 ألم في الصدر
+                    </button>
+                    <button class="quick-btn" onclick="quickMessage('نظام غذائي للسكري')">
+                        🍎 نظام السكري
+                    </button>
+                    <button class="quick-btn" onclick="quickMessage('كيف أنقص وزني؟')">
+                        ⚖️ إنقاص الوزن
+                    </button>
+                    <button class="quick-btn" onclick="quickMessage('فيتامين د')">
+                        ☀️ فيتامين د
+                    </button>
+                </div>
+
+                <!-- Quick Navigation -->
+                <div class="mt-3">
+                    <small class="text-white-50">الوصول السريع:</small>
+                    <div class="d-flex flex-wrap gap-1 mt-2">
+                        <a href="profile.html" class="btn btn-outline-light btn-sm">
+                            <i class="fas fa-user me-1"></i>الملف الشخصي
+                        </a>
+                        <a href="medical-reports.html" class="btn btn-outline-light btn-sm">
+                            <i class="fas fa-chart-line me-1"></i>التقارير
+                        </a>
+                        <a href="settings.html" class="btn btn-outline-light btn-sm">
+                            <i class="fas fa-cog me-1"></i>الإعدادات
+                        </a>
+                        <a href="help-support.html" class="btn btn-outline-light btn-sm">
+                            <i class="fas fa-question-circle me-1"></i>المساعدة
+                        </a>
+                        <a href="emergency.html" class="btn btn-outline-danger btn-sm">
+                            <i class="fas fa-ambulance me-1"></i>الطوارئ
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="chat-messages scrollbar-custom" id="chatMessages">
+                <!-- الرسائل ستظهر هنا -->
+            </div>
+            
+            <div class="typing-indicator" id="typingIndicator">
+                <div class="typing-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                الدكتور الذكي يكتب...
+            </div>
+            
+            <div class="chat-input">
+                <div class="input-group">
+                    <input type="text" class="form-control" id="messageInput" 
+                           placeholder="اوصف أعراضك أو اسأل عن نظام غذائي..." 
+                           onkeypress="if(event.key==='Enter') sendMessage()">
+                    <button class="btn btn-primary" onclick="sendMessage()">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // قاعدة البيانات الطبية الموحدة
+        const medicalDatabase = {
+            symptoms: {
+                'صداع': {
+                    conditions: ['الصداع النصفي', 'صداع التوتر', 'ارتفاع ضغط الدم', 'التهاب الجيوب الأنفية'],
+                    severity: 'متوسط',
+                    specialty: 'الأعصاب',
+                    advice: ['احصل على راحة كافية', 'اشرب كمية كافية من الماء', 'تجنب الضوضاء والأضواء الساطعة', 'ضع كمادات باردة على الجبهة']
+                },
+                'حمى': {
+                    conditions: ['عدوى فيروسية', 'عدوى بكتيرية', 'الإنفلونزا', 'التهاب الحلق'],
+                    severity: 'عالي',
+                    specialty: 'الطب الباطني',
+                    advice: ['اشرب سوائل كثيرة', 'احصل على راحة تامة', 'راجع الطبيب إذا ارتفعت الحرارة عن 39°', 'استخدم خافض حرارة حسب الحاجة']
+                },
+                'سعال': {
+                    conditions: ['نزلة برد', 'التهاب الشعب الهوائية', 'الربو', 'الحساسية', 'التهاب الرئة'],
+                    severity: 'متوسط',
+                    specialty: 'أمراض الصدر',
+                    advice: ['اشرب مشروبات دافئة', 'تجنب المهيجات', 'استخدم مرطب الهواء', 'تناول العسل الطبيعي']
+                },
+                'ألم في الصدر': {
+                    conditions: ['ذبحة صدرية', 'ارتجاع المريء', 'التهاب الغضروف الضلعي', 'التهاب عضلة القلب'],
+                    severity: 'عالي',
+                    specialty: 'أمراض القلب',
+                    advice: ['توجه للطوارئ فوراً إذا كان الألم شديد', 'تجنب المجهود الشاق', 'راجع طبيب القلب', 'لا تتجاهل الألم']
+                },
+                'ضيق في التنفس': {
+                    conditions: ['الربو', 'أمراض القلب', 'فقر الدم', 'القلق', 'انسداد رئوي'],
+                    severity: 'عالي',
+                    specialty: 'أمراض القلب',
+                    advice: ['اجلس في وضع مستقيم', 'تنفس ببطء وعمق', 'راجع الطبيب فوراً', 'تجنب المجهود الشاق']
+                },
+                'ألم في البطن': {
+                    conditions: ['التهاب المعدة', 'قرحة المعدة', 'متلازمة القولون العصبي', 'التهاب الزائدة الدودية'],
+                    severity: 'متوسط',
+                    specialty: 'الطب الباطني',
+                    advice: ['تجنب الأطعمة الحارة والدهنية', 'تناول وجبات صغيرة', 'اشرب ماء بكميات قليلة ومتكررة', 'ضع كمادات دافئة']
+                },
+                'إسهال': {
+                    conditions: ['التسمم الغذائي', 'عدوى معوية', 'متلازمة القولون العصبي', 'عدم تحمل اللاكتوز'],
+                    severity: 'متوسط',
+                    specialty: 'الطب الباطني',
+                    advice: ['اشرب محلول الجفاف', 'تجنب منتجات الألبان', 'تناول الأرز المسلوق والموز', 'تجنب الأطعمة الدهنية']
+                },
+                'دوخة': {
+                    conditions: ['انخفاض ضغط الدم', 'فقر الدم', 'التهاب الأذن الداخلية', 'الجفاف', 'انخفاض السكر'],
+                    severity: 'متوسط',
+                    specialty: 'الأعصاب',
+                    advice: ['اجلس أو استلق فوراً', 'اشرب ماء', 'تجنب الحركات المفاجئة', 'تناول وجبة خفيفة']
+                },
+                'تعب': {
+                    conditions: ['فقر الدم', 'خمول الغدة الدرقية', 'قلة النوم', 'الاكتئاب', 'نقص الفيتامينات'],
+                    severity: 'منخفض',
+                    specialty: 'الطب الباطني',
+                    advice: ['احصل على نوم كافي (7-8 ساعات)', 'تناول غذاء متوازن', 'مارس الرياضة بانتظام', 'قلل من التوتر']
+                },
+                'ألم في الحلق': {
+                    conditions: ['التهاب الحلق الفيروسي', 'التهاب الحلق البكتيري', 'التهاب اللوزتين', 'ارتجاع المريء'],
+                    severity: 'متوسط',
+                    specialty: 'أنف وأذن وحنجرة',
+                    advice: ['اشرب سوائل دافئة', 'تغرغر بالماء المالح', 'تجنب الأطعمة الحارة', 'استخدم مرطب الهواء']
+                },
+                'حرقة في البول': {
+                    conditions: ['التهاب المسالك البولية', 'التهاب المثانة', 'حصوات الكلى', 'التهاب الإحليل'],
+                    severity: 'متوسط',
+                    specialty: 'المسالك البولية',
+                    advice: ['اشرب ماء كثير', 'تجنب الكافيين والكحول', 'تبول بانتظام', 'حافظ على النظافة الشخصية']
+                },
+                'ألم في المفاصل': {
+                    conditions: ['التهاب المفاصل', 'النقرس', 'الروماتيزم', 'إصابة رياضية'],
+                    severity: 'متوسط',
+                    specialty: 'العظام',
+                    advice: ['ضع كمادات باردة أو دافئة', 'تجنب الحركات المؤلمة', 'مارس تمارين خفيفة', 'حافظ على وزن صحي']
+                }
+            },
+
+            nutrition: {
+                'نظام غذائي للسكري': {
+                    name: 'نظام غذائي لمرضى السكري',
+                    description: 'نظام غذائي متوازن للتحكم في مستوى السكر في الدم',
+                    allowed: ['خضروات ورقية', 'بروتينات خالية من الدهون', 'حبوب كاملة', 'أسماك دهنية', 'مكسرات'],
+                    avoid: ['سكريات مكررة', 'مشروبات غازية', 'خبز أبيض', 'حلويات', 'أطعمة مقلية'],
+                    meals: {
+                        breakfast: 'شوفان بالحليب قليل الدسم + توت + لوز',
+                        lunch: 'سلطة خضراء + دجاج مشوي + أرز بني + خضار مطبوخة',
+                        dinner: 'سمك مشوي + خضار سوتيه + خبز أسمر',
+                        snacks: 'خضار نيئة، فواكه قليلة السكر، مكسرات'
+                    }
+                },
+                'إنقاص الوزن': {
+                    name: 'نظام غذائي لإنقاص الوزن',
+                    description: 'نظام غذائي صحي ومتوازن لفقدان الوزن بطريقة آمنة',
+                    allowed: ['خضروات', 'فواكه', 'بروتينات خالية من الدهون', 'حبوب كاملة', 'ماء'],
+                    avoid: ['أطعمة مقلية', 'حلويات', 'مشروبات سكرية', 'وجبات سريعة', 'أطعمة معالجة'],
+                    meals: {
+                        breakfast: 'بيض مسلوق + خبز أسمر + خضار',
+                        lunch: 'سلطة كبيرة + قطعة دجاج مشوي + فاكهة',
+                        dinner: 'شوربة خضار + سمك مشوي + سلطة',
+                        snacks: 'فواكه، خضار نيئة، زبادي قليل الدسم'
+                    }
+                },
+                'ضغط الدم': {
+                    name: 'نظام غذائي لضغط الدم',
+                    description: 'نظام غذائي قليل الصوديوم للتحكم في ضغط الدم',
+                    allowed: ['خضروات طازجة', 'فواكه', 'حبوب كاملة', 'أسماك', 'دواجن بدون جلد'],
+                    avoid: ['ملح زائد', 'أطعمة معلبة', 'وجبات سريعة', 'لحوم مصنعة', 'مخللات'],
+                    meals: {
+                        breakfast: 'شوفان + موز + حليب قليل الدسم',
+                        lunch: 'سلطة + سمك مشوي + أرز + خضار',
+                        dinner: 'دجاج مشوي + خضار مطبوخة + خبز أسمر',
+                        snacks: 'فواكه طازجة، مكسرات غير مملحة'
+                    }
+                }
+            },
+
+            vitamins: {
+                'فيتامين د': {
+                    sources: ['السمك الدهني', 'صفار البيض', 'الحليب المدعم', 'التعرض لأشعة الشمس'],
+                    benefits: ['صحة العظام', 'تقوية المناعة', 'تحسين المزاج', 'امتصاص الكالسيوم'],
+                    deficiency: ['ألم العظام', 'ضعف العضلات', 'التعب', 'كسور متكررة']
+                },
+                'فيتامين ب12': {
+                    sources: ['اللحوم', 'الأسماك', 'منتجات الألبان', 'البيض'],
+                    benefits: ['صحة الأعصاب', 'تكوين خلايا الدم الحمراء', 'الطاقة', 'وظائف المخ'],
+                    deficiency: ['التعب', 'ضعف الذاكرة', 'تنميل الأطراف', 'فقر الدم']
+                },
+                'الحديد': {
+                    sources: ['اللحوم الحمراء', 'السبانخ', 'العدس', 'الكبد'],
+                    benefits: ['نقل الأكسجين', 'الطاقة', 'صحة الدم', 'وظائف المناعة'],
+                    deficiency: ['فقر الدم', 'التعب', 'شحوب الوجه', 'ضيق التنفس']
+                },
+                'الكالسيوم': {
+                    sources: ['منتجات الألبان', 'السردين', 'اللوز', 'الخضروات الورقية'],
+                    benefits: ['صحة العظام والأسنان', 'وظائف العضلات', 'تخثر الدم', 'وظائف الأعصاب'],
+                    deficiency: ['ضعف العظام', 'تشنجات العضلات', 'هشاشة العظام']
+                }
+            }
+        };
+
+        let conversationHistory = [];
+
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+
+            if (!message) return;
+
+            addMessage(message, 'user');
+            input.value = '';
+
+            showTypingIndicator();
+
+            setTimeout(() => {
+                const response = processMessage(message);
+                hideTypingIndicator();
+                addMessage(response, 'bot');
+            }, 1500);
+        }
+
+        function addMessage(content, sender) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            contentDiv.innerHTML = content;
+
+            const timeDiv = document.createElement('div');
+            timeDiv.className = 'message-time';
+            timeDiv.textContent = new Date().toLocaleTimeString('ar-SA', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+
+            contentDiv.appendChild(timeDiv);
+            messageDiv.appendChild(contentDiv);
+            messagesContainer.appendChild(messageDiv);
+
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            conversationHistory.push({sender, content, timestamp: new Date()});
+        }
+
+        function processMessage(message) {
+            const lowerMessage = message.toLowerCase();
+
+            // تحية
+            if (lowerMessage.includes('مرحبا') || lowerMessage.includes('السلام') || lowerMessage.includes('أهلا')) {
+                return 'مرحباً بك! أنا الدكتور الذكي 👨‍⚕️ كيف يمكنني مساعدتك اليوم؟';
+            }
+
+            // شكر
+            if (lowerMessage.includes('شكرا') || lowerMessage.includes('شكراً')) {
+                return 'عفواً! أتمنى لك الشفاء العاجل 💙 لا تتردد في العودة إذا احتجت مساعدة أخرى.';
+            }
+
+            // طوارئ
+            if (lowerMessage.includes('ألم شديد في الصدر') || lowerMessage.includes('صعوبة شديدة في التنفس') || lowerMessage.includes('فقدان الوعي')) {
+                return generateEmergencyResponse();
+            }
+
+            // فيتامينات
+            if (lowerMessage.includes('فيتامين') || lowerMessage.includes('حديد') || lowerMessage.includes('كالسيوم')) {
+                return generateVitaminInfo(lowerMessage);
+            }
+
+            // أنظمة غذائية
+            if (lowerMessage.includes('نظام غذائي') || lowerMessage.includes('ريجيم') || lowerMessage.includes('حمية') ||
+                lowerMessage.includes('سكري') || lowerMessage.includes('إنقاص') || lowerMessage.includes('تخسيس') ||
+                lowerMessage.includes('ضغط الدم')) {
+                return generateNutritionPlan(lowerMessage);
+            }
+
+            // أعراض طبية
+            const detectedSymptoms = detectSymptoms(lowerMessage);
+            if (detectedSymptoms.length > 0) {
+                return generateDiagnosis(detectedSymptoms, lowerMessage);
+            }
+
+            // رد افتراضي
+            return generateDefaultResponse();
+        }
+
+        function detectSymptoms(text) {
+            const symptoms = [];
+            const symptomKeywords = {
+                'صداع': ['صداع', 'وجع رأس', 'ألم في الرأس', 'وجع الرأس'],
+                'حمى': ['حمى', 'حرارة', 'سخونة', 'حرارة عالية'],
+                'سعال': ['سعال', 'كحة', 'كحه', 'سعلة'],
+                'ألم في الصدر': ['ألم في الصدر', 'وجع صدر', 'ألم صدر', 'ضغط في الصدر'],
+                'ضيق في التنفس': ['ضيق في التنفس', 'ضيق نفس', 'صعوبة في التنفس'],
+                'ألم في البطن': ['ألم في البطن', 'وجع بطن', 'ألم بطن', 'مغص'],
+                'إسهال': ['إسهال', 'اسهال', 'براز سائل'],
+                'دوخة': ['دوخة', 'دوار', 'دوخه', 'عدم توازن'],
+                'تعب': ['تعب', 'إعياء', 'إرهاق', 'خمول'],
+                'ألم في الحلق': ['ألم في الحلق', 'وجع حلق', 'التهاب حلق'],
+                'حرقة في البول': ['حرقة في البول', 'حرقة بول', 'ألم عند التبول'],
+                'ألم في المفاصل': ['ألم في المفاصل', 'وجع مفاصل', 'ألم مفاصل']
+            };
+
+            for (const [symptom, keywords] of Object.entries(symptomKeywords)) {
+                if (keywords.some(keyword => text.includes(keyword))) {
+                    symptoms.push(symptom);
+                }
+            }
+
+            return symptoms;
+        }
+
+        function generateDiagnosis(symptoms, originalMessage) {
+            const severity = detectSeverity(originalMessage);
+            let response = '<div class="diagnosis-result">';
+            response += '<h6><i class="fas fa-stethoscope me-2"></i>التشخيص الطبي الذكي</h6>';
+
+            response += `<p><strong>الأعراض المكتشفة:</strong> ${symptoms.join('، ')}</p>`;
+
+            if (severity !== 'متوسط') {
+                const severityClass = severity === 'عالي' ? 'high' : severity === 'متوسط' ? 'medium' : 'low';
+                response += `<p><strong>شدة الأعراض:</strong> <span class="severity-badge severity-${severityClass}">${severity}</span></p>`;
+            }
+
+            const allConditions = [];
+            const allAdvice = [];
+            let maxSeverity = 'منخفض';
+            let specialty = 'الطب الباطني';
+
+            symptoms.forEach(symptom => {
+                const data = medicalDatabase.symptoms[symptom];
+                if (data) {
+                    allConditions.push(...data.conditions);
+                    allAdvice.push(...data.advice);
+                    specialty = data.specialty;
+                    if (data.severity === 'عالي') maxSeverity = 'عالي';
+                    else if (data.severity === 'متوسط' && maxSeverity !== 'عالي') maxSeverity = 'متوسط';
+                }
+            });
+
+            // إزالة التكرارات
+            const uniqueConditions = [...new Set(allConditions)];
+            const uniqueAdvice = [...new Set(allAdvice)];
+
+            response += '<p><strong>التشخيصات المحتملة:</strong></p>';
+            response += '<ul>';
+            uniqueConditions.slice(0, 4).forEach((condition, index) => {
+                const probability = Math.max(85 - (index * 10), 40);
+                response += `<li>${condition} <small>(احتمالية: ${probability}%)</small></li>`;
+            });
+            response += '</ul>';
+
+            response += `<p><strong>التخصص المقترح:</strong> ${specialty}</p>`;
+
+            // مستوى الإلحاح
+            const urgencyLevel = severity === 'عالي' || maxSeverity === 'عالي' ? 'عاجل' :
+                               severity === 'متوسط' || maxSeverity === 'متوسط' ? 'متوسط' : 'غير عاجل';
+
+            response += '<p><strong>مستوى الإلحاح:</strong> ';
+            if (urgencyLevel === 'عاجل') {
+                response += '<span class="badge bg-danger">عاجل - راجع الطبيب فوراً</span>';
+            } else if (urgencyLevel === 'متوسط') {
+                response += '<span class="badge bg-warning">متوسط - راجع الطبيب خلال يومين</span>';
+            } else {
+                response += '<span class="badge bg-success">غير عاجل - يمكن المتابعة في المنزل</span>';
+            }
+            response += '</p>';
+
+            response += '<p><strong>النصائح والتوصيات:</strong></p>';
+            response += '<ul>';
+            uniqueAdvice.slice(0, 4).forEach(advice => {
+                response += `<li>💡 ${advice}</li>`;
+            });
+            response += '</ul>';
+
+            response += '</div>';
+            response += '<p><small><i class="fas fa-info-circle text-info me-1"></i>';
+            response += '<strong>تنبيه مهم:</strong> هذا التشخيص استرشادي ويعتمد على الذكاء الاصطناعي. يُنصح بشدة باستشارة طبيب مختص للتأكد من التشخيص والعلاج المناسب.</small></p>';
+
+            return response;
+        }
+
+        function detectSeverity(text) {
+            if (text.includes('شديد') || text.includes('قوي') || text.includes('حاد') || text.includes('مؤلم جداً')) {
+                return 'عالي';
+            } else if (text.includes('خفيف') || text.includes('بسيط') || text.includes('قليل')) {
+                return 'منخفض';
+            }
+            return 'متوسط';
+        }
+
+        function generateNutritionPlan(message) {
+            let planType = '';
+
+            if (message.includes('سكري')) planType = 'نظام غذائي للسكري';
+            else if (message.includes('إنقاص') || message.includes('تخسيس') || message.includes('ريجيم')) planType = 'إنقاص الوزن';
+            else if (message.includes('ضغط')) planType = 'ضغط الدم';
+            else planType = 'نظام غذائي للسكري'; // افتراضي
+
+            const plan = medicalDatabase.nutrition[planType];
+            if (!plan) return 'عذراً، لا توجد معلومات متاحة عن هذا النظام الغذائي.';
+
+            let response = '<div class="nutrition-result">';
+            response += `<h6><i class="fas fa-utensils me-2"></i>${plan.name}</h6>`;
+            response += `<p><strong>الوصف:</strong> ${plan.description}</p>`;
+
+            response += '<div class="row">';
+
+            response += '<div class="col-md-6">';
+            response += '<h6><i class="fas fa-check-circle me-2"></i>الأطعمة المسموحة:</h6>';
+            response += '<ul>';
+            plan.allowed.forEach(food => {
+                response += `<li>✅ ${food}</li>`;
+            });
+            response += '</ul>';
+            response += '</div>';
+
+            response += '<div class="col-md-6">';
+            response += '<h6><i class="fas fa-times-circle me-2"></i>الأطعمة المتجنبة:</h6>';
+            response += '<ul>';
+            plan.avoid.forEach(food => {
+                response += `<li>❌ ${food}</li>`;
+            });
+            response += '</ul>';
+            response += '</div>';
+
+            response += '</div>';
+
+            response += '<h6 class="mt-3"><i class="fas fa-calendar-alt me-2"></i>خطة الوجبات اليومية:</h6>';
+            response += `<p><strong>🌅 الإفطار:</strong> ${plan.meals.breakfast}</p>`;
+            response += `<p><strong>🌞 الغداء:</strong> ${plan.meals.lunch}</p>`;
+            response += `<p><strong>🌙 العشاء:</strong> ${plan.meals.dinner}</p>`;
+            response += `<p><strong>🍎 الوجبات الخفيفة:</strong> ${plan.meals.snacks}</p>`;
+
+            response += '</div>';
+            response += '<p><small><i class="fas fa-info-circle text-warning me-1"></i>';
+            response += '<strong>تنبيه:</strong> هذه توصيات عامة. يُنصح باستشارة أخصائي تغذية لخطة مخصصة لحالتك.</small></p>';
+
+            return response;
+        }
+
+        function generateVitaminInfo(message) {
+            let response = '<div class="diagnosis-result">';
+            response += '<h6><i class="fas fa-pills me-2"></i>معلومات الفيتامينات والمعادن</h6>';
+
+            let found = false;
+
+            if (message.includes('فيتامين د') || message.includes('د')) {
+                const vitD = medicalDatabase.vitamins['فيتامين د'];
+                response += '<h6>فيتامين د ☀️</h6>';
+                response += `<p><strong>المصادر:</strong> ${vitD.sources.join('، ')}</p>`;
+                response += `<p><strong>الفوائد:</strong> ${vitD.benefits.join('، ')}</p>`;
+                response += `<p><strong>أعراض النقص:</strong> ${vitD.deficiency.join('، ')}</p>`;
+                found = true;
+            }
+
+            if (message.includes('فيتامين ب12') || message.includes('ب12')) {
+                const vitB12 = medicalDatabase.vitamins['فيتامين ب12'];
+                response += '<h6>فيتامين ب12 🧠</h6>';
+                response += `<p><strong>المصادر:</strong> ${vitB12.sources.join('، ')}</p>`;
+                response += `<p><strong>الفوائد:</strong> ${vitB12.benefits.join('، ')}</p>`;
+                response += `<p><strong>أعراض النقص:</strong> ${vitB12.deficiency.join('، ')}</p>`;
+                found = true;
+            }
+
+            if (message.includes('حديد')) {
+                const iron = medicalDatabase.vitamins['الحديد'];
+                response += '<h6>الحديد 🩸</h6>';
+                response += `<p><strong>المصادر:</strong> ${iron.sources.join('، ')}</p>`;
+                response += `<p><strong>الفوائد:</strong> ${iron.benefits.join('، ')}</p>`;
+                response += `<p><strong>أعراض النقص:</strong> ${iron.deficiency.join('، ')}</p>`;
+                found = true;
+            }
+
+            if (message.includes('كالسيوم')) {
+                const calcium = medicalDatabase.vitamins['الكالسيوم'];
+                response += '<h6>الكالسيوم 🦴</h6>';
+                response += `<p><strong>المصادر:</strong> ${calcium.sources.join('، ')}</p>`;
+                response += `<p><strong>الفوائد:</strong> ${calcium.benefits.join('، ')}</p>`;
+                response += `<p><strong>أعراض النقص:</strong> ${calcium.deficiency.join('، ')}</p>`;
+                found = true;
+            }
+
+            if (!found) {
+                response += '<p>الفيتامينات والمعادن المتاحة:</p>';
+                response += '<ul>';
+                response += '<li>فيتامين د ☀️</li>';
+                response += '<li>فيتامين ب12 🧠</li>';
+                response += '<li>الحديد 🩸</li>';
+                response += '<li>الكالسيوم 🦴</li>';
+                response += '</ul>';
+                response += '<p>اكتب اسم الفيتامين أو المعدن للحصول على معلومات مفصلة.</p>';
+            }
+
+            response += '</div>';
+            return response;
+        }
+
+        function generateEmergencyResponse() {
+            return `<div class="emergency-result">
+                <h5><i class="fas fa-exclamation-triangle me-2"></i>⚠️ حالة طوارئ محتملة!</h5>
+                <p><strong>🚨 يُنصح بالتوجه فوراً لأقرب قسم طوارئ أو الاتصال بالإسعاف</strong></p>
+                <p>الأعراض التي وصفتها قد تشير إلى حالة طبية عاجلة تتطلب تدخلاً طبياً فورياً.</p>
+                <hr>
+                <p><strong>📞 أرقام الطوارئ:</strong></p>
+                <ul>
+                    <li>🚑 الإسعاف: 997</li>
+                    <li>🏥 الطوارئ: 911</li>
+                    <li>🚨 الدفاع المدني: 998</li>
+                </ul>
+                <p><strong>⚠️ لا تتأخر في طلب المساعدة الطبية!</strong></p>
+            </div>`;
+        }
+
+        function generateDefaultResponse() {
+            return `<div class="diagnosis-result">
+                <h6><i class="fas fa-question-circle me-2"></i>كيف يمكنني مساعدتك؟</h6>
+                <p>يمكنني مساعدتك في:</p>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="text-success">🩺 التشخيص الطبي:</h6>
+                        <ul>
+                            <li>"أشعر بصداع شديد"</li>
+                            <li>"لدي حمى وسعال"</li>
+                            <li>"ألم في البطن بعد الأكل"</li>
+                            <li>"حرقة في البول"</li>
+                        </ul>
+                    </div>
+
+                    <div class="col-md-6">
+                        <h6 class="text-warning">🥗 الأنظمة الغذائية:</h6>
+                        <ul>
+                            <li>"نظام غذائي للسكري"</li>
+                            <li>"كيف أنقص وزني؟"</li>
+                            <li>"نظام غذائي لضغط الدم"</li>
+                            <li>"معلومات عن فيتامين د"</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <p class="mt-3"><strong>💡 نصيحة:</strong> كن محدداً في وصف أعراضك للحصول على تشخيص أدق.</p>
+            </div>`;
+        }
+
+        function showTypingIndicator() {
+            document.getElementById('typingIndicator').style.display = 'block';
+            const messagesContainer = document.getElementById('chatMessages');
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function hideTypingIndicator() {
+            document.getElementById('typingIndicator').style.display = 'none';
+        }
+
+        function quickMessage(message) {
+            document.getElementById('messageInput').value = message;
+            sendMessage();
+        }
+
+        // رسالة ترحيبية عند تحميل الصفحة
+        window.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                const welcomeMessage = `مرحباً بك في النظام الطبي الذكي الموحد! 👨‍⚕️
+
+                <br><br>أنا مساعدك الطبي الشخصي المتاح 24/7، يمكنني مساعدتك في:
+
+                <br><br><strong>🩺 التشخيص الطبي الذكي:</strong>
+                <br>• تشخيص أكثر من 25 عرض طبي
+                <br>• تقييم شدة الأعراض
+                <br>• توصيات التخصص المناسب
+                <br>• نصائح العناية الذاتية
+
+                <br><br><strong>🥗 الأنظمة الغذائية المخصصة:</strong>
+                <br>• خطط غذائية لمرضى السكري
+                <br>• أنظمة إنقاص الوزن الصحي
+                <br>• نظام غذائي لضغط الدم
+
+                <br><br><strong>💊 معلومات الفيتامينات والمعادن:</strong>
+                <br>• فيتامين د، ب12، الحديد، الكالسيوم
+                <br>• المصادر والفوائد
+                <br>• أعراض النقص
+
+                <br><br><strong>🚨 نظام إنذار الطوارئ:</strong>
+                <br>• كشف الحالات العاجلة
+                <br>• توجيه فوري للطوارئ
+
+                <br><br>اختر من الأزرار السريعة أعلاه أو اكتب استفسارك مباشرة!`;
+
+                addMessage(welcomeMessage, 'bot');
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

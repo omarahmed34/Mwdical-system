@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تأكيد الحجز - مساعد طبي ذكي</title>
+    <meta name="description" content="تأكيد حجز موعدك مع الطبيب">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap RTL -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <!-- Unified Theme CSS -->
+    <link rel="stylesheet" href="css/unified-theme.css">
+    <!-- Medical Enhancements CSS -->
+    <link rel="stylesheet" href="css/medical-enhancements.css">
+    <style>
+        body { font-family: 'Cairo', sans-serif; }
+        .success-icon { font-size: 4rem; color: var(--bs-success); }
+        .booking-card { border: 2px solid var(--bs-success); }
+        .step-indicator { display: flex; justify-content: center; margin-bottom: 2rem; }
+        .step { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 10px; }
+        .step.completed { background: var(--bs-success); color: white; }
+        .qr-code { width: 150px; height: 150px; background: #f8f9fa; border: 2px dashed #dee2e6; display: flex; align-items: center; justify-content: center; }
+        @media print {
+            .no-print { display: none !important; }
+            body { padding-top: 0; }
+            .navbar { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top shadow-sm no-print">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="index.html">
+                <i class="fas fa-heartbeat text-primary me-2"></i>
+                <span class="fw-bold">مساعد طبي ذكي</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">الرئيسية</a></li>
+                    <li class="nav-item"><a class="nav-link" href="diagnosis.html">التشخيص</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="appointments.html">حجز موعد</a></li>
+                    <li class="nav-item" id="userMenuContainer" style="display: none;">
+                        <div class="dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user-circle me-1"></i>
+                                <span id="userDisplayName">المستخدم</span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="my-appointments.html"><i class="fas fa-calendar me-2"></i>مواعيدي</a></li>
+                                <li><a class="dropdown-item" href="profile.html"><i class="fas fa-user me-2"></i>الملف الشخصي</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#" id="logoutBtn"><i class="fas fa-sign-out-alt me-2"></i>تسجيل الخروج</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="nav-item" id="loginMenuContainer">
+                        <button class="btn btn-outline-primary" onclick="window.location.href='index.html#login'">
+                            <i class="fas fa-sign-in-alt me-1"></i>
+                            تسجيل الدخول
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="py-5 py-md-6 mt-5">
+        <div class="container">
+            <!-- Step Indicator -->
+            <div class="step-indicator no-print">
+                <div class="step completed" id="step1">1</div>
+                <div class="step completed" id="step2">2</div>
+                <div class="step completed" id="step3">3</div>
+                <div class="step completed" id="step4">4</div>
+            </div>
+
+            <!-- Success Message -->
+            <div class="text-center mb-5">
+                <div class="success-icon mb-3">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h1 class="display-4 fw-bold text-success mb-3">تم تأكيد حجزك بنجاح!</h1>
+                <p class="lead text-muted">سيتم إرسال رسالة تأكيد على رقم هاتفك المسجل</p>
+            </div>
+
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <!-- Booking Details Card -->
+                    <div class="card booking-card border-0 shadow-lg rounded-4 mb-4">
+                        <div class="card-header bg-success text-white text-center py-3">
+                            <h4 class="mb-0">تفاصيل الحجز</h4>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="row g-4">
+                                <!-- Doctor Info -->
+                                <div class="col-md-6">
+                                    <h5 class="fw-bold text-primary mb-3">
+                                        <i class="fas fa-user-md me-2"></i>
+                                        بيانات الطبيب
+                                    </h5>
+                                    <div id="doctorDetails">
+                                        <!-- Doctor details will be populated by JavaScript -->
+                                    </div>
+                                </div>
+
+                                <!-- Appointment Info -->
+                                <div class="col-md-6">
+                                    <h5 class="fw-bold text-primary mb-3">
+                                        <i class="fas fa-calendar-alt me-2"></i>
+                                        موعد الحجز
+                                    </h5>
+                                    <div id="appointmentDetails">
+                                        <!-- Appointment details will be populated by JavaScript -->
+                                    </div>
+                                </div>
+
+                                <!-- Patient Info -->
+                                <div class="col-md-6">
+                                    <h5 class="fw-bold text-primary mb-3">
+                                        <i class="fas fa-user me-2"></i>
+                                        بيانات المريض
+                                    </h5>
+                                    <div id="patientDetails">
+                                        <!-- Patient details will be populated by JavaScript -->
+                                    </div>
+                                </div>
+
+                                <!-- Payment Info -->
+                                <div class="col-md-6">
+                                    <h5 class="fw-bold text-primary mb-3">
+                                        <i class="fas fa-credit-card me-2"></i>
+                                        تفاصيل الدفع
+                                    </h5>
+                                    <div id="paymentDetails">
+                                        <!-- Payment details will be populated by JavaScript -->
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- QR Code Section -->
+                            <div class="text-center mt-4 pt-4 border-top">
+                                <h6 class="fw-bold mb-3">رمز الحجز</h6>
+                                <div class="qr-code mx-auto mb-3">
+                                    <i class="fas fa-qrcode fa-3x text-muted"></i>
+                                </div>
+                                <p class="text-muted small">امسح الرمز عند وصولك للعيادة</p>
+                                <div class="fw-bold text-primary" id="bookingNumber">
+                                    رقم الحجز: #BK-2024-001
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Important Notes -->
+                    <div class="card border-0 shadow-sm rounded-4 mb-4">
+                        <div class="card-body p-4">
+                            <h5 class="fw-bold text-warning mb-3">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                ملاحظات مهمة
+                            </h5>
+                            <ul class="list-unstyled">
+                                <li class="mb-2">
+                                    <i class="fas fa-clock text-primary me-2"></i>
+                                    يرجى الحضور قبل 15 دقيقة من موعد الحجز
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-id-card text-primary me-2"></i>
+                                    إحضار بطاقة الهوية أو جواز السفر
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-file-medical text-primary me-2"></i>
+                                    إحضار أي تقارير طبية سابقة إن وجدت
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-phone text-primary me-2"></i>
+                                    في حالة التأخير أو الإلغاء، يرجى الاتصال مسبقاً
+                                </li>
+                                <li class="mb-0">
+                                    <i class="fas fa-money-bill text-primary me-2"></i>
+                                    يمكن الدفع نقداً أو بالبطاقة الائتمانية
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="d-flex flex-column flex-md-row gap-3 justify-content-center no-print">
+                        <button class="btn btn-primary btn-lg" onclick="window.print()">
+                            <i class="fas fa-print me-2"></i>
+                            طباعة تفاصيل الحجز
+                        </button>
+                        <button class="btn btn-success btn-lg" id="addToCalendar">
+                            <i class="fas fa-calendar-plus me-2"></i>
+                            إضافة للتقويم
+                        </button>
+                        <button class="btn btn-info btn-lg" id="shareBooking">
+                            <i class="fas fa-share-alt me-2"></i>
+                            مشاركة الحجز
+                        </button>
+                    </div>
+
+                    <!-- Navigation -->
+                    <div class="text-center mt-5 no-print">
+                        <a href="appointments.html" class="btn btn-outline-primary me-3">
+                            <i class="fas fa-plus me-2"></i>
+                            حجز موعد جديد
+                        </a>
+                        <a href="my-appointments.html" class="btn btn-outline-secondary">
+                            <i class="fas fa-list me-2"></i>
+                            مواعيدي
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Arabic Localization -->
+    <script src="js/arabic-localization.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load booking data from localStorage
+            const bookingData = JSON.parse(localStorage.getItem('bookingData'));
+            
+            if (bookingData) {
+                populateBookingDetails(bookingData);
+                generateBookingNumber();
+            } else {
+                // Redirect to appointments if no booking data
+                window.location.href = 'appointments.html';
+            }
+            
+            setupEventListeners();
+        });
+        
+        function populateBookingDetails(data) {
+            // Doctor details
+            const doctorDetailsElement = document.getElementById('doctorDetails');
+            if (doctorDetailsElement) {
+                doctorDetailsElement.innerHTML = `
+                    <div class="d-flex align-items-center mb-3">
+                        <img src="${data.doctor.image}" alt="${data.doctor.name}" class="rounded-circle me-3" style="width: 60px; height: 60px; object-fit: cover;" onerror="this.src='https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=150&h=150&fit=crop&crop=face'">
+                        <div>
+                            <div class="fw-bold">${data.doctor.name}</div>
+                            <small class="text-muted">${data.doctor.specialty || 'طبيب متخصص'}</small>
+                        </div>
+                    </div>
+                    <div class="small text-muted">
+                        <i class="fas fa-map-marker-alt me-1"></i>
+                        عيادة الدكتور - الدور الثاني
+                    </div>
+                `;
+            }
+            
+            // Appointment details
+            const appointmentDate = new Date(data.date);
+            const formattedDate = appointmentDate.toLocaleDateString('ar-EG', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            
+            document.getElementById('appointmentDetails').innerHTML = `
+                <div class="mb-2">
+                    <strong>التاريخ:</strong><br>
+                    <span class="text-muted">${formattedDate}</span>
+                </div>
+                <div class="mb-2">
+                    <strong>الوقت:</strong><br>
+                    <span class="text-muted">${data.time}</span>
+                </div>
+                <div>
+                    <strong>مدة الجلسة:</strong><br>
+                    <span class="text-muted">30 دقيقة</span>
+                </div>
+            `;
+            
+            // Patient details
+            document.getElementById('patientDetails').innerHTML = `
+                <div class="mb-2">
+                    <strong>الاسم:</strong><br>
+                    <span class="text-muted">${data.patient.name}</span>
+                </div>
+                <div class="mb-2">
+                    <strong>رقم الهاتف:</strong><br>
+                    <span class="text-muted">${data.patient.phone}</span>
+                </div>
+                ${data.patient.age ? `
+                <div class="mb-2">
+                    <strong>العمر:</strong><br>
+                    <span class="text-muted">${data.patient.age} سنة</span>
+                </div>
+                ` : ''}
+                ${data.patient.gender ? `
+                <div>
+                    <strong>الجنس:</strong><br>
+                    <span class="text-muted">${data.patient.gender === 'male' ? 'ذكر' : 'أنثى'}</span>
+                </div>
+                ` : ''}
+            `;
+            
+            // Payment details
+            document.getElementById('paymentDetails').innerHTML = `
+                <div class="mb-2">
+                    <strong>رسوم الكشف:</strong><br>
+                    <span class="text-success fw-bold">${data.doctor.price} جنيه</span>
+                </div>
+                <div class="mb-2">
+                    <strong>حالة الدفع:</strong><br>
+                    <span class="badge bg-warning">في انتظار الدفع</span>
+                </div>
+                <div>
+                    <strong>طريقة الدفع:</strong><br>
+                    <span class="text-muted">عند الوصول للعيادة</span>
+                </div>
+            `;
+        }
+        
+        function generateBookingNumber() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+            
+            const bookingNumber = `BK-${year}${month}${day}-${random}`;
+            document.getElementById('bookingNumber').textContent = `رقم الحجز: #${bookingNumber}`;
+        }
+        
+        function setupEventListeners() {
+            // Add to calendar
+            document.getElementById('addToCalendar').addEventListener('click', function() {
+                const bookingData = JSON.parse(localStorage.getItem('bookingData'));
+                if (bookingData) {
+                    createCalendarEvent(bookingData);
+                }
+            });
+
+            // Share booking
+            document.getElementById('shareBooking').addEventListener('click', function() {
+                if (navigator.share) {
+                    navigator.share({
+                        title: 'تفاصيل حجز الموعد',
+                        text: 'تم تأكيد حجز موعدي مع الطبيب',
+                        url: window.location.href
+                    });
+                } else {
+                    // Fallback for browsers that don't support Web Share API
+                    const url = window.location.href;
+                    navigator.clipboard.writeText(url).then(() => {
+                        alert('تم نسخ رابط الحجز إلى الحافظة');
+                    });
+                }
+            });
+        }
+
+        function createCalendarEvent(bookingData) {
+            const startDate = new Date(`${bookingData.date}T${bookingData.time}:00`);
+            const endDate = new Date(startDate.getTime() + 30 * 60000); // Add 30 minutes
+
+            const event = {
+                title: `موعد مع ${bookingData.doctor.name}`,
+                start: startDate.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z',
+                end: endDate.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z',
+                description: `موعد طبي مع ${bookingData.doctor.name} - ${bookingData.doctor.specialty || 'طبيب متخصص'}`
+            };
+
+            const calendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.title)}&dates=${event.start}/${event.end}&details=${encodeURIComponent(event.description)}`;
+            window.open(calendarUrl, '_blank');
+        }
+
+        // Authentication check and save appointment
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuthStatus();
+            saveAppointmentToHistory();
+        });
+
+        function checkAuthStatus() {
+            const userData = localStorage.getItem('currentUser');
+            if (userData) {
+                const user = JSON.parse(userData);
+                document.getElementById('userMenuContainer').style.display = 'block';
+                document.getElementById('loginMenuContainer').style.display = 'none';
+                document.getElementById('userDisplayName').textContent = user.name;
+            } else {
+                document.getElementById('userMenuContainer').style.display = 'none';
+                document.getElementById('loginMenuContainer').style.display = 'block';
+            }
+        }
+
+        function saveAppointmentToHistory() {
+            const bookingData = JSON.parse(localStorage.getItem('bookingData'));
+            if (bookingData) {
+                // Get existing appointments
+                const appointments = JSON.parse(localStorage.getItem('userAppointments') || '[]');
+
+                // Create appointment object
+                const appointment = {
+                    id: Date.now().toString(),
+                    bookingNumber: document.getElementById('bookingNumber').textContent.replace('رقم الحجز: #', ''),
+                    doctor: bookingData.doctor,
+                    date: bookingData.date,
+                    time: bookingData.time,
+                    patient: bookingData.patient,
+                    status: 'confirmed',
+                    createdAt: new Date().toISOString()
+                };
+
+                // Add to appointments list
+                appointments.unshift(appointment);
+
+                // Save to localStorage
+                localStorage.setItem('userAppointments', JSON.stringify(appointments));
+
+                // Clear booking data
+                localStorage.removeItem('bookingData');
+            }
+        }
+
+        // Logout functionality
+        document.getElementById('logoutBtn')?.addEventListener('click', function(e) {
+            e.preventDefault();
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('rememberUser');
+            checkAuthStatus();
+            showAlert('تم تسجيل الخروج بنجاح', 'info');
+        });
+
+        function showAlert(message, type) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+            alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            document.body.appendChild(alertDiv);
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.remove();
+                }
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

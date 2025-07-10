@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مساعد طبي ذكي - حلول رعاية صحية متقدمة</title>
+    <meta name="description" content="احصل على تشخيص طبي فوري بالذكاء الاصطناعي وتوصيات صحية موثوقة. مساعدة طبية سريعة ودقيقة.">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap RTL -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <!-- Unified Theme CSS -->
+    <link rel="stylesheet" href="css/unified-theme.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-heartbeat me-2"></i>
+                مساعد طبي ذكي
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="index.html">الرئيسية</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="medical-diagnosis.html">التشخيص</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="appointments.html">حجز موعد</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="team.html">القائمون بالعمل</a>
+                    </li>
+                    <li class="nav-item" id="userMenuContainer" style="display: none;">
+                        <div class="dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user-circle me-1"></i>
+                                <span id="userDisplayName">المستخدم</span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="my-appointments.html"><i class="fas fa-calendar me-2"></i>مواعيدي</a></li>
+                                <li><a class="dropdown-item" href="profile.html"><i class="fas fa-user me-2"></i>الملف الشخصي</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#" id="logoutBtn"><i class="fas fa-sign-out-alt me-2"></i>تسجيل الخروج</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="nav-item" id="loginMenuContainer">
+                        <a href="login.html" class="btn btn-outline-primary">
+                            <i class="fas fa-sign-in-alt me-1"></i>
+                            تسجيل الدخول
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 mb-5 mb-lg-0">
+                    <div class="hero-content animate-fadeIn">
+                        <h1>مساعدك الطبي الذكي</h1>
+                        <p>تحليل ذكي للأعراض باستخدام الذكاء الاصطناعي ومعالجة اللغة الطبيعية للحصول على تشخيص أولي دقيق وسريع</p>
+                        <div class="d-flex flex-column flex-sm-row gap-3">
+                            <a href="diagnosis.html" class="btn btn-primary btn-xl">
+                                <i class="fas fa-stethoscope me-2"></i>
+                                ابدأ التشخيص
+                            </a>
+                            <a href="appointments.html" class="btn btn-secondary btn-xl">
+                                <i class="fas fa-calendar-plus me-2"></i>
+                                احجز موعد
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 d-none d-lg-block">
+                    <div class="hero-image-container position-relative animate-slideInUp">
+                        <img src="medical-banner-with-doctor-wearing-goggles.jpg" class="img-fluid rounded-3xl shadow-2xl" alt="Doctor using medical technology">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-20 bg-light">
+        <div class="container">
+            <div class="row justify-content-center text-center mb-16">
+                <div class="col-lg-8">
+                    <h2 class="text-4xl font-bold mb-6">لماذا تختارنا</h2>
+                    <p class="text-xl text-muted">منصتنا المدعومة بالذكاء الاصطناعي تقدم عدة مزايا لاحتياجاتك الصحية</p>
+                </div>
+            </div>
+            <div class="row g-8">
+                <div class="col-md-6 col-lg-3">
+                    <div class="feature-card animate-fadeIn">
+                        <div class="feature-icon">
+                            <i class="fas fa-user-md"></i>
+                        </div>
+                        <h3>سهل الاستخدام</h3>
+                        <p>واجهة بسيطة وبديهية لوصف أعراضك باللغة الطبيعية دون تعقيدات</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="feature-card animate-fadeIn" style="animation-delay: 0.1s;">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3>دقة عالية</h3>
+                        <p>خوارزميات ذكاء اصطناعي متقدمة تقدم تحليلاً دقيقاً ومفصلاً لأعراضك</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="feature-card animate-fadeIn" style="animation-delay: 0.2s;">
+                        <div class="feature-icon">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <h3>نتائج سريعة</h3>
+                        <p>احصل على تشخيص أولي فوري دون أوقات انتظار طويلة أو تأخير</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="feature-card animate-fadeIn" style="animation-delay: 0.3s;">
+                        <div class="feature-icon">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <h3>خدمة مجانية</h3>
+                        <p>احصل على رؤى طبية قيمة ومفيدة دون أي تكلفة أو رسوم إضافية</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="steps py-5 py-md-6 bg-light">
+        <div class="container py-5">
+            <div class="row justify-content-center text-center mb-5">
+                <div class="col-lg-8">
+                    <h2 class="fw-bold mb-3">كيف يعمل</h2>
+                    <p class="lead text-muted">البدء مع مساعدنا الطبي الذكي أمر بسيط</p>
+                </div>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 hover-lift">
+                        <div class="card-body p-4">
+                            <div class="step-number rounded-circle bg-primary text-white">1</div>
+                            <h3 class="card-title h5 fw-bold mt-4">اوصف الأعراض</h3>
+                            <p class="card-text text-muted">أدخل أعراضك باللغة الطبيعية، تماماً كما تخبر طبيبك</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 hover-lift">
+                        <div class="card-body p-4">
+                            <div class="step-number rounded-circle bg-primary text-white">2</div>
+                            <h3 class="card-title h5 fw-bold mt-4">تحليل ذكي</h3>
+                            <p class="card-text text-muted">ذكاؤنا الاصطناعي المتقدم يعالج وصفك ويقارنه بالمعرفة الطبية</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 hover-lift">
+                        <div class="card-body p-4">
+                            <div class="step-number rounded-circle bg-primary text-white">3</div>
+                            <h3 class="card-title h5 fw-bold mt-4">احصل على النتائج</h3>
+                            <p class="card-text text-muted">تلقى تحليلاً مفصلاً وتوصيات بناءً على أعراضك</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- QR Code Section -->
+    <section class="qr-section py-5 py-md-6">
+        <div class="container py-5">
+            <div class="row justify-content-center text-center">
+                <div class="col-lg-8">
+                    <h2 class="fw-bold mb-3">امسح الكود للوصول السريع</h2>
+                    <p class="lead text-muted mb-5">استخدم كاميرا هاتفك لمسح الكود والوصول المباشر للمساعد الطبي</p>
+
+                    <div class="row justify-content-center">
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card border-0 shadow-lg rounded-4 p-4">
+                                <div class="card-body text-center">
+                                    <div class="qr-code-container mb-4">
+                                        <div id="qrcode" class="d-flex justify-content-center"></div>
+                                    </div>
+                                    <h5 class="fw-bold mb-2">مساعد طبي ذكي</h5>
+                                    <p class="text-muted small mb-3">امسح للوصول المباشر</p>
+                                    <div class="d-flex justify-content-center gap-2 mb-3">
+                                        <span class="badge bg-primary">مجاني</span>
+                                        <span class="badge bg-success">سريع</span>
+                                        <span class="badge bg-info">آمن</span>
+                                    </div>
+                                    <button class="btn btn-outline-primary btn-sm" id="copyLinkBtn">
+                                        <i class="fas fa-copy me-2"></i>نسخ الرابط
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-5">
+                        <div class="col-md-4">
+                            <div class="d-flex align-items-center justify-content-center mb-3">
+                                <div class="feature-icon-small bg-primary bg-gradient text-white rounded-circle me-3">
+                                    <i class="fas fa-mobile-alt"></i>
+                                </div>
+                                <div class="text-start">
+                                    <h6 class="fw-bold mb-1">وصول سريع</h6>
+                                    <small class="text-muted">من أي مكان</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="d-flex align-items-center justify-content-center mb-3">
+                                <div class="feature-icon-small bg-success bg-gradient text-white rounded-circle me-3">
+                                    <i class="fas fa-qrcode"></i>
+                                </div>
+                                <div class="text-start">
+                                    <h6 class="fw-bold mb-1">سهل الاستخدام</h6>
+                                    <small class="text-muted">مسح بسيط</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="d-flex align-items-center justify-content-center mb-3">
+                                <div class="feature-icon-small bg-info bg-gradient text-white rounded-circle me-3">
+                                    <i class="fas fa-shield-alt"></i>
+                                </div>
+                                <div class="text-start">
+                                    <h6 class="fw-bold mb-1">آمن ومحمي</h6>
+                                    <small class="text-muted">بياناتك محمية</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonial Section -->
+    <section class="testimonials py-5 py-md-6">
+        <div class="container py-5">
+            <div class="row justify-content-center text-center mb-5">
+                <div class="col-lg-8">
+                    <h2 class="fw-bold mb-3">ماذا يقول مستخدمونا</h2>
+                    <p class="lead text-muted">اقرأ عن تجارب الأشخاص الذين استخدموا مساعدنا الطبي الذكي</p>
+                </div>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 hover-lift">
+                        <div class="card-body p-4">
+                            <div class="d-flex mb-4">
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                            </div>
+                            <p class="card-text mb-4">"ساعدني المساعد الطبي الذكي في تحديد أعراضي بسرعة. كانت التوصيات دقيقة ووفرت علي رحلة غير ضرورية للطبيب."</p>
+                            <div class="d-flex align-items-center">
+                                <div class="rounded-circle bg-primary text-white testimonial-avatar">س م</div>
+                                <div class="ms-3">
+                                    <h6 class="mb-0 fw-bold">سارة محمد</h6>
+                                    <small class="text-muted">مريضة</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 hover-lift">
+                        <div class="card-body p-4">
+                            <div class="d-flex mb-4">
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                            </div>
+                            <p class="card-text mb-4">"كمقدم رعاية صحية، أنا معجب بدقة هذا النظام. يساعد مرضاي في الحصول على رؤى أولية قبل مواعيدهم."</p>
+                            <div class="d-flex align-items-center">
+                                <div class="rounded-circle bg-primary text-white testimonial-avatar">د س</div>
+                                <div class="ms-3">
+                                    <h6 class="mb-0 fw-bold">د. سامية</h6>
+                                    <small class="text-muted">طبيب عائلة</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 hover-lift">
+                        <div class="card-body p-4">
+                            <div class="d-flex mb-4">
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star-half-alt text-warning"></i>
+                            </div>
+                            <p class="card-text mb-4">"الواجهة بديهية جداً، وأقدر كيف شرحت الأسباب المحتملة لأعراضي بلغة سهلة الفهم."</p>
+                            <div class="d-flex align-items-center">
+                                <div class="rounded-circle bg-primary text-white testimonial-avatar">م ع</div>
+                                <div class="ms-3">
+                                    <h6 class="mb-0 fw-bold">محمد عبدالله</h6>
+                                    <small class="text-muted">مستخدم</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="cta bg-primary py-5 py-md-6">
+        <div class="container py-5 text-center">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <h2 class="fw-bold text-white mb-4">هل أنت مستعد لتجربة مساعدنا الطبي الذكي؟</h2>
+                    <p class="lead text-white-50 mb-5">ابدأ تشخيصك الأول - إنه مجاني ويستغرق أقل من 5 دقائق</p>
+                    <a href="medical-diagnosis.html" class="btn btn-light btn-lg px-5 py-3 rounded-pill fw-semibold">ابدأ تشخيصك</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+    <!-- QR Code Library -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Common Functions -->
+    <script src="js/common.js"></script>
+    <!-- Arabic Localization -->
+    <script src="js/arabic-localization.js"></script>
+    <!-- Custom JS -->
+    <script src="js/main-bootstrap.js"></script>
+
+    <!-- QR Code Generation Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                // Get current page URL
+                const currentUrl = window.location.href;
+
+                // Create QR Code using qrcode-generator library
+                const qr = qrcode(0, 'M');
+                qr.addData(currentUrl);
+                qr.make();
+
+                // Generate QR Code as SVG
+                const qrCodeContainer = document.getElementById('qrcode');
+
+                // Create QR Code HTML
+                const cellSize = 8;
+                const margin = 4;
+                const size = qr.getModuleCount();
+                const totalSize = (size + margin * 2) * cellSize;
+
+                let qrHTML = `
+                    <svg width="${totalSize}" height="${totalSize}" style="border-radius: 15px; box-shadow: 0 4px 15px rgba(0,123,255,0.2); border: 3px solid #f8f9fa;">
+                        <rect width="${totalSize}" height="${totalSize}" fill="#ffffff"/>
+                `;
+
+                for (let row = 0; row < size; row++) {
+                    for (let col = 0; col < size; col++) {
+                        if (qr.isDark(row, col)) {
+                            const x = (col + margin) * cellSize;
+                            const y = (row + margin) * cellSize;
+                            qrHTML += `<rect x="${x}" y="${y}" width="${cellSize}" height="${cellSize}" fill="#007bff"/>`;
+                        }
+                    }
+                }
+
+                qrHTML += '</svg>';
+                qrCodeContainer.innerHTML = qrHTML;
+
+                console.log('QR Code generated successfully!');
+
+            } catch (error) {
+                console.error('QR Code generation failed:', error);
+
+                // Fallback: Use Google Charts API
+                const currentUrl = encodeURIComponent(window.location.href);
+                const qrCodeContainer = document.getElementById('qrcode');
+
+                qrCodeContainer.innerHTML = `
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${currentUrl}&color=007bff&bgcolor=ffffff"
+                         alt="QR Code"
+                         style="border-radius: 15px; box-shadow: 0 4px 15px rgba(0,123,255,0.2); border: 3px solid #f8f9fa; max-width: 100%; height: auto;"
+                         onerror="this.parentElement.innerHTML='<div class=\\'alert alert-warning\\' style=\\'margin: 0;\\'>QR Code غير متاح حالياً<br><small>يمكنك نسخ الرابط مباشرة</small></div>'">
+                `;
+            }
+
+            // Add copy link functionality
+            const copyLinkBtn = document.getElementById('copyLinkBtn');
+            if (copyLinkBtn) {
+                copyLinkBtn.addEventListener('click', function() {
+                    const currentUrl = window.location.href;
+
+                    // Try to use the modern clipboard API
+                    if (navigator.clipboard && window.isSecureContext) {
+                        navigator.clipboard.writeText(currentUrl).then(function() {
+                            // Success feedback
+                            const originalText = copyLinkBtn.innerHTML;
+                            copyLinkBtn.innerHTML = '<i class="fas fa-check me-2"></i>تم النسخ!';
+                            copyLinkBtn.classList.remove('btn-outline-primary');
+                            copyLinkBtn.classList.add('btn-success');
+
+                            setTimeout(function() {
+                                copyLinkBtn.innerHTML = originalText;
+                                copyLinkBtn.classList.remove('btn-success');
+                                copyLinkBtn.classList.add('btn-outline-primary');
+                            }, 2000);
+                        }).catch(function(err) {
+                            console.error('Failed to copy: ', err);
+                            fallbackCopyTextToClipboard(currentUrl);
+                        });
+                    } else {
+                        // Fallback for older browsers
+                        fallbackCopyTextToClipboard(currentUrl);
+                    }
+                });
+            }
+
+            // Fallback copy function
+            function fallbackCopyTextToClipboard(text) {
+                const textArea = document.createElement("textarea");
+                textArea.value = text;
+                textArea.style.top = "0";
+                textArea.style.left = "0";
+                textArea.style.position = "fixed";
+
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+
+                try {
+                    const successful = document.execCommand('copy');
+                    if (successful) {
+                        const copyLinkBtn = document.getElementById('copyLinkBtn');
+                        const originalText = copyLinkBtn.innerHTML;
+                        copyLinkBtn.innerHTML = '<i class="fas fa-check me-2"></i>تم النسخ!';
+                        copyLinkBtn.classList.remove('btn-outline-primary');
+                        copyLinkBtn.classList.add('btn-success');
+
+                        setTimeout(function() {
+                            copyLinkBtn.innerHTML = originalText;
+                            copyLinkBtn.classList.remove('btn-success');
+                            copyLinkBtn.classList.add('btn-outline-primary');
+                        }, 2000);
+                    } else {
+                        alert('فشل في نسخ الرابط. يرجى نسخه يدوياً: ' + text);
+                    }
+                } catch (err) {
+                    alert('فشل في نسخ الرابط. يرجى نسخه يدوياً: ' + text);
+                }
+
+                document.body.removeChild(textArea);
+            }
+        });
+    </script>
+
+    <style>
+        /* QR Code Section Styles */
+        .qr-section {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        }
+
+        .qr-code-container {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            display: inline-block;
+        }
+
+        .feature-icon-small {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .qr-section .card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .qr-section .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,123,255,0.15);
+        }
+
+        #qrcode canvas {
+            max-width: 100%;
+            height: auto;
+        }
+
+        @media (max-width: 768px) {
+            .qr-code-container {
+                padding: 15px;
+            }
+
+            .feature-icon-small {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+
+    <!-- Authentication System JavaScript -->
+    <script>
+        // Authentication System
+        class AuthSystem {
+            constructor() {
+                this.currentUser = null;
+                this.init();
+            }
+
+            init() {
+                this.checkAuthStatus();
+                this.setupEventListeners();
+                this.setupPasswordToggles();
+            }
+
+            checkAuthStatus() {
+                const userData = localStorage.getItem('currentUser');
+                if (userData) {
+                    this.currentUser = JSON.parse(userData);
+                    this.updateUIForLoggedInUser();
+                }
+            }
+
+            setupEventListeners() {
+                // Login form
+                document.getElementById('loginForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.handleLogin();
+                });
+
+                // Register form
+                document.getElementById('registerForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.handleRegister();
+                });
+
+                // Logout button
+                document.getElementById('logoutBtn').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.handleLogout();
+                });
+
+                // Password confirmation validation
+                document.getElementById('confirmPassword').addEventListener('input', () => {
+                    this.validatePasswordConfirmation();
+                });
+            }
+
+            setupPasswordToggles() {
+                // Toggle login password visibility
+                document.getElementById('toggleLoginPassword').addEventListener('click', () => {
+                    this.togglePasswordVisibility('loginPassword', 'toggleLoginPassword');
+                });
+
+                // Toggle register password visibility
+                document.getElementById('toggleRegisterPassword').addEventListener('click', () => {
+                    this.togglePasswordVisibility('registerPassword', 'toggleRegisterPassword');
+                });
+            }
+
+            togglePasswordVisibility(passwordFieldId, toggleButtonId) {
+                const passwordField = document.getElementById(passwordFieldId);
+                const toggleButton = document.getElementById(toggleButtonId);
+                const icon = toggleButton.querySelector('i');
+
+                if (passwordField.type === 'password') {
+                    passwordField.type = 'text';
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                } else {
+                    passwordField.type = 'password';
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                }
+            }
+
+            validatePasswordConfirmation() {
+                const password = document.getElementById('registerPassword').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+                const confirmPasswordField = document.getElementById('confirmPassword');
+                const errorDiv = document.getElementById('confirmPasswordError');
+
+                if (confirmPassword && password !== confirmPassword) {
+                    confirmPasswordField.classList.add('is-invalid');
+                    errorDiv.textContent = 'كلمات المرور غير متطابقة';
+                } else {
+                    confirmPasswordField.classList.remove('is-invalid');
+                    errorDiv.textContent = '';
+                }
+            }
+
+            async handleLogin() {
+                const email = document.getElementById('loginEmail').value;
+                const password = document.getElementById('loginPassword').value;
+                const rememberMe = document.getElementById('rememberMe').checked;
+                const spinner = document.getElementById('loginSpinner');
+
+                // Show loading
+                spinner.classList.remove('d-none');
+
+                try {
+                    // Simulate API call
+                    await this.simulateAPICall(1000);
+
+                    // Get stored users
+                    const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+                    const user = users.find(u => u.email === email && u.password === password);
+
+                    if (user) {
+                        // Successful login
+                        this.currentUser = {
+                            id: user.id,
+                            name: user.name,
+                            email: user.email,
+                            phone: user.phone,
+                            loginTime: new Date().toISOString(),
+                            registrationDate: user.registrationDate
+                        };
+
+                        // Initialize sample data for new users
+                        this.initializeSampleData(user.id);
+
+                        // Store user session
+                        localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+                        if (rememberMe) {
+                            localStorage.setItem('rememberUser', 'true');
+                        }
+
+                        // Update UI
+                        this.updateUIForLoggedInUser();
+
+                        // Close modal
+                        bootstrap.Modal.getInstance(document.getElementById('loginModal')).hide();
+
+                        // Show success message
+                        this.showAlert('تم تسجيل الدخول بنجاح!', 'success');
+
+                        // Reset form
+                        document.getElementById('loginForm').reset();
+                    } else {
+                        this.showAlert('البريد الإلكتروني أو كلمة المرور غير صحيحة', 'danger');
+                    }
+                } catch (error) {
+                    this.showAlert('حدث خطأ أثناء تسجيل الدخول', 'danger');
+                } finally {
+                    spinner.classList.add('d-none');
+                }
+            }
+
+            async handleRegister() {
+                const name = document.getElementById('registerName').value;
+                const email = document.getElementById('registerEmail').value;
+                const phone = document.getElementById('registerPhone').value;
+                const password = document.getElementById('registerPassword').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+                const agreeTerms = document.getElementById('agreeTerms').checked;
+                const spinner = document.getElementById('registerSpinner');
+
+                // Validation
+                if (!this.validateRegistrationForm(name, email, phone, password, confirmPassword, agreeTerms)) {
+                    return;
+                }
+
+                // Show loading
+                spinner.classList.remove('d-none');
+
+                try {
+                    // Simulate API call
+                    await this.simulateAPICall(1500);
+
+                    // Get existing users
+                    const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+
+                    // Check if email already exists
+                    if (users.find(u => u.email === email)) {
+                        this.showAlert('البريد الإلكتروني مستخدم بالفعل', 'warning');
+                        return;
+                    }
+
+                    // Create new user
+                    const newUser = {
+                        id: Date.now().toString(),
+                        name,
+                        email,
+                        phone,
+                        password,
+                        registrationDate: new Date().toISOString()
+                    };
+
+                    // Save user
+                    users.push(newUser);
+                    localStorage.setItem('registeredUsers', JSON.stringify(users));
+
+                    // Auto login
+                    this.currentUser = {
+                        id: newUser.id,
+                        name: newUser.name,
+                        email: newUser.email,
+                        phone: newUser.phone,
+                        loginTime: new Date().toISOString()
+                    };
+
+                    localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+
+                    // Initialize sample data for new user
+                    this.initializeSampleData(newUser.id);
+
+                    // Update UI
+                    this.updateUIForLoggedInUser();
+
+                    // Close modal
+                    bootstrap.Modal.getInstance(document.getElementById('loginModal')).hide();
+
+                    // Show success message
+                    this.showAlert('تم إنشاء الحساب وتسجيل الدخول بنجاح!', 'success');
+
+                    // Reset form
+                    document.getElementById('registerForm').reset();
+
+                } catch (error) {
+                    this.showAlert('حدث خطأ أثناء إنشاء الحساب', 'danger');
+                } finally {
+                    spinner.classList.add('d-none');
+                }
+            }
+
+            validateRegistrationForm(name, email, phone, password, confirmPassword, agreeTerms) {
+                let isValid = true;
+
+                // Reset previous errors
+                document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+
+                // Name validation
+                if (name.length < 3) {
+                    document.getElementById('registerName').classList.add('is-invalid');
+                    document.getElementById('registerNameError').textContent = 'الاسم يجب أن يكون 3 أحرف على الأقل';
+                    isValid = false;
+                }
+
+                // Email validation
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    document.getElementById('registerEmail').classList.add('is-invalid');
+                    document.getElementById('registerEmailError').textContent = 'البريد الإلكتروني غير صحيح';
+                    isValid = false;
+                }
+
+                // Phone validation
+                const phoneRegex = /^[0-9]{11}$/;
+                if (!phoneRegex.test(phone)) {
+                    document.getElementById('registerPhone').classList.add('is-invalid');
+                    document.getElementById('registerPhoneError').textContent = 'رقم الهاتف يجب أن يكون 11 رقم';
+                    isValid = false;
+                }
+
+                // Password validation
+                if (password.length < 6) {
+                    document.getElementById('registerPassword').classList.add('is-invalid');
+                    document.getElementById('registerPasswordError').textContent = 'كلمة المرور يجب أن تكون 6 أحرف على الأقل';
+                    isValid = false;
+                }
+
+                // Password confirmation
+                if (password !== confirmPassword) {
+                    document.getElementById('confirmPassword').classList.add('is-invalid');
+                    document.getElementById('confirmPasswordError').textContent = 'كلمات المرور غير متطابقة';
+                    isValid = false;
+                }
+
+                // Terms agreement
+                if (!agreeTerms) {
+                    this.showAlert('يجب الموافقة على الشروط والأحكام', 'warning');
+                    isValid = false;
+                }
+
+                return isValid;
+            }
+
+            initializeSampleData(userId) {
+                // Initialize sample appointments if none exist
+                const existingAppointments = localStorage.getItem('userAppointments');
+                if (!existingAppointments) {
+                    const sampleAppointments = [
+                        {
+                            id: 1,
+                            doctorName: 'د. أحمد محمد',
+                            specialty: 'طب عام',
+                            date: '2024-01-15',
+                            time: '10:00',
+                            status: 'completed',
+                            userId: userId
+                        },
+                        {
+                            id: 2,
+                            doctorName: 'د. فاطمة علي',
+                            specialty: 'طب عام',
+                            date: '2024-02-20',
+                            time: '14:30',
+                            status: 'completed',
+                            userId: userId
+                        },
+                        {
+                            id: 3,
+                            doctorName: 'د. سارة أحمد',
+                            specialty: 'أمراض القلب',
+                            date: '2024-06-25',
+                            time: '11:00',
+                            status: 'upcoming',
+                            userId: userId
+                        }
+                    ];
+                    localStorage.setItem('userAppointments', JSON.stringify(sampleAppointments));
+                }
+
+                // Initialize sample diagnoses if none exist
+                const existingDiagnoses = localStorage.getItem('userDiagnoses');
+                if (!existingDiagnoses) {
+                    const sampleDiagnoses = [
+                        {
+                            id: 1,
+                            symptoms: 'صداع وحمى خفيفة',
+                            diagnosis: 'نزلة برد عادية',
+                            date: '2024-01-10',
+                            userId: userId
+                        },
+                        {
+                            id: 2,
+                            symptoms: 'ألم في المعدة بعد الأكل',
+                            diagnosis: 'عسر هضم',
+                            date: '2024-02-15',
+                            userId: userId
+                        }
+                    ];
+                    localStorage.setItem('userDiagnoses', JSON.stringify(sampleDiagnoses));
+                }
+            }
+
+            handleLogout() {
+                // Clear user data
+                localStorage.removeItem('currentUser');
+                localStorage.removeItem('rememberUser');
+                this.currentUser = null;
+
+                // Update UI
+                this.updateUIForLoggedOutUser();
+
+                // Show success message
+                this.showAlert('تم تسجيل الخروج بنجاح', 'info');
+            }
+
+            updateUIForLoggedInUser() {
+                document.getElementById('userMenuContainer').style.display = 'block';
+                document.getElementById('loginMenuContainer').style.display = 'none';
+                document.getElementById('userDisplayName').textContent = this.currentUser.name;
+            }
+
+            updateUIForLoggedOutUser() {
+                document.getElementById('userMenuContainer').style.display = 'none';
+                document.getElementById('loginMenuContainer').style.display = 'block';
+            }
+
+            simulateAPICall(delay) {
+                return new Promise(resolve => setTimeout(resolve, delay));
+            }
+
+            showAlert(message, type) {
+                // Create alert element
+                const alertDiv = document.createElement('div');
+                alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+                alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+                alertDiv.innerHTML = `
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                `;
+
+                // Add to page
+                document.body.appendChild(alertDiv);
+
+                // Auto remove after 5 seconds
+                setTimeout(() => {
+                    if (alertDiv.parentNode) {
+                        alertDiv.remove();
+                    }
+                }, 5000);
+            }
+        }
+
+        // Initialize authentication system when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            window.authSystem = new AuthSystem();
+        });
+    </script>
+
+    <!-- Quick Diagnosis Button -->
+    <a href="medical-diagnosis.html" class="btn btn-primary rounded-circle position-fixed"
+       style="bottom: 30px; right: 30px; width: 60px; height: 60px; z-index: 1000; box-shadow: 0 10px 30px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center;"
+       title="تشخيص سريع">
+        <i class="fas fa-stethoscope" style="font-size: 1.5rem;"></i>
+    </a>
+</body>
+</html>

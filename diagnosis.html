@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ابدأ التشخيص - مساعد طبي ذكي</title>
+    <meta name="description" content="اوصف أعراضك واحصل على تحليل وتشخيص بالذكاء الاصطناعي">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap RTL -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <!-- Unified Theme CSS -->
+    <link rel="stylesheet" href="css/unified-theme.css">
+    <!-- Medical Enhancements CSS -->
+    <link rel="stylesheet" href="css/medical-enhancements.css">
+    <style>
+
+        /* Chat Container Styles */
+        .chat-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #007bff, #0056b3) !important;
+        }
+
+        .quick-action-btn {
+            padding: 1rem;
+            height: auto;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .quick-action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+        }
+
+        .quick-action-btn i {
+            font-size: 1.5rem;
+        }
+
+        /* Message Styles */
+        .message {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .message.user .message-avatar {
+            background: linear-gradient(45deg, #007bff, #0056b3);
+        }
+
+        .message.bot .message-avatar {
+            background: linear-gradient(45deg, #28a745, #1e7e34);
+        }
+
+        .message-content {
+            background: #f8f9fa;
+            padding: 0.75rem 1rem;
+            border-radius: 18px;
+            max-width: 70%;
+            position: relative;
+            line-height: 1.6;
+            word-wrap: break-word;
+        }
+
+        .message.user .message-content {
+            background: linear-gradient(45deg, #007bff, #0056b3);
+            color: white;
+        }
+
+        .message-time {
+            font-size: 0.75rem;
+            color: #6c757d;
+            margin-top: 0.25rem;
+        }
+
+        .message.user .message-time {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Typing Indicator */
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .typing-dots span {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #007bff;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+
+        .typing-dots span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dots span:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes typing {
+            0%, 80%, 100% { transform: scale(0); opacity: 0.5; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Input Styles */
+        #messageInput {
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+        }
+
+        #messageInput:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+
+        #sendBtn {
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        #sendBtn:not(:disabled):hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(0, 123, 255, 0.4);
+        }
+
+        #sendBtn:disabled {
+            background-color: #e9ecef;
+            border-color: #e9ecef;
+            color: #6c757d;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .message-content {
+                max-width: 85%;
+            }
+
+            .quick-action-btn {
+                padding: 0.75rem;
+            }
+
+            .quick-action-btn i {
+                font-size: 1.25rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-heartbeat me-2"></i>
+                مساعد طبي ذكي
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">الرئيسية</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="diagnosis.html">التشخيص</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="appointments.html">حجز موعد</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="team.html">القائمون بالعمل</a>
+                    </li>
+                    <li class="nav-item" id="userMenuContainer" style="display: none;">
+                        <div class="dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user-circle me-1"></i>
+                                <span id="userDisplayName">المستخدم</span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="my-appointments.html"><i class="fas fa-calendar me-2"></i>مواعيدي</a></li>
+                                <li><a class="dropdown-item" href="profile.html"><i class="fas fa-user me-2"></i>الملف الشخصي</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#" id="logoutBtn"><i class="fas fa-sign-out-alt me-2"></i>تسجيل الخروج</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="nav-item" id="loginMenuContainer">
+                        <a href="login.html" class="btn btn-outline-primary">
+                            <i class="fas fa-sign-in-alt me-1"></i>
+                            تسجيل الدخول
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    
+    <!-- Main Content -->
+    <main class="py-5 py-md-6 mt-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <!-- Medical Chatbot Interface -->
+                    <div class="chat-container bg-white rounded-4 shadow-lg overflow-hidden">
+                        <!-- Chat Header -->
+                        <div class="chat-header bg-primary text-white p-4">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-robot fs-2 me-3"></i>
+                                    <div>
+                                        <h2 class="h4 mb-1">المساعد الطبي الذكي</h2>
+                                        <p class="mb-0 opacity-75">اسأل عن أعراضك واحصل على مساعدة فورية</p>
+                                    </div>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-outline-light btn-sm" id="clearChatBtn" title="مسح المحادثة">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                    <button class="btn btn-outline-light btn-sm" id="exportChatBtn" title="تصدير المحادثة">
+                                        <i class="fas fa-download"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Welcome Message -->
+                        <div class="welcome-section p-5 text-center border-bottom" id="welcomeSection">
+                            <div class="mb-4">
+                                <i class="fas fa-stethoscope text-primary" style="font-size: 4rem;"></i>
+                            </div>
+                            <h3 class="h4 mb-3">مرحباً بك في المساعد الطبي الذكي</h3>
+                            <p class="text-muted mb-4">أنا هنا لمساعدتك في الأسئلة الطبية والإسعافات الأولية</p>
+
+                            <!-- Quick Action Buttons -->
+                            <div class="row g-3">
+                                <div class="col-md-3 col-6">
+                                    <button class="btn btn-outline-primary w-100 quick-action-btn" data-message="أعاني من صداع شديد">
+                                        <i class="fas fa-head-side-virus d-block mb-2"></i>
+                                        <small>صداع</small>
+                                    </button>
+                                </div>
+                                <div class="col-md-3 col-6">
+                                    <button class="btn btn-outline-primary w-100 quick-action-btn" data-message="عندي حمى وأعراض برد">
+                                        <i class="fas fa-thermometer-half d-block mb-2"></i>
+                                        <small>حمى</small>
+                                    </button>
+                                </div>
+                                <div class="col-md-3 col-6">
+                                    <button class="btn btn-outline-primary w-100 quick-action-btn" data-message="أعمل إيه لو حد اغمى عليه؟">
+                                        <i class="fas fa-dizzy d-block mb-2"></i>
+                                        <small>إغماء</small>
+                                    </button>
+                                </div>
+                                <div class="col-md-3 col-6">
+                                    <button class="btn btn-outline-primary w-100 quick-action-btn" data-message="إزاي أتعامل مع الحروق؟">
+                                        <i class="fas fa-fire d-block mb-2"></i>
+                                        <small>حروق</small>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Nutrition Quick Buttons -->
+                            <div class="mt-4">
+                                <h6 class="text-muted mb-3">🥗 الأنظمة الغذائية</h6>
+                                <div class="row g-2">
+                                    <div class="col-md-4 col-6">
+                                        <button class="btn btn-outline-success w-100 quick-action-btn" data-message="نظام غذائي للسكري">
+                                            <i class="fas fa-apple-alt d-block mb-1"></i>
+                                            <small>نظام السكري</small>
+                                        </button>
+                                    </div>
+                                    <div class="col-md-4 col-6">
+                                        <button class="btn btn-outline-success w-100 quick-action-btn" data-message="نظام غذائي لضغط الدم">
+                                            <i class="fas fa-heart d-block mb-1"></i>
+                                            <small>نظام ضغط الدم</small>
+                                        </button>
+                                    </div>
+                                    <div class="col-md-4 col-6">
+                                        <button class="btn btn-outline-success w-100 quick-action-btn" data-message="نظام غذائي لإنقاص الوزن">
+                                            <i class="fas fa-weight d-block mb-1"></i>
+                                            <small>إنقاص الوزن</small>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Chat Messages Area -->
+                        <div class="chat-messages p-4" id="chatMessages" style="min-height: 400px; max-height: 500px; overflow-y: auto;">
+                            <!-- Messages will be added here dynamically -->
+                        </div>
+
+                        <!-- Typing Indicator -->
+                        <div class="typing-indicator px-4 pb-3" id="typingIndicator" style="display: none;">
+                            <div class="d-flex align-items-center text-muted">
+                                <div class="typing-dots me-2">
+                                    <span></span>
+                                    <span></span>
+                                    <span></span>
+                                </div>
+                                <small>المساعد الطبي يكتب...</small>
+                            </div>
+                        </div>
+
+                        <!-- Chat Input -->
+                        <div class="chat-input border-top p-4">
+                            <div class="input-group">
+                                <textarea
+                                    class="form-control border-0 shadow-none"
+                                    id="messageInput"
+                                    placeholder="اكتب سؤالك الطبي هنا... (مثال: عندي صداع شديد)"
+                                    rows="1"
+                                    style="resize: none; max-height: 120px;"
+                                ></textarea>
+                                <button class="btn btn-primary px-4" id="sendBtn" disabled>
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                            <div class="mt-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-exclamation-triangle me-1"></i>
+                                    هذا المساعد لا يغني عن استشارة الطبيب المختص
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tips Card -->
+                    <div class="card border-0 shadow-sm rounded-4 mt-4">
+                        <div class="card-body p-4">
+                            <h5 class="text-primary fw-bold mb-3">
+                                <i class="fas fa-lightbulb me-2"></i>
+                                نصائح للحصول على أفضل مساعدة:
+                            </h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>كن محدداً في وصف أعراضك</li>
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>اذكر متى بدأت الأعراض</li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>اذكر أي تاريخ طبي ذي صلة</li>
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>صف شدة الأعراض</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Emergency Modal -->
+    <div class="modal fade" id="emergencyModal" tabindex="-1" aria-labelledby="emergencyModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="emergencyModalLabel">
+                        <i class="fas fa-ambulance me-2"></i>
+                        حالة طوارئ؟
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-3">إذا كانت هذه حالة طوارئ طبية، يرجى الاتصال فوراً بـ:</p>
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <div class="d-flex align-items-center p-3 bg-light rounded">
+                                <i class="fas fa-phone text-danger fs-4 me-3"></i>
+                                <div>
+                                    <strong>الإسعاف</strong>
+                                    <div class="text-danger fw-bold">123</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="d-flex align-items-center p-3 bg-light rounded">
+                                <i class="fas fa-hospital text-danger fs-4 me-3"></i>
+                                <div>
+                                    <strong>الطوارئ</strong>
+                                    <div class="text-danger fw-bold">16123</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">متابعة المحادثة</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Common Functions -->
+    <script src="js/common.js"></script>
+    <!-- Arabic Localization -->
+    <script src="js/arabic-localization.js"></script>
+    <!-- Custom JS -->
+    <script src="js/main-bootstrap.js"></script>
+    <script>
+        // Medical Chatbot JavaScript
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const chatMessages = document.getElementById('chatMessages');
+            const messageInput = document.getElementById('messageInput');
+            const sendBtn = document.getElementById('sendBtn');
+            const welcomeSection = document.getElementById('welcomeSection');
+            const typingIndicator = document.getElementById('typingIndicator');
+            const clearChatBtn = document.getElementById('clearChatBtn');
+            const exportChatBtn = document.getElementById('exportChatBtn');
+            const emergencyModal = new bootstrap.Modal(document.getElementById('emergencyModal'));
+
+            // Chat state
+            let chatHistory = [];
+            let isTyping = false;
+
+            // Emergency keywords that trigger the emergency modal
+            const emergencyKeywords = [
+                'طوارئ', 'emergency', 'نزيف', 'bleeding', 'اختناق', 'choking',
+                'توقف القلب', 'cardiac arrest', 'فقدان الوعي', 'unconscious',
+                'حادث', 'accident', 'سكتة', 'stroke', 'نوبة قلبية', 'heart attack',
+                'تسمم', 'poisoning', 'حريق', 'fire', 'غرق', 'drowning'
+            ];
+
+            // Initialize event listeners
+            initializeEventListeners();
+            loadChatHistory();
+            adjustTextareaHeight();
+
+            function initializeEventListeners() {
+                // Send message events
+                sendBtn.addEventListener('click', sendMessage);
+                messageInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        sendMessage();
+                    }
+                });
+
+                // Input validation
+                messageInput.addEventListener('input', function() {
+                    const hasText = this.value.trim().length > 0;
+                    sendBtn.disabled = !hasText;
+                    adjustTextareaHeight();
+
+                    // Check for emergency keywords
+                    if (hasText && containsEmergencyKeyword(this.value)) {
+                        emergencyModal.show();
+                    }
+                });
+
+                // Quick action buttons
+                document.querySelectorAll('.quick-action-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const message = this.getAttribute('data-message');
+                        messageInput.value = message;
+                        sendBtn.disabled = false;
+
+                        // Add visual feedback
+                        this.style.transform = 'scale(0.95)';
+                        setTimeout(() => {
+                            this.style.transform = 'scale(1)';
+                        }, 150);
+
+                        // Send message after a short delay for better UX
+                        setTimeout(() => {
+                            sendMessage();
+                        }, 200);
+                    });
+                });
+
+                // Clear chat
+                clearChatBtn.addEventListener('click', clearChat);
+
+                // Export chat
+                exportChatBtn.addEventListener('click', exportChat);
+            }
+
+            // Send message function
+            async function sendMessage() {
+                const message = messageInput.value.trim();
+                if (!message || isTyping) return;
+
+                // Check if user is logged in
+                const userData = localStorage.getItem('currentUser');
+
+                // Add user message to chat
+                addMessage(message, 'user');
+                messageInput.value = '';
+                sendBtn.disabled = true;
+                adjustTextareaHeight();
+
+                // Hide welcome message
+                if (welcomeSection) {
+                    welcomeSection.style.display = 'none';
+                }
+
+                // Show typing indicator
+                showTypingIndicator();
+
+                try {
+                    // Simulate AI response with local processing
+                    let botResponse = await generateLocalResponse(message);
+
+                    // Add login reminder for non-logged users occasionally
+                    if (!userData && Math.random() < 0.3) {
+                        botResponse += "\n\n💡 **نصيحة:** سجل دخولك للحصول على تجربة أفضل وحفظ تاريخ المحادثات!";
+                    }
+
+                    // Hide typing indicator
+                    hideTypingIndicator();
+
+                    // Add bot response
+                    addMessage(botResponse, 'bot');
+
+                } catch (error) {
+                    console.error('Error:', error);
+                    hideTypingIndicator();
+
+                    // Add error message
+                    addMessage('عذراً، حدث خطأ في المعالجة. يرجى المحاولة مرة أخرى.', 'bot', true);
+                }
+
+                // Save chat history (only if logged in)
+                if (userData) {
+                    saveChatHistory();
+                }
+            }
+
+            // Generate local AI response
+            async function generateLocalResponse(message) {
+                // Simulate thinking time
+                await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
+
+                const messageLower = message.toLowerCase();
+
+                // Emergency responses
+                if (containsEmergencyKeyword(message)) {
+                    return "🚨 **هذه حالة طوارئ!**\n\nيرجى الاتصال فوراً بـ:\n• الإسعاف: 123\n• الطوارئ: 16123\n\nإذا كان الشخص فاقد الوعي أو لا يتنفس، ابدأ الإنعاش القلبي الرئوي (CPR) فوراً.\n\n⚠️ هذا المساعد لا يغني عن الرعاية الطبية الفورية في حالات الطوارئ.";
+                }
+
+                // First aid responses
+                const firstAidResponse = getFirstAidResponse(messageLower);
+                if (firstAidResponse) {
+                    return firstAidResponse;
+                }
+
+                // Common symptoms responses
+                if (messageLower.includes('صداع') || messageLower.includes('وجع راس')) {
+                    return "🤕 **بخصوص الصداع:**\n\n**أسباب محتملة:**\n• التوتر والإجهاد\n• قلة النوم\n• الجفاف\n• مشاكل في النظر\n• تغيرات هرمونية\n\n**نصائح للتخفيف:**\n• اشرب كمية كافية من الماء\n• خذ قسط من الراحة\n• تجنب الأضواء الساطعة\n• دلك منطقة الرقبة والكتفين\n• تناول مسكن خفيف إذا لزم الأمر\n\n⚠️ إذا كان الصداع شديد أو مصحوب بحمى أو قيء، يجب مراجعة الطبيب فوراً.";
+                }
+
+                if (messageLower.includes('حمى') || messageLower.includes('سخونة') || messageLower.includes('حرارة')) {
+                    return "🌡️ **بخصوص الحمى:**\n\n**الحمى هي استجابة طبيعية للجسم لمحاربة العدوى**\n\n**نصائح للتعامل مع الحمى:**\n• اشرب سوائل كثيرة (ماء، عصائر طبيعية)\n• خذ حمام فاتر (ليس بارد)\n• ارتدي ملابس خفيفة\n• استرح في مكان بارد\n• تناول خافض حرارة مناسب\n\n**متى تراجع الطبيب:**\n• إذا تجاوزت الحرارة 39°م\n• إذا استمرت أكثر من 3 أيام\n• إذا صاحبها أعراض أخرى مقلقة\n\n⚠️ هذا لا يغني عن استشارة الطبيب المختص.";
+                }
+
+                if (messageLower.includes('سعال') || messageLower.includes('كحة')) {
+                    return "😷 **بخصوص السعال:**\n\n**أنواع السعال:**\n• **جاف:** بدون بلغم\n• **مع بلغم:** قد يدل على عدوى\n\n**نصائح للتخفيف:**\n• اشرب سوائل دافئة (شاي بالعسل)\n• استنشق بخار الماء\n• تجنب المهيجات (دخان، عطور)\n• استخدم مرطب الهواء\n• تناول ملعقة عسل قبل النوم\n\n**متى تراجع الطبيب:**\n• إذا استمر أكثر من أسبوعين\n• إذا صاحبه دم أو حمى\n• إذا كان مصحوب بضيق تنفس\n\n⚠️ هذا لا يغني عن استشارة الطبيب المختص.";
+                }
+
+                if (messageLower.includes('معدة') || messageLower.includes('بطن') || messageLower.includes('مغص')) {
+                    return "🤢 **بخصوص ألم المعدة:**\n\n**أسباب محتملة:**\n• عسر الهضم\n• التهاب المعدة\n• القولون العصبي\n• التسمم الغذائي\n• القرحة\n\n**نصائح للتخفيف:**\n• تجنب الأطعمة الحارة والدهنية\n• اشرب شاي النعناع أو الكاموميل\n• تناول وجبات صغيرة ومتكررة\n• تجنب التوتر\n• ضع كمادة دافئة على البطن\n\n**متى تراجع الطبيب:**\n• ألم شديد ومستمر\n• قيء مستمر أو دم\n• حمى مع الألم\n• فقدان الوزن غير المبرر\n\n⚠️ هذا لا يغني عن استشارة الطبيب المختص.";
+                }
+
+                if (messageLower.includes('ضغط') || messageLower.includes('دوخة') || messageLower.includes('دوار')) {
+                    return "💫 **بخصوص الدوخة وضغط الدم:**\n\n**أسباب الدوخة:**\n• انخفاض ضغط الدم\n• الجفاف\n• انخفاض السكر\n• مشاكل الأذن الداخلية\n• الأنيميا\n\n**نصائح فورية:**\n• اجلس أو استلق فوراً\n• اشرب ماء أو عصير\n• تجنب الحركة المفاجئة\n• تنفس بعمق\n• تناول شيء حلو إذا كان السكر منخفض\n\n**للوقاية:**\n• اشرب سوائل كافية\n• قم ببطء من الجلوس أو الاستلقاء\n• تناول وجبات منتظمة\n• تجنب الوقوف لفترات طويلة\n\n⚠️ إذا كانت الدوخة شديدة أو متكررة، راجع الطبيب فوراً.";
+                }
+
+                if (messageLower.includes('نوم') || messageLower.includes('أرق') || messageLower.includes('سهر')) {
+                    return "😴 **بخصوص مشاكل النوم:**\n\n**أسباب الأرق:**\n• التوتر والقلق\n• الكافيين المفرط\n• استخدام الشاشات قبل النوم\n• عدم انتظام مواعيد النوم\n• مشاكل صحية\n\n**نصائح لنوم أفضل:**\n• حدد موعد ثابت للنوم والاستيقاظ\n• تجنب الكافيين بعد العصر\n• اجعل الغرفة مظلمة وباردة\n• تجنب الشاشات قبل النوم بساعة\n• مارس الاسترخاء أو التأمل\n• تجنب الوجبات الثقيلة قبل النوم\n\n**متى تراجع الطبيب:**\n• أرق مستمر أكثر من أسبوعين\n• شخير شديد أو توقف التنفس\n• نعاس مفرط أثناء النهار\n\n⚠️ النوم الجيد ضروري للصحة العامة.";
+                }
+
+                if (messageLower.includes('سكر') || messageLower.includes('سكري') || messageLower.includes('diabetes')) {
+                    return "🍯 **بخصوص السكري:**\n\n**أعراض ارتفاع السكر:**\n• عطش شديد\n• كثرة التبول\n• تعب وإرهاق\n• تشوش الرؤية\n• بطء شفاء الجروح\n\n**أعراض انخفاض السكر:**\n• دوخة ورعشة\n• تعرق\n• جوع شديد\n• تشوش ذهني\n• خفقان القلب\n\n**نصائح للتحكم:**\n• اتبع نظام غذائي متوازن\n• مارس الرياضة بانتظام\n• راقب مستوى السكر\n• تناول الأدوية في مواعيدها\n• تجنب السكريات البسيطة\n\n**في حالة الطوارئ:**\n• انخفاض شديد: تناول سكر أو عصير فوراً\n• ارتفاع شديد: اشرب ماء واتصل بالطبيب\n\n⚠️ السكري يحتاج متابعة طبية دورية.";
+                }
+
+                // الأنظمة الغذائية
+                if (messageLower.includes('نظام غذائي') || messageLower.includes('ريجيم') || messageLower.includes('حمية') ||
+                    messageLower.includes('نظام السكري') || messageLower.includes('ضغط الدم') || messageLower.includes('إنقاص الوزن')) {
+                    console.log('Nutrition plan condition matched for:', messageLower);
+                    return generateNutritionPlan(messageLower);
+                }
+
+                // General health questions
+                if (messageLower.includes('نصائح') || messageLower.includes('صحة') || messageLower.includes('وقاية')) {
+                    return "🌟 **نصائح صحية عامة:**\n\n**للحفاظ على صحة جيدة:**\n• اشرب 8 أكواب ماء يومياً\n• تناول 5 حصص من الخضار والفواكه\n• مارس الرياضة 30 دقيقة يومياً\n• نم 7-8 ساعات ليلاً\n• تجنب التدخين والكحول\n• اغسل يديك بانتظام\n• تجنب التوتر والضغط النفسي\n• راجع الطبيب دورياً للفحص\n\n**للوقاية من الأمراض:**\n• تناول طعام متوازن\n• حافظ على وزن صحي\n• تجنب الأطعمة المصنعة\n• مارس التأمل أو اليوجا\n\n⚠️ هذه نصائح عامة ولا تغني عن استشارة الطبيب المختص.";
+                }
+
+                // Check for specific medical questions
+                if (messageLower.includes('دكتور') || messageLower.includes('طبيب') || messageLower.includes('مستشفى')) {
+                    return "👨‍⚕️ **بخصوص الاستشارة الطبية:**\n\nأنا مساعد ذكي يقدم معلومات طبية عامة، لكن لا أغني عن:\n\n**متى تحتاج طبيب:**\n• أعراض شديدة أو مستمرة\n• حالات طوارئ\n• تشخيص دقيق\n• وصف أدوية\n• فحوصات طبية\n\n**يمكنني مساعدتك في:**\n• فهم الأعراض العامة\n• الإسعافات الأولية\n• النصائح الصحية\n• معلومات عن الأمراض الشائعة\n\n**للعثور على طبيب:**\n• استخدم خدمة حجز المواعيد في الموقع\n• اتصل بأقرب مستشفى\n• راجع دليل الأطباء المحليين\n\n⚠️ في الحالات الطارئة، اتصل بالإسعاف فوراً: 123";
+                }
+
+                if (messageLower.includes('دواء') || messageLower.includes('علاج') || messageLower.includes('حبوب')) {
+                    return "💊 **بخصوص الأدوية:**\n\n⚠️ **تحذير مهم:** لا يمكنني وصف أدوية أو تغيير جرعات.\n\n**معلومات عامة عن الأدوية:**\n• اتبع تعليمات الطبيب دائماً\n• لا تتوقف عن الدواء فجأة\n• اقرأ النشرة الداخلية\n• احفظ الأدوية في مكان آمن\n• تحقق من تاريخ الانتهاء\n\n**آثار جانبية شائعة:**\n• غثيان أو دوخة\n• طفح جلدي\n• اضطراب المعدة\n• نعاس أو أرق\n\n**متى تتصل بالطبيب:**\n• آثار جانبية شديدة\n• حساسية (طفح، تورم، صعوبة تنفس)\n• عدم تحسن الأعراض\n• تفاعل مع أدوية أخرى\n\n⚠️ استشر الطبيب أو الصيدلي قبل تناول أي دواء.";
+                }
+
+                if (messageLower.includes('كورونا') || messageLower.includes('covid') || messageLower.includes('فيروس')) {
+                    return "🦠 **بخصوص كوفيد-19 والفيروسات:**\n\n**أعراض كوفيد-19:**\n• حمى وسعال جاف\n• فقدان حاسة الشم أو التذوق\n• تعب وآلام عضلات\n• ضيق تنفس\n• التهاب حلق\n\n**الوقاية:**\n• اغسل يديك بانتظام\n• ارتدي الكمامة في الأماكن المزدحمة\n• حافظ على التباعد الاجتماعي\n• تجنب لمس الوجه\n• نظف الأسطح بانتظام\n\n**إذا كنت مصاباً:**\n• ابق في المنزل\n• اشرب سوائل كثيرة\n• راقب الأعراض\n• اتصل بالطبيب إذا ساءت الحالة\n\n**متى تطلب المساعدة:**\n• صعوبة شديدة في التنفس\n• ألم مستمر في الصدر\n• تشوش ذهني\n• شفاه أو وجه مزرق\n\n⚠️ اتبع إرشادات وزارة الصحة المحلية.";
+                }
+
+                // Default response for unclear questions
+                return "🤖 **أهلاً بك في المساعد الطبي الذكي!**\n\nلم أفهم سؤالك بوضوح. يمكنني مساعدتك في:\n\n• **الأعراض الشائعة** (صداع، حمى، سعال، ألم معدة)\n• **الإسعافات الأولية** (حروق، جروح، إغماء، اختناق)\n• **النصائح الصحية** (نوم، تغذية، رياضة)\n• **معلومات طبية** (أدوية، فيروسات، سكري)\n\n**أمثلة على أسئلة يمكنني الإجابة عليها:**\n• \"عندي صداع شديد\"\n• \"إزاي أتعامل مع الحروق؟\"\n• \"نصائح للنوم الجيد\"\n• \"أعراض كورونا إيه؟\"\n\n**لمساعدة أفضل:**\n• اكتب سؤالك بوضوح\n• اذكر الأعراض التي تشعر بها\n• حدد متى بدأت المشكلة\n\n⚠️ **تذكر:** أنا لا أغني عن استشارة الطبيب المختص.\n\nجرب كتابة سؤالك مرة أخرى بطريقة أوضح! 😊";
+            }
+
+            // Generate nutrition plan
+            function generateNutritionPlan(messageLower) {
+                console.log('generateNutritionPlan called with:', messageLower);
+                const nutritionData = {
+                    'السكري': {
+                        name: 'نظام غذائي لمرضى السكري',
+                        description: 'نظام غذائي متوازن للتحكم في مستوى السكر',
+                        allowedFoods: [
+                            'الخضروات الورقية (سبانخ، جرجير، خس)',
+                            'البروتينات الخالية من الدهون (دجاج، سمك، بقوليات)',
+                            'الحبوب الكاملة (شوفان، أرز بني، خبز أسمر)',
+                            'المكسرات (لوز، جوز، بذور)',
+                            'الفواكه قليلة السكر (تفاح، كمثرى، توت)'
+                        ],
+                        avoidFoods: [
+                            'السكريات المكررة والحلويات',
+                            'المشروبات الغازية والعصائر المحلاة',
+                            'الخبز الأبيض والأرز الأبيض',
+                            'الأطعمة المقلية والدهنية',
+                            'الفواكه عالية السكر (عنب، تين، تمر بكثرة)'
+                        ],
+                        mealPlan: {
+                            breakfast: 'شوفان بالحليب قليل الدسم + حبة فاكهة + مكسرات',
+                            lunch: 'سلطة خضراء + قطعة دجاج مشوي + أرز بني + خضار مطبوخة',
+                            dinner: 'سمك مشوي + خضار سوتيه + خبز أسمر',
+                            snacks: 'خضار نيئة، مكسرات، زبادي طبيعي'
+                        }
+                    },
+                    'ضغط الدم': {
+                        name: 'نظام DASH لضغط الدم',
+                        description: 'نظام غذائي لخفض ضغط الدم المرتفع',
+                        allowedFoods: [
+                            'الفواكه والخضروات الطازجة',
+                            'الحبوب الكاملة',
+                            'منتجات الألبان قليلة الدسم',
+                            'البروتينات الخالية من الدهون',
+                            'المكسرات والبذور'
+                        ],
+                        avoidFoods: [
+                            'الملح والأطعمة المالحة',
+                            'الأطعمة المصنعة والمعلبة',
+                            'اللحوم الحمراء الدهنية',
+                            'الحلويات والسكريات',
+                            'الكافيين الزائد'
+                        ],
+                        mealPlan: {
+                            breakfast: 'شوفان بالفواكه + حليب قليل الدسم',
+                            lunch: 'سلطة كبيرة + دجاج مشوي + أرز بني',
+                            dinner: 'سمك + خضار مشوية + بطاطا مسلوقة',
+                            snacks: 'فواكه طازجة، مكسرات غير مملحة'
+                        }
+                    },
+                    'إنقاص الوزن': {
+                        name: 'نظام غذائي لإنقاص الوزن',
+                        description: 'نظام متوازن وصحي لفقدان الوزن التدريجي',
+                        allowedFoods: [
+                            'الخضروات الورقية والملونة',
+                            'البروتينات الخالية من الدهون',
+                            'الفواكه الطازجة',
+                            'الحبوب الكاملة بكميات محدودة',
+                            'الماء والشاي الأخضر'
+                        ],
+                        avoidFoods: [
+                            'الأطعمة المقلية والدهنية',
+                            'الحلويات والسكريات',
+                            'المشروبات الغازية',
+                            'الوجبات السريعة',
+                            'الخبز الأبيض والمعجنات'
+                        ],
+                        mealPlan: {
+                            breakfast: 'بيضتان مسلوقتان + خضار + شاي أخضر',
+                            lunch: 'سلطة كبيرة + قطعة دجاج مشوي',
+                            dinner: 'شوربة خضار + سمك مشوي',
+                            snacks: 'خضار نيئة، فواكه قليلة السكر'
+                        }
+                    }
+                };
+
+                // تحديد نوع النظام الغذائي
+                let dietType = '';
+                if (messageLower.includes('سكري') || messageLower.includes('سكر') || messageLower.includes('نظام السكري')) {
+                    dietType = 'السكري';
+                } else if (messageLower.includes('ضغط') || messageLower.includes('ضغط الدم')) {
+                    dietType = 'ضغط الدم';
+                } else if (messageLower.includes('إنقاص') || messageLower.includes('تخسيس') || messageLower.includes('ريجيم') ||
+                          messageLower.includes('إنقاص الوزن') || messageLower.includes('تنحيف')) {
+                    dietType = 'إنقاص الوزن';
+                } else {
+                    return "🥗 **الأنظمة الغذائية المتاحة:**\n\n• نظام غذائي للسكري\n• نظام غذائي لضغط الدم\n• نظام غذائي لإنقاص الوزن\n\nاكتب اسم النظام الذي تريده للحصول على تفاصيل كاملة.\n\n**أو انقر على الأزرار السريعة أعلاه! 👆**";
+                }
+
+                const diet = nutritionData[dietType];
+                if (!diet) {
+                    return "عذراً، لا توجد معلومات متاحة عن هذا النظام الغذائي.";
+                }
+
+                let response = `🍎 **${diet.name}**\n\n`;
+                response += `**الوصف:** ${diet.description}\n\n`;
+
+                response += "**✅ الأطعمة المسموحة:**\n";
+                diet.allowedFoods.forEach(food => {
+                    response += `• ${food}\n`;
+                });
+
+                response += "\n**❌ الأطعمة المتجنبة:**\n";
+                diet.avoidFoods.forEach(food => {
+                    response += `• ${food}\n`;
+                });
+
+                response += "\n**📅 خطة الوجبات اليومية:**\n";
+                response += `🌅 **الإفطار:** ${diet.mealPlan.breakfast}\n`;
+                response += `🌞 **الغداء:** ${diet.mealPlan.lunch}\n`;
+                response += `🌙 **العشاء:** ${diet.mealPlan.dinner}\n`;
+                response += `🍎 **الوجبات الخفيفة:** ${diet.mealPlan.snacks}\n\n`;
+
+                response += "⚠️ **تنبيه:** هذه توصيات عامة. يُنصح باستشارة أخصائي تغذية لخطة مخصصة لحالتك.";
+
+                return response;
+            }
+
+            // Get first aid response
+            function getFirstAidResponse(messageLower) {
+                if (messageLower.includes('حروق') || messageLower.includes('حرق')) {
+                    return "🔥 **الإسعافات الأولية للحروق:**\n\n**خطوات فورية:**\n1. أبعد مصدر الحرق فوراً\n2. ضع المنطقة المحروقة تحت الماء البارد لمدة 10-20 دقيقة\n3. لا تستخدم الثلج أو معجون الأسنان\n4. غطي الحرق بشاش معقم\n5. لا تفقع الفقاعات إن وجدت\n\n**متى تذهب للطوارئ:**\n• حروق الدرجة الثالثة (عميقة)\n• حروق تغطي مساحة كبيرة\n• حروق في الوجه أو اليدين\n• حروق كيميائية أو كهربائية\n\n⚠️ هذا لا يغني عن الرعاية الطبية المتخصصة.";
+                }
+
+                if (messageLower.includes('جرح') || messageLower.includes('نزيف') || messageLower.includes('قطع')) {
+                    return "🩸 **الإسعافات الأولية للجروح:**\n\n**خطوات فورية:**\n1. اغسل يديك جيداً\n2. اضغط على الجرح بقطعة قماش نظيفة\n3. ارفع المنطقة المصابة فوق مستوى القلب إن أمكن\n4. نظف الجرح بالماء النظيف\n5. ضع ضمادة معقمة\n\n**متى تذهب للطوارئ:**\n• نزيف لا يتوقف بعد 10 دقائق ضغط\n• جرح عميق يحتاج خياطة\n• جرح ملوث بالأوساخ\n• علامات عدوى (احمرار، تورم، صديد)\n\n⚠️ تأكد من تحديث تطعيم التيتانوس.";
+                }
+
+                if (messageLower.includes('إغماء') || messageLower.includes('فقدان وعي') || messageLower.includes('اغمى')) {
+                    return "😵 **الإسعافات الأولية للإغماء:**\n\n**خطوات فورية:**\n1. تأكد من أن المكان آمن\n2. ضع الشخص على ظهره\n3. ارفع ساقيه 30 سم تقريباً\n4. فك الملابس الضيقة\n5. تحقق من التنفس والنبض\n\n**إذا لم يستعد الوعي خلال دقيقة:**\n• اتصل بالإسعاف فوراً\n• ضعه في وضعية الإفاقة\n• راقب التنفس باستمرار\n\n**لا تفعل:**\n• لا ترش الماء على الوجه\n• لا تعطي أي طعام أو شراب\n• لا تتركه وحده\n\n⚠️ الإغماء قد يكون علامة على حالة خطيرة.";
+                }
+
+                if (messageLower.includes('اختناق') || messageLower.includes('شرقة')) {
+                    return "😮‍💨 **الإسعافات الأولية للاختناق:**\n\n**للشخص الواعي:**\n1. اسأل: \"هل تختنق؟\" إذا لم يستطع الكلام، فهو يختنق\n2. قف خلفه واحط ذراعيك حول خصره\n3. ضع قبضة يد فوق السرة مباشرة\n4. امسك القبضة باليد الأخرى\n5. اضغط بقوة للداخل وللأعلى\n6. كرر حتى يخرج الجسم الغريب\n\n**للرضع (أقل من سنة):**\n• 5 ضربات على الظهر\n• 5 ضغطات على الصدر\n\n**إذا فقد الوعي:**\n• ابدأ الإنعاش القلبي الرئوي\n• اتصل بالإسعاف\n\n⚠️ تعلم هذه المهارات عملياً من مدرب مؤهل.";
+                }
+
+                return null;
+            }
+
+            // Add message to chat
+            function addMessage(text, sender, isError = false) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${sender}`;
+
+                const avatar = document.createElement('div');
+                avatar.className = 'message-avatar';
+                avatar.innerHTML = sender === 'user' ? '<i class="fas fa-user"></i>' : '<i class="fas fa-robot"></i>';
+
+                const content = document.createElement('div');
+                content.className = 'message-content';
+
+                if (isError) {
+                    content.style.background = 'linear-gradient(45deg, #dc3545, #c82333)';
+                    content.style.color = 'white';
+                }
+
+                // Format message text (convert line breaks, etc.)
+                content.innerHTML = formatMessageText(text);
+
+                const time = document.createElement('div');
+                time.className = 'message-time';
+                time.textContent = new Date().toLocaleTimeString('ar-EG', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                content.appendChild(time);
+                messageDiv.appendChild(avatar);
+                messageDiv.appendChild(content);
+
+                chatMessages.appendChild(messageDiv);
+
+                // Scroll to bottom
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+
+                // Add to chat history
+                chatHistory.push({
+                    text: text,
+                    sender: sender,
+                    timestamp: new Date().toISOString(),
+                    isError: isError
+                });
+
+                // Animate message appearance
+                messageDiv.style.opacity = '0';
+                messageDiv.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    messageDiv.style.transition = 'all 0.3s ease';
+                    messageDiv.style.opacity = '1';
+                    messageDiv.style.transform = 'translateY(0)';
+                }, 100);
+            }
+
+            // Format message text
+            function formatMessageText(text) {
+                return text
+                    .replace(/\n/g, '<br>')
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                    .replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank">$1</a>');
+            }
+
+            // Show/Hide typing indicator
+            function showTypingIndicator() {
+                isTyping = true;
+                typingIndicator.style.display = 'block';
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            function hideTypingIndicator() {
+                isTyping = false;
+                typingIndicator.style.display = 'none';
+            }
+
+            // Adjust textarea height
+            function adjustTextareaHeight() {
+                messageInput.style.height = 'auto';
+                messageInput.style.height = Math.min(messageInput.scrollHeight, 120) + 'px';
+            }
+
+            // Emergency modal functions
+            function containsEmergencyKeyword(text) {
+                const lowerText = text.toLowerCase();
+                return emergencyKeywords.some(keyword => lowerText.includes(keyword));
+            }
+
+            // Clear chat function
+            function clearChat() {
+                if (confirm('هل أنت متأكد من مسح المحادثة؟')) {
+                    chatMessages.innerHTML = '';
+                    chatHistory = [];
+                    welcomeSection.style.display = 'block';
+                    localStorage.removeItem('medicalChatHistory');
+                }
+            }
+
+            // Export chat function
+            function exportChat() {
+                if (chatHistory.length === 0) {
+                    alert('لا توجد محادثة لتصديرها');
+                    return;
+                }
+
+                const chatText = chatHistory.map(msg => {
+                    const sender = msg.sender === 'user' ? 'المستخدم' : 'المساعد الطبي';
+                    const time = new Date(msg.timestamp).toLocaleString('ar-EG');
+                    return `[${time}] ${sender}: ${msg.text}`;
+                }).join('\n\n');
+
+                const blob = new Blob([chatText], { type: 'text/plain;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `medical-chat-${new Date().toISOString().split('T')[0]}.txt`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+
+            // Save/Load chat history
+            function saveChatHistory() {
+                localStorage.setItem('medicalChatHistory', JSON.stringify(chatHistory));
+            }
+
+            function loadChatHistory() {
+                const saved = localStorage.getItem('medicalChatHistory');
+                if (saved) {
+                    chatHistory = JSON.parse(saved);
+
+                    // Restore messages
+                    chatHistory.forEach(msg => {
+                        addMessageToDOM(msg.text, msg.sender, msg.isError);
+                    });
+
+                    if (chatHistory.length > 0) {
+                        welcomeSection.style.display = 'none';
+                    }
+                }
+            }
+
+            // Add message to DOM without adding to history (for loading saved messages)
+            function addMessageToDOM(text, sender, isError = false) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${sender}`;
+
+                const avatar = document.createElement('div');
+                avatar.className = 'message-avatar';
+                avatar.innerHTML = sender === 'user' ? '<i class="fas fa-user"></i>' : '<i class="fas fa-robot"></i>';
+
+                const content = document.createElement('div');
+                content.className = 'message-content';
+
+                if (isError) {
+                    content.style.background = 'linear-gradient(45deg, #dc3545, #c82333)';
+                    content.style.color = 'white';
+                }
+
+                content.innerHTML = formatMessageText(text);
+
+                messageDiv.appendChild(avatar);
+                messageDiv.appendChild(content);
+                chatMessages.appendChild(messageDiv);
+            }
+
+            // Authentication check
+            checkAuthStatus();
+
+            function checkAuthStatus() {
+                const userData = localStorage.getItem('currentUser');
+                if (userData) {
+                    const user = JSON.parse(userData);
+                    document.getElementById('userMenuContainer').style.display = 'block';
+                    document.getElementById('loginMenuContainer').style.display = 'none';
+                    document.getElementById('userDisplayName').textContent = user.name;
+
+                    // Show welcome message for logged in users
+                    setTimeout(() => {
+                        if (chatHistory.length === 0) {
+                            addMessage(`مرحباً ${user.name}! 👋\n\n🤖 **أنا المساعد الطبي الذكي**\n\nجاهز لمساعدتك في:\n• الأعراض والمشاكل الصحية\n• الإسعافات الأولية\n• النصائح الطبية والصحية\n• معلومات عن الأدوية والعلاجات\n\n💡 **نصيحة:** كن محدداً في وصف أعراضك للحصول على أفضل مساعدة.\n\n⚠️ **تذكر:** أنا لا أغني عن استشارة الطبيب المختص.\n\nكيف يمكنني مساعدتك اليوم؟`, 'bot');
+                            welcomeSection.style.display = 'none';
+                        }
+                    }, 1000);
+                } else {
+                    document.getElementById('userMenuContainer').style.display = 'none';
+                    document.getElementById('loginMenuContainer').style.display = 'block';
+
+                    // Show guest welcome message
+                    setTimeout(() => {
+                        if (chatHistory.length === 0) {
+                            addMessage('مرحباً بك في المساعد الطبي الذكي! 🤖\n\n**يمكنك استخدام المساعد الآن مباشرة!**\n\nأنا جاهز لمساعدتك في:\n• الأعراض والمشاكل الصحية\n• الإسعافات الأولية\n• النصائح الطبية\n• معلومات عن الأدوية\n\n💡 **للحصول على تجربة أفضل:**\n• سجل دخولك لحفظ المحادثات\n• احجز مواعيد مع الأطباء\n• احصل على ملف طبي شخصي\n\n⚠️ **تذكر:** أنا لا أغني عن استشارة الطبيب المختص.\n\nابدأ بكتابة سؤالك أو اختر من الأزرار أعلاه! 👆', 'bot');
+                            welcomeSection.style.display = 'none';
+                        }
+                    }, 1000);
+                }
+            }
+
+            // Logout functionality
+            document.getElementById('logoutBtn')?.addEventListener('click', function(e) {
+                e.preventDefault();
+                localStorage.removeItem('currentUser');
+                localStorage.removeItem('rememberUser');
+                checkAuthStatus();
+                showAlert('تم تسجيل الخروج بنجاح', 'info');
+            });
+
+            function showAlert(message, type) {
+                const alertDiv = document.createElement('div');
+                alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+                alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+                alertDiv.innerHTML = `
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                `;
+                document.body.appendChild(alertDiv);
+                setTimeout(() => {
+                    if (alertDiv.parentNode) {
+                        alertDiv.remove();
+                    }
+                }, 5000);
+            }
+        });
+    </script>
+</body>
+</html>

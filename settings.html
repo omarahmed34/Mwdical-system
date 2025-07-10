@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الإعدادات - النظام الطبي الذكي</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success-gradient: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            --warning-gradient: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+            --danger-gradient: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%);
+            --card-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            --border-radius: 20px;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: var(--primary-gradient);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .navbar {
+            background: white !important;
+            box-shadow: var(--card-shadow);
+            border-radius: var(--border-radius);
+            margin-bottom: 2rem;
+        }
+
+        .navbar-brand {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+        }
+
+        .main-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .settings-header {
+            background: var(--primary-gradient);
+            color: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .settings-card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .setting-item {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-left: 5px solid #667eea;
+            transition: all 0.3s ease;
+        }
+
+        .setting-item:hover {
+            transform: translateX(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .setting-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            background: var(--primary-gradient);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-left: 1rem;
+        }
+
+        .form-switch .form-check-input {
+            width: 3rem;
+            height: 1.5rem;
+        }
+
+        .form-switch .form-check-input:checked {
+            background-color: #667eea;
+            border-color: #667eea;
+        }
+
+        .btn-custom {
+            border-radius: 25px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-primary-custom {
+            background: var(--primary-gradient);
+            border: none;
+            color: white;
+        }
+
+        .btn-success-custom {
+            background: var(--success-gradient);
+            border: none;
+            color: white;
+        }
+
+        .btn-danger-custom {
+            background: var(--danger-gradient);
+            border: none;
+            color: white;
+        }
+
+        .theme-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .theme-option {
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .theme-option:hover {
+            border-color: #667eea;
+            transform: scale(1.05);
+        }
+
+        .theme-option.active {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .theme-preview {
+            width: 100%;
+            height: 60px;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+
+        .theme-blue { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .theme-green { background: linear-gradient(135deg, #28a745 0%, #20c997 100%); }
+        .theme-orange { background: linear-gradient(135deg, #fd7e14 0%, #ffc107 100%); }
+        .theme-purple { background: linear-gradient(135deg, #6f42c1 0%, #e83e8c 100%); }
+
+        .notification-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 0 10px;
+            }
+            
+            .settings-card {
+                padding: 1rem;
+            }
+            
+            .setting-item {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container">
+            <a class="navbar-brand" href="unified-medical-system.html">
+                <i class="fas fa-heartbeat me-2"></i>النظام الطبي الذكي
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="unified-medical-system.html">
+                            <i class="fas fa-home me-1"></i>الرئيسية
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="profile.html">
+                            <i class="fas fa-user me-1"></i>الملف الشخصي
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="medical-reports.html">
+                            <i class="fas fa-chart-line me-1"></i>التقارير
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="settings.html">
+                            <i class="fas fa-cog me-1"></i>الإعدادات
+                        </a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="logout()">
+                            <i class="fas fa-sign-out-alt me-1"></i>تسجيل الخروج
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <!-- Header -->
+        <div class="settings-header">
+            <h2><i class="fas fa-cog me-3"></i>إعدادات النظام</h2>
+            <p class="mb-0">تخصيص النظام حسب تفضيلاتك</p>
+        </div>
+
+        <!-- General Settings -->
+        <div class="settings-card">
+            <h4><i class="fas fa-sliders-h me-2"></i>الإعدادات العامة</h4>
+            
+            <div class="setting-item">
+                <div class="d-flex align-items-center">
+                    <div class="setting-icon">
+                        <i class="fas fa-language"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h6 class="mb-1">اللغة</h6>
+                        <small class="text-muted">اختر لغة واجهة النظام</small>
+                    </div>
+                    <select class="form-select w-auto" id="languageSelect">
+                        <option value="ar">العربية</option>
+                        <option value="en">English</option>
+                        <option value="fr">Français</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="setting-item">
+                <div class="d-flex align-items-center">
+                    <div class="setting-icon">
+                        <i class="fas fa-palette"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h6 class="mb-1">المظهر</h6>
+                        <small class="text-muted">اختر لون النظام</small>
+                        <div class="theme-selector">
+                            <div class="theme-option active" data-theme="blue">
+                                <div class="theme-preview theme-blue"></div>
+                                <small>أزرق</small>
+                            </div>
+                            <div class="theme-option" data-theme="green">
+                                <div class="theme-preview theme-green"></div>
+                                <small>أخضر</small>
+                            </div>
+                            <div class="theme-option" data-theme="orange">
+                                <div class="theme-preview theme-orange"></div>
+                                <small>برتقالي</small>
+                            </div>
+                            <div class="theme-option" data-theme="purple">
+                                <div class="theme-preview theme-purple"></div>
+                                <small>بنفسجي</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="setting-item">
+                <div class="d-flex align-items-center">
+                    <div class="setting-icon">
+                        <i class="fas fa-text-height"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h6 class="mb-1">حجم الخط</h6>
+                        <small class="text-muted">تكبير أو تصغير النصوص</small>
+                    </div>
+                    <select class="form-select w-auto" id="fontSizeSelect">
+                        <option value="small">صغير</option>
+                        <option value="medium" selected>متوسط</option>
+                        <option value="large">كبير</option>
+                        <option value="extra-large">كبير جداً</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notification Settings -->
+        <div class="settings-card">
+            <h4><i class="fas fa-bell me-2"></i>إعدادات الإشعارات</h4>
+            
+            <div class="notification-item">
+                <div>
+                    <h6 class="mb-1">إشعارات التشخيص</h6>
+                    <small class="text-muted">تلقي إشعارات عند اكتمال التشخيص</small>
+                </div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="diagnosisNotifications" checked>
+                </div>
+            </div>
+
+            <div class="notification-item">
+                <div>
+                    <h6 class="mb-1">تذكير المواعيد</h6>
+                    <small class="text-muted">تذكير بالمواعيد الطبية</small>
+                </div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="appointmentReminders" checked>
+                </div>
+            </div>
+
+            <div class="notification-item">
+                <div>
+                    <h6 class="mb-1">نصائح يومية</h6>
+                    <small class="text-muted">تلقي نصائح طبية يومية</small>
+                </div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="dailyTips" checked>
+                </div>
+            </div>
+
+            <div class="notification-item">
+                <div>
+                    <h6 class="mb-1">تحديثات النظام</h6>
+                    <small class="text-muted">إشعارات التحديثات والميزات الجديدة</small>
+                </div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="systemUpdates" checked>
+                </div>
+            </div>
+        </div>
+
+        <!-- Privacy Settings -->
+        <div class="settings-card">
+            <h4><i class="fas fa-shield-alt me-2"></i>إعدادات الخصوصية</h4>
+            
+            <div class="setting-item">
+                <div class="d-flex align-items-center">
+                    <div class="setting-icon">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h6 class="mb-1">حفظ البيانات</h6>
+                        <small class="text-muted">حفظ تاريخ الاستشارات والتشخيصات</small>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="saveData" checked>
+                    </div>
+                </div>
+            </div>
+
+            <div class="setting-item">
+                <div class="d-flex align-items-center">
+                    <div class="setting-icon">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h6 class="mb-1">الإحصائيات</h6>
+                        <small class="text-muted">السماح بجمع إحصائيات الاستخدام</small>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="analytics" checked>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="settings-card">
+            <h4><i class="fas fa-tools me-2"></i>إجراءات النظام</h4>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <button class="btn btn-success-custom btn-custom w-100" onclick="saveSettings()">
+                        <i class="fas fa-save me-2"></i>حفظ الإعدادات
+                    </button>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <button class="btn btn-primary-custom btn-custom w-100" onclick="resetSettings()">
+                        <i class="fas fa-undo me-2"></i>إعادة تعيين
+                    </button>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <button class="btn btn-primary-custom btn-custom w-100" onclick="exportSettings()">
+                        <i class="fas fa-download me-2"></i>تصدير الإعدادات
+                    </button>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <button class="btn btn-danger-custom btn-custom w-100" onclick="clearAllData()">
+                        <i class="fas fa-trash-alt me-2"></i>مسح جميع البيانات
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // تحميل الإعدادات
+        function loadSettings() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (!currentUser) {
+                alert('يجب تسجيل الدخول أولاً');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const settings = JSON.parse(localStorage.getItem('userSettings') || '{}');
+
+            // تطبيق الإعدادات المحفوظة
+            if (settings.language) {
+                document.getElementById('languageSelect').value = settings.language;
+            }
+
+            if (settings.fontSize) {
+                document.getElementById('fontSizeSelect').value = settings.fontSize;
+                applyFontSize(settings.fontSize);
+            }
+
+            if (settings.theme) {
+                selectTheme(settings.theme);
+            }
+
+            // إعدادات الإشعارات
+            document.getElementById('diagnosisNotifications').checked = settings.diagnosisNotifications !== false;
+            document.getElementById('appointmentReminders').checked = settings.appointmentReminders !== false;
+            document.getElementById('dailyTips').checked = settings.dailyTips !== false;
+            document.getElementById('systemUpdates').checked = settings.systemUpdates !== false;
+
+            // إعدادات الخصوصية
+            document.getElementById('saveData').checked = settings.saveData !== false;
+            document.getElementById('analytics').checked = settings.analytics !== false;
+        }
+
+        // حفظ الإعدادات
+        function saveSettings() {
+            const settings = {
+                language: document.getElementById('languageSelect').value,
+                fontSize: document.getElementById('fontSizeSelect').value,
+                theme: document.querySelector('.theme-option.active').dataset.theme,
+                diagnosisNotifications: document.getElementById('diagnosisNotifications').checked,
+                appointmentReminders: document.getElementById('appointmentReminders').checked,
+                dailyTips: document.getElementById('dailyTips').checked,
+                systemUpdates: document.getElementById('systemUpdates').checked,
+                saveData: document.getElementById('saveData').checked,
+                analytics: document.getElementById('analytics').checked,
+                lastUpdated: new Date().toISOString()
+            };
+
+            localStorage.setItem('userSettings', JSON.stringify(settings));
+
+            // تطبيق الإعدادات فوراً
+            applyFontSize(settings.fontSize);
+            applyTheme(settings.theme);
+
+            alert('تم حفظ الإعدادات بنجاح!');
+        }
+
+        // إعادة تعيين الإعدادات
+        function resetSettings() {
+            if (confirm('هل أنت متأكد من إعادة تعيين جميع الإعدادات؟')) {
+                localStorage.removeItem('userSettings');
+
+                // إعادة تعيين القيم الافتراضية
+                document.getElementById('languageSelect').value = 'ar';
+                document.getElementById('fontSizeSelect').value = 'medium';
+                selectTheme('blue');
+
+                // إعادة تعيين الإشعارات
+                document.getElementById('diagnosisNotifications').checked = true;
+                document.getElementById('appointmentReminders').checked = true;
+                document.getElementById('dailyTips').checked = true;
+                document.getElementById('systemUpdates').checked = true;
+
+                // إعادة تعيين الخصوصية
+                document.getElementById('saveData').checked = true;
+                document.getElementById('analytics').checked = true;
+
+                applyFontSize('medium');
+                applyTheme('blue');
+
+                alert('تم إعادة تعيين الإعدادات بنجاح!');
+            }
+        }
+
+        // تطبيق حجم الخط
+        function applyFontSize(size) {
+            const root = document.documentElement;
+            switch(size) {
+                case 'small':
+                    root.style.fontSize = '14px';
+                    break;
+                case 'medium':
+                    root.style.fontSize = '16px';
+                    break;
+                case 'large':
+                    root.style.fontSize = '18px';
+                    break;
+                case 'extra-large':
+                    root.style.fontSize = '20px';
+                    break;
+            }
+        }
+
+        // اختيار المظهر
+        function selectTheme(theme) {
+            document.querySelectorAll('.theme-option').forEach(option => {
+                option.classList.remove('active');
+            });
+            document.querySelector(`[data-theme="${theme}"]`).classList.add('active');
+        }
+
+        // تطبيق المظهر
+        function applyTheme(theme) {
+            const root = document.documentElement;
+            switch(theme) {
+                case 'blue':
+                    root.style.setProperty('--primary-gradient', 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)');
+                    break;
+                case 'green':
+                    root.style.setProperty('--primary-gradient', 'linear-gradient(135deg, #28a745 0%, #20c997 100%)');
+                    break;
+                case 'orange':
+                    root.style.setProperty('--primary-gradient', 'linear-gradient(135deg, #fd7e14 0%, #ffc107 100%)');
+                    break;
+                case 'purple':
+                    root.style.setProperty('--primary-gradient', 'linear-gradient(135deg, #6f42c1 0%, #e83e8c 100%)');
+                    break;
+            }
+        }
+
+        // تصدير الإعدادات
+        function exportSettings() {
+            const settings = JSON.parse(localStorage.getItem('userSettings') || '{}');
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+
+            const exportData = {
+                user: currentUser.name,
+                settings: settings,
+                exportDate: new Date().toISOString(),
+                version: '1.0'
+            };
+
+            const jsonStr = JSON.stringify(exportData, null, 2);
+            const blob = new Blob([jsonStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'medical_system_settings.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            alert('تم تصدير الإعدادات بنجاح!');
+        }
+
+        // مسح جميع البيانات
+        function clearAllData() {
+            if (!confirm('هل أنت متأكد من مسح جميع البيانات؟ سيتم تسجيل خروجك تلقائياً.')) {
+                return;
+            }
+
+            if (!confirm('هذا الإجراء لا يمكن التراجع عنه. هل تريد المتابعة؟')) {
+                return;
+            }
+
+            localStorage.clear();
+            alert('تم مسح جميع البيانات. سيتم إعادة توجيهك لصفحة تسجيل الدخول.');
+            window.location.href = 'login.html';
+        }
+
+        function logout() {
+            if (confirm('هل أنت متأكد من تسجيل الخروج؟')) {
+                localStorage.removeItem('currentUser');
+                window.location.href = 'login.html';
+            }
+        }
+
+        // معالجات الأحداث
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSettings();
+
+            // معالج تغيير المظهر
+            document.querySelectorAll('.theme-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    selectTheme(this.dataset.theme);
+                });
+            });
+
+            // معالج تغيير حجم الخط
+            document.getElementById('fontSizeSelect').addEventListener('change', function() {
+                applyFontSize(this.value);
+            });
+
+            // حفظ تلقائي عند تغيير الإعدادات
+            document.querySelectorAll('input[type="checkbox"], select').forEach(element => {
+                element.addEventListener('change', function() {
+                    // حفظ تلقائي بعد ثانية واحدة
+                    setTimeout(saveSettings, 1000);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
